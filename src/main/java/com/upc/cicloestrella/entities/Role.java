@@ -8,8 +8,8 @@ import java.util.List;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = true)
-    public Long RoleId;
+    public Long id;
+
     @Column(nullable = true)
     public String RoleName;
 
