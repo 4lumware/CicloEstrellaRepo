@@ -1,10 +1,10 @@
 package com.upc.cicloestrella.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
+import java.util.List;
+
+@Entity
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -12,4 +12,8 @@ public class Role {
     public Long RoleId;
     @Column(nullable = true)
     public String RoleName;
+
+    @ManyToMany(mappedBy = "roles")
+    public List<User> users;
+
 }
