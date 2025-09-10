@@ -5,14 +5,14 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-public class Tags {
+public class Reaction{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String TagName;
+    @Lob
+    @Column(nullable = true)
+    private String icon_url;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "reactions")
     private List<Review> reviews;
 }
-
-

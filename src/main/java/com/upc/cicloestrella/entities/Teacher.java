@@ -36,6 +36,20 @@ public class Teacher {
             inverseJoinColumns = @JoinColumn(name = "career_id")
     )
     private List<Career> careers;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "teacher_campuses",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "campus_id")
+    )
+    private List<Campus> campuses;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "teacher_courses",
+            joinColumns = @JoinColumn(name = "teacher_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private List<Course> courses;
 
 }
