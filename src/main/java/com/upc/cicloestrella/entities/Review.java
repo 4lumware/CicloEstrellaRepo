@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Review {
@@ -19,6 +20,28 @@ public class Review {
     @MapsId("teacherId")
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    @ManyToMany
+    @JoinTable(
+            name = "review_reactions",
+            joinColumns = {
+                    @JoinColumn(name = "student_id", referencedColumnName = "student_id"),
+                    @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
+            },
+            inverseJoinColumns = @JoinColumn(name = "reaction_id")
+    )
+    private List<Reaction> reactions;
+
+    @ManyToMany
+    @JoinTable(
+            name = "review_tags",
+            joinColumns = {
+                    @JoinColumn(name = "student_id", referencedColumnName = "student_id"),
+                    @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
+            },
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tags> tags;
 
     private String description;
 

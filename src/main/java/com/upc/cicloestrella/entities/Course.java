@@ -1,18 +1,19 @@
 package com.upc.cicloestrella.entities;
 
+
 import jakarta.persistence.*;
 
 import java.util.List;
 
 @Entity
-public class Tags {
+@Table(name = "courses")
+public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String TagName;
 
-    @ManyToMany(mappedBy = "tags")
-    private List<Review> reviews;
+    private String course_name;
+
+    @ManyToMany(mappedBy = "courses")
+    private List<Teacher> teacher;
 }
-
-
