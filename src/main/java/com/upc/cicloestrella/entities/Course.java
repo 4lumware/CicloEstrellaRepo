@@ -12,7 +12,7 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String course_name;
+    private String courseName;
 
     @ManyToMany(mappedBy = "courses")
     private List<Teacher> teacher;

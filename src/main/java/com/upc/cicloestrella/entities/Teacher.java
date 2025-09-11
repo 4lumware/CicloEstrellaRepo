@@ -13,21 +13,27 @@ public class Teacher {
     private Long id;
 
     @Column(length = 100 , nullable = false)
-    private String first_name;
+    private String firstName;
 
     @Column(length = 100 , nullable = false)
-    private String last_name;
+    private String lastName;
 
     @Lob
-    @Column(nullable = true)
-    private String general_description;
+    @Column(nullable = true , name = "general_description")
+    private String generalDescription;
 
     @Lob
-    @Column(nullable = true)
-    private String profile_picture_url;
+    @Column(nullable = true , name = "profile_picture_url")
+    private String profilePictureURL;
 
-    @Column(precision = 2, scale = 2, nullable = false)
-    private BigDecimal average_rating;
+    @Column(
+            name = "average_rating",
+            precision = 2,
+            scale = 2,
+            nullable = true,
+            columnDefinition = "DECIMAL(2,2) DEFAULT 0.00"
+    )
+    private BigDecimal averageRating;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

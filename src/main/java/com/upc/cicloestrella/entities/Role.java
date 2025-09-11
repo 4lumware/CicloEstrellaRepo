@@ -11,7 +11,7 @@ public class Role {
     public Long id;
 
     @Column(nullable = true)
-    public String RoleName;
+    public String roleName;
 
     @ManyToMany(mappedBy = "roles")
     public List<User> users;
