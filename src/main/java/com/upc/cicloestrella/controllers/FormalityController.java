@@ -39,4 +39,5 @@ public class FormalityController {
     public void delete(@PathVariable Long idFormality) {
         formalityService.delete(idFormality);
     }
+
 }
