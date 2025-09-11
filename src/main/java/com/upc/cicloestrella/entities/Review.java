@@ -47,6 +47,7 @@ public class Review {
     )
     private List<Tags> tags;
 
+    @Column(length = 1000, nullable = false)
     private String description;
 
     @Column(precision = 2, scale = 2, nullable = false)
