@@ -30,4 +30,5 @@ public class Formality {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
 }

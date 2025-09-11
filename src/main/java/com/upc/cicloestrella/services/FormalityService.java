@@ -55,5 +55,4 @@ public class FormalityService implements FormalityServiceInterface {
     public void delete(Long idFormality) {
         formalityRepository.deleteById(idFormality);
     }
-
 }

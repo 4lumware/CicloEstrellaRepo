@@ -17,5 +17,4 @@ public class FormalityDTO {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-
 }

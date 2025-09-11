@@ -13,4 +13,5 @@ public interface FormalityServiceInterface {
     public FormalityDTO insert(FormalityDTO formalityDTO);
     public Formality update(Formality formality);
     public void delete(Long idFormality);
+
 }
