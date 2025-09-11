@@ -22,12 +22,10 @@ public class Teacher {
     @Column(length = 100 , nullable = false)
     private String lastName;
 
-    @Lob
-    @Column(nullable = true , name = "general_description")
+    @Column(nullable = true , name = "general_description" , length = 4000)
     private String generalDescription;
 
-    @Lob
-    @Column(nullable = true , name = "profile_picture_url")
+    @Column(nullable = true , name = "profile_picture_url" , length = 1000)
     private String profilePictureURL;
 
     @Column(

@@ -69,7 +69,18 @@ public class TeacherService implements TeacherServiceInterface {
     }
 
     @Override
-    public List<TeacherResponseDTO> index() {
+    public List<TeacherResponseDTO> index(String firstName) {
+
+        if (firstName != null && !firstName.isEmpty()) {
+            List<Teacher> teachers = teacherRepository.findByFirstNameContainingIgnoreCase(firstName);
+            teachers.forEach(teacher -> {
+                teacher.getGeneralDescription();
+                teacher.getProfilePictureURL();
+            });
+            return teachers.stream()
+                    .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
+                    .toList();
+        }
         return teacherRepository.findAll()
                 .stream()
                 .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
