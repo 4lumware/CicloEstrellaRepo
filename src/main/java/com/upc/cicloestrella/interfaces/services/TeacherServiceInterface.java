@@ -5,8 +5,8 @@ import com.upc.cicloestrella.DTOs.TeacherResponseDTO;
 
 import java.util.List;
 
-public interface TeacherService {
+public interface TeacherServiceInterface {
     public TeacherResponseDTO save(TeacherRequestDTO teacher);
-    public List<TeacherRequestDTO> findAll();
-    public TeacherResponseDTO findById(Long id);
+    public List<TeacherRequestDTO> index();
+    public TeacherResponseDTO show(Long id);
 }
