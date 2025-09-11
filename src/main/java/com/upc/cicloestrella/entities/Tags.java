@@ -9,7 +9,7 @@ public class Tags {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String TagName;
+    private String tagName;
 
     @ManyToMany(mappedBy = "tags")
     private List<Review> reviews;

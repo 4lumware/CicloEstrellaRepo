@@ -10,7 +10,7 @@ public class Career {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String nameCareer;
+    private String careerName;
 
     @ManyToMany(mappedBy = "careers")
     private List<Teacher> teachers;

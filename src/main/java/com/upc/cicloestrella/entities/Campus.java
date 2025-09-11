@@ -10,7 +10,7 @@ public class Campus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String campusName;
     @ManyToMany(mappedBy ="campuses")
     private List<Teacher> teachers;
 

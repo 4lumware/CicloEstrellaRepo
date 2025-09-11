@@ -15,7 +15,7 @@ public class Student {
     private User user;
 
     @Column(nullable = false)
-    private int current_semester;
+    private int currentSemester;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
