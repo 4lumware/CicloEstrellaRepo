@@ -13,10 +13,6 @@ public class CourseRequestDTO {
     @Size(max = 150, message = "El nombre del curso no debe superar los 150 caracteres")
     private String courseName;
 
-    @NotBlank(message = "La descripción del curso no puede estar vacía")
-    @Size(max = 1000, message = "La descripción no debe superar los 1000 caracteres")
-    private String description;
-
     @NotEmpty(message = "Debe asignar al menos un formato al curso")
     private List<Long> formatsIds;
 }

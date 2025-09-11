@@ -7,7 +7,6 @@ import java.util.List;
 @Data
 public class CourseResponseDTO {
 
-    private String name;
-    private String description;
+    private String courseName;
     private List<FormatResponseDTO> formats;
 }
