@@ -24,8 +24,8 @@ public class TeacherController {
     }
 
     @GetMapping("/teachers")
-    public ResponseEntity<?> index() {
-        List<TeacherResponseDTO> teachers = teacherService.index();
+    public ResponseEntity<?> index(@RequestParam(required = false) String name) {
+        List<TeacherResponseDTO> teachers = teacherService.index(name);
 
         if (teachers.isEmpty()) {
             return ResponseEntity
