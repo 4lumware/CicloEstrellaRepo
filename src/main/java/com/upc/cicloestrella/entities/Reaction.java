@@ -13,8 +13,8 @@ public class Reaction{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Lob
-    @Column(nullable = true)
+
+    @Column(nullable = true , length = 1000)
     private String icon_url;
 
     @ManyToMany(mappedBy = "reactions")
