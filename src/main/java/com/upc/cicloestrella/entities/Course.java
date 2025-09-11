@@ -16,4 +16,14 @@ public class Course {
 
     @ManyToMany(mappedBy = "courses")
     private List<Teacher> teacher;
+
+    @ManyToMany
+    @JoinTable(
+            name = "course_formats",
+            joinColumns = {
+                    @JoinColumn(name = "course_id", referencedColumnName = "course_id"),
+            },
+            inverseJoinColumns = @JoinColumn(name = "format_id")
+    )
+    private List<Format> formats;
 }
