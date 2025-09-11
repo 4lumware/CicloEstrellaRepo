@@ -1,12 +1,16 @@
 package com.upc.cicloestrella.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
 @Table(name = "teachers")
+@Getter
+@Setter
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

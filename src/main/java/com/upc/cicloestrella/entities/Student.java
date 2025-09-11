@@ -2,11 +2,15 @@ package com.upc.cicloestrella.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 @Entity
 @Table(name = "students")
+@Getter
+@Setter
 public class Student {
 
     @Id
