@@ -22,5 +22,4 @@ public class Career {
     @ManyToMany(mappedBy = "careers")
     private List<Student> students;
 
-
 }

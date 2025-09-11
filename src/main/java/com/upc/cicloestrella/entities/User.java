@@ -37,6 +37,7 @@ public class User {
     private LocalDate creationDate;
 
     @Column(nullable = true)
+    @Lob
     private String profilePictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
