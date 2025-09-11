@@ -21,7 +21,7 @@ public class Course {
     @JoinTable(
             name = "course_formats",
             joinColumns = {
-                    @JoinColumn(name = "course_id", referencedColumnName = "course_id"),
+                    @JoinColumn(name = "course_id", referencedColumnName = "id"),
             },
             inverseJoinColumns = @JoinColumn(name = "format_id")
     )
