@@ -14,6 +14,7 @@ public class Campus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true)
     private String campusName;
     @ManyToMany(mappedBy ="campuses")
     private List<Teacher> teachers;

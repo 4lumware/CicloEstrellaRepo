@@ -13,6 +13,8 @@ public class Tags {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true, nullable = false)
     private String tagName;
 
     @ManyToMany(mappedBy = "tags")
