@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/careers")
 public class CareerController {
     private final CareerServiceInterface careerService;
 
@@ -21,7 +21,7 @@ public class CareerController {
         this.careerService = careerService;
     }
 
-    @GetMapping("/careers")
+    @GetMapping
     public ResponseEntity<?> index() {
         var careers = careerService.index();
 
@@ -40,7 +40,7 @@ public class CareerController {
                 );
     }
 
-    @GetMapping("/careers/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
         var career = careerService.show(id);
 
@@ -59,7 +59,7 @@ public class CareerController {
                 );
     }
 
-    @PostMapping("/careers")
+    @PostMapping
     public ResponseEntity<?> save(@Valid @RequestBody CareerRequestDTO career) {
         var savedCareer = careerService.save(career);
 
@@ -78,7 +78,7 @@ public class CareerController {
                 );
     }
 
-    @PutMapping("/careers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CareerRequestDTO career) {
         var updatedCareer = careerService.update(id, career);
         if (updatedCareer == null) {
@@ -97,7 +97,7 @@ public class CareerController {
 
     }
 
-    @DeleteMapping("/careers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         var career = careerService.show(id);
         if (career == null) {

@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: cicloestrella
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cicloestrella_db
+    username: postgres
+    password: toor
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  mvc:
+    servlet:
+      path: /api
+logging:
+  file:
+    name: logs/cicloestrella.log
+  level:
+    root: INFO
+    com.example.cicloestrella: DEBUG
+  pattern:
+    dateformat: "yyyy-MM-dd HH:mm:ss"
+    file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
+
+
+
