@@ -7,10 +7,10 @@ import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Course;
 import com.upc.cicloestrella.entities.Teacher;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
-import com.upc.cicloestrella.repositories.CampusRepository;
-import com.upc.cicloestrella.repositories.CareerRepository;
-import com.upc.cicloestrella.repositories.CourseRepository;
-import com.upc.cicloestrella.repositories.TeacherRepository;
+import com.upc.cicloestrella.repositories.interfaces.CampusRepository;
+import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
+import com.upc.cicloestrella.repositories.interfaces.CourseRepository;
+import com.upc.cicloestrella.repositories.interfaces.TeacherRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 

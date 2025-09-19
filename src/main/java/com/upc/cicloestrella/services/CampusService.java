@@ -4,7 +4,7 @@ import com.upc.cicloestrella.DTOs.CampusRequestDTO;
 import com.upc.cicloestrella.DTOs.CampusResponseDTO;
 import com.upc.cicloestrella.entities.Campus;
 import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
-import com.upc.cicloestrella.repositories.CampusRepository;
+import com.upc.cicloestrella.repositories.interfaces.CampusRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

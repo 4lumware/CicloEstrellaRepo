@@ -1,13 +1,13 @@
 package com.upc.cicloestrella.DTOs;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
-public class UserRequestDTO {
+public class StudentRequestDTO {
+
     @NotBlank(message = "El nombre de usuario no puede estar vacío")
     @Size(max = 50, message = "El nombre de usuario no debe superar los 50 caracteres")
     private String username;
@@ -26,4 +26,15 @@ public class UserRequestDTO {
             message = "La URL de la foto debe ser válida"
     )
     private String profilePictureUrl;
+
+    @NotNull(message = "El semestre actual no puede estar vacío")
+    @Min(value = 1, message = "El semestre actual debe ser al menos 1")
+    @Max(value = 20, message = "El semestre actual no debe superar 20")
+
+    private int currentSemester;
+
+    @NotNull(message = "La lista de carreras no puede ser null")
+    @Size(min = 1, message = "Debe seleccionar al menos una carrera")
+    private List<@Positive(message = "El ID de la carrera debe ser positivo") Long> careerIds;
+
 }

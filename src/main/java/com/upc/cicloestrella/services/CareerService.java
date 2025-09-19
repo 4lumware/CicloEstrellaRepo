@@ -4,7 +4,7 @@ import com.upc.cicloestrella.DTOs.CareerRequestDTO;
 import com.upc.cicloestrella.DTOs.CareerResponseDTO;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.interfaces.services.CareerServiceInterface;
-import com.upc.cicloestrella.repositories.CareerRepository;
+import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

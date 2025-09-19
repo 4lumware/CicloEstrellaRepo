@@ -3,7 +3,7 @@ package com.upc.cicloestrella.services;
 import com.upc.cicloestrella.DTOs.FormatRequestDTO;
 import com.upc.cicloestrella.DTOs.FormatResponseDTO;
 import com.upc.cicloestrella.interfaces.services.FormatServiceInterface;
-import com.upc.cicloestrella.repositories.FormatRepository;
+import com.upc.cicloestrella.repositories.interfaces.FormatRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
