@@ -2,6 +2,7 @@ package com.upc.cicloestrella.controllers;
 
 import com.upc.cicloestrella.DTOs.CampusRequestDTO;
 import com.upc.cicloestrella.DTOs.CampusResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/campuses")
 public class CampusController {
     private final CampusServiceInterface campusService;
 
@@ -21,7 +22,7 @@ public class CampusController {
         this.campusService = campusService;
     }
 
-    @GetMapping("/campuses")
+    @GetMapping
     public ResponseEntity<?> index() {
         List<CampusResponseDTO> campuses = campusService.index();
 
@@ -29,18 +30,18 @@ public class CampusController {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "No se encontraron campus", "status", 404)
+                            ApiResponse.builder().message("No se encontraron campus").status(404).build()
                     );
         }
 
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", campuses, "message", "Campus obtenidos correctamente", "status", 200)
+                        ApiResponse.builder().data(campuses).message("Campus obtenidos correctamente").status(200).build()
                 );
     }
 
-    @GetMapping("/campuses/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
         CampusResponseDTO campus = campusService.show(id);
 
@@ -48,18 +49,18 @@ public class CampusController {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Campus no encontrado", "status", 404)
+                            ApiResponse.builder().message("No se encontraron campus").status(404).build()
                     );
         }
 
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", campus, "message", "Campus obtenido correctamente", "status", 200)
+                        ApiResponse.builder().data(campus).message("Campus obtenido correctamente").status(200).build()
                 );
     }
 
-    @PostMapping("/campuses")
+    @PostMapping
     public ResponseEntity<?> store(@Valid @RequestBody CampusRequestDTO campusRequestDTO) {
         CampusResponseDTO campus = campusService.save(campusRequestDTO);
 
@@ -78,7 +79,7 @@ public class CampusController {
                 );
     }
 
-    @PutMapping("/campuses/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CampusRequestDTO campusRequestDTO) {
         CampusResponseDTO campus = campusService.update(id, campusRequestDTO);
 
@@ -97,7 +98,7 @@ public class CampusController {
                 );
     }
 
-    @DeleteMapping("/campuses/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         CampusResponseDTO campus = campusService.show(id);
 

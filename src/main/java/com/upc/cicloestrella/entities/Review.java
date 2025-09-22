@@ -12,6 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 public class Review {
+
     @EmbeddedId
     private StudentTeacherID id;
 

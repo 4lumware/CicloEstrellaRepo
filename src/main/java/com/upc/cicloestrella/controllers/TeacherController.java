@@ -3,6 +3,7 @@ package com.upc.cicloestrella.controllers;
 
 import com.upc.cicloestrella.DTOs.TeacherRequestDTO;
 import com.upc.cicloestrella.DTOs.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
 import com.upc.cicloestrella.services.TeacherService;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/teachers")
 public class TeacherController {
     private final TeacherServiceInterface teacherService;
 
@@ -23,35 +24,33 @@ public class TeacherController {
         this.teacherService = teacherService;
     }
 
-    @GetMapping("/teachers")
+    @GetMapping
     public ResponseEntity<?> index(@RequestParam(required = false) String name) {
         List<TeacherResponseDTO> teachers = teacherService.index(name);
-
         if (teachers.isEmpty()) {
             return ResponseEntity
                     .status(404)
-                    .body(Map.of("message", "No se han encontrado profesores", "status", 404));
+                    .body(ApiResponse.builder().message("No se han encontrado profesores").status(404).build());
         }
         return ResponseEntity
                 .status(200)
-                .body(Map.of("data", teachers, "message", "Se han encontrado los profesores", "status", 200));
+                .body(ApiResponse.builder().data(teachers).message("Se han encontrado los profesores").status(200).build());
     }
 
-    @GetMapping("/teachers/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
         TeacherResponseDTO teacher = teacherService.show(id);
-
         if (teacher == null) {
             return ResponseEntity
                     .status(404)
-                    .body(Map.of("message", "No se ha encontrado el profesor", "status", 404));
+                    .body(ApiResponse.builder().message("Profesor no encontrado").status(404).build());
         }
         return ResponseEntity
                 .status(200)
-                .body(Map.of("data", teacher, "message", "Se ha encontrado el profesor", "status", 200));
+                .body(ApiResponse.builder().data(teacher).message("Profesor obtenido correctamente").status(200).build());
     }
 
-    @PostMapping("/teachers")
+    @PostMapping
     public ResponseEntity<?> save(@Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO savedTeacher = teacherService.save(teacher);
 
@@ -67,7 +66,7 @@ public class TeacherController {
                 .body(Map.of("data", savedTeacher, "message", "Se ha creado el profesor", "status", 201));
     }
 
-    @PutMapping("/teachers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO updatedTeacher = teacherService.update(id, teacher);
         if (updatedTeacher == null) {
@@ -81,7 +80,7 @@ public class TeacherController {
 
     }
 
-    @DeleteMapping("/teachers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         teacherService.delete(id);
         return ResponseEntity
@@ -89,4 +88,3 @@ public class TeacherController {
                 .body(Map.of("message", "Se ha eliminado el profesor", "status", 200));
     }
 }
-

@@ -2,8 +2,10 @@ package com.upc.cicloestrella.controllers;
 
 
 import com.upc.cicloestrella.DTOs.CourseRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.ApiResponse;
 import com.upc.cicloestrella.entities.Course;
 import com.upc.cicloestrella.interfaces.services.CourseServiceInterface;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -12,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/courses")
 public class CourseController {
     private final CourseServiceInterface courseService;
 
@@ -21,89 +23,89 @@ public class CourseController {
         this.courseService = courseService;
     }
 
-    @GetMapping("/courses")
+    @GetMapping
     public ResponseEntity<?> index() {
         var courses = courseService.index();
         if (courses.isEmpty()) {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "No se encontraron cursos", "status", 404)
+                            ApiResponse.builder().message("No se encontraron cursos").status(404).build()
                     );
         }
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", courses, "message", "Cursos obtenidos correctamente", "status", 200)
+                        ApiResponse.builder().data(courses).message("Cursos obtenidos correctamente").status(200).build()
                 );
     }
 
-    @GetMapping("/courses/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> show(@PathVariable Long id) {
         var course = courseService.show(id);
         if (course == null) {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Curso no encontrado", "status", 404)
+                            ApiResponse.builder().message("No se encontraron cursos").status(404).build()
                     );
         }
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", course, "message", "Curso obtenido correctamente", "status", 200)
+                        ApiResponse.builder().data(course).message("Curso obtenido correctamente").status(200).build()
                 );
     }
 
-    @PostMapping("/courses")
-    public ResponseEntity<?> store(@Validated @RequestBody CourseRequestDTO course) {
+    @PostMapping
+    public ResponseEntity<?> store(@Valid @RequestBody CourseRequestDTO course) {
         var createdCourse = courseService.save(course);
         if (createdCourse == null) {
             return ResponseEntity
                     .status(400)
                     .body(
-                            Map.of("message", "Error al crear el curso", "status", 400)
+                            ApiResponse.builder().message("No se encontraron cursos").status(400).build()
                     );
         }
         return ResponseEntity
                 .status(201)
                 .body(
-                        Map.of("data", createdCourse, "message", "Curso creado exitosamente", "status", 201)
+                        ApiResponse.builder().data(createdCourse).message("Curso creado correctamente").status(201).build()
                 );
     }
 
-    @PutMapping("/courses/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Validated @RequestBody CourseRequestDTO course) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody CourseRequestDTO course) {
         var updatedCourse = courseService.update(id, course);
         if (updatedCourse == null) {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Curso no encontrado", "status", 404)
+                            ApiResponse.builder().message("No se encontraron cursos").status(404).build()
                     );
         }
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", updatedCourse, "message", "Curso actualizado correctamente", "status", 200)
+                        ApiResponse.builder().data(updatedCourse).message("Curso actualizado correctamente").status(200).build()
                 );
     }
 
-    @DeleteMapping("/courses/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         var course = courseService.show(id);
         if (course == null) {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Curso no encontrado", "status", 404)
+                            ApiResponse.builder().message("No se encontraron cursos").status(404).build()
                     );
         }
         courseService.delete(id);
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("message", "Curso eliminado correctamente", "status", 200)
+                        ApiResponse.builder().message("Curso eliminado correctamente").status(200).build()
                 );
     }
 }
