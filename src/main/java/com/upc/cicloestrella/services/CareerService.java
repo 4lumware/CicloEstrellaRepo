@@ -3,6 +3,7 @@ package com.upc.cicloestrella.services;
 import com.upc.cicloestrella.DTOs.requests.CareerRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CareerResponseDTO;
 import com.upc.cicloestrella.entities.Career;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.CareerServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
 import org.modelmapper.ModelMapper;
@@ -33,7 +34,7 @@ public class CareerService implements CareerServiceInterface {
     public CareerResponseDTO show(Long id) {
         return careerRepository.findById(id)
                 .map(career -> modelMapper.map(career, CareerResponseDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Carrera con id " + id + " no encontrada"));
     }
 
     @Override
@@ -52,11 +53,14 @@ public class CareerService implements CareerServiceInterface {
                     Career updatedCareer = careerRepository.save(existingCareer);
                     return modelMapper.map(updatedCareer, CareerResponseDTO.class);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Carrera con id " + id + " no encontrada"));
     }
 
     @Override
     public void delete(Long id) {
+        if (!careerRepository.existsById(id)) {
+            throw new EntityIdNotFoundException("Carrera con id " + id + " no encontrada");
+        }
         careerRepository.deleteById(id);
     }
 }

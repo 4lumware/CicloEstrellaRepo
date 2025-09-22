@@ -6,6 +6,7 @@ import com.upc.cicloestrella.entities.Campus;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Course;
 import com.upc.cicloestrella.entities.Teacher;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CampusRepository;
 import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
@@ -44,20 +45,19 @@ public class TeacherService implements TeacherServiceInterface {
         teacherEntity.setProfilePictureURL(teacher.getProfilePictureUrl());
         teacherEntity.setAverageRating(BigDecimal.ZERO);  // Inicializar en 0
 
-
         List<Campus> campuses = campusRepository.findAllById(teacher.getCampusIds());
         if (campuses.size() != teacher.getCampusIds().size()) {
-            throw new RuntimeException("Uno o más campus no existen");
+            throw new EntityIdNotFoundException("Uno o más campus no existen");
         }
 
         List<Career> careers = careerRepository.findAllById(teacher.getCareerIds());
         if (careers.size() != teacher.getCareerIds().size()) {
-            throw new RuntimeException("Una o más carreras no existen");
+            throw new EntityIdNotFoundException("Una o más carreras no existen");
         }
 
         List<Course> courses = courseRepository.findAllById(teacher.getCourseIds());
         if (courses.size() != teacher.getCourseIds().size()) {
-            throw new RuntimeException("Uno o más cursos no existen");
+            throw new EntityIdNotFoundException("Uno o más cursos no existen");
         }
         teacherEntity.setCampuses(campuses);
         teacherEntity.setCareers(careers);

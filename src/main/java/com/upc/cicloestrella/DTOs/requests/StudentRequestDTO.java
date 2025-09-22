@@ -20,6 +20,7 @@ public class StudentRequestDTO {
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
+    @NotNull(message = "El nombre no puede estar vacío")
     @Size(max = 500, message = "La URL de la foto no debe superar los 500 caracteres")
     @Pattern(
             regexp = "^(https?|ftp)://.*$",

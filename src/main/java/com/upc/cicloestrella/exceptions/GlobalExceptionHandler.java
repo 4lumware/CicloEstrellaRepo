@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .badRequest()
-                .body(new ValidationErrorResponse(400, "Validation Failed", errors, LocalDateTime.now()));
+                .body(new ValidationErrorResponse(400, "Validacion fallida", errors, LocalDateTime.now()));
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -33,7 +33,15 @@ public class GlobalExceptionHandler {
         log.error("Database constraint violation: {}", ex.getMessage());
         return ResponseEntity
                 .badRequest()
-                .body(new GeneralErrorResponse(400, "Database Constraint Violation", LocalDateTime.now()));
+                .body(new GeneralErrorResponse(400, "Violacion de restriccion de la base de datos", LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(EntityIdNotFoundException.class)
+    public ResponseEntity<GeneralErrorResponse> handleEntityNotFoundException(EntityIdNotFoundException ex){
+        log.error("Entity not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(404)
+                .body(new GeneralErrorResponse(404, ex.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(Exception.class)
@@ -41,7 +49,7 @@ public class GlobalExceptionHandler {
         log.error("An unexpected error occurred: {}", ex.getMessage());
         return ResponseEntity
                 .status(500)
-                .body(new GeneralErrorResponse(500, "An unexpected error occurred", LocalDateTime.now()));
+                .body(new GeneralErrorResponse(500, "Un inesperado error ha sucedido", LocalDateTime.now()));
     }
 
 
