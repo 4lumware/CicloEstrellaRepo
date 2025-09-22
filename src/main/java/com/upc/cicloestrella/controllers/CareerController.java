@@ -2,6 +2,7 @@ package com.upc.cicloestrella.controllers;
 
 
 import com.upc.cicloestrella.DTOs.CareerRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.CareerServiceInterface;
 import jakarta.validation.Valid;
 import org.apache.coyote.Response;
@@ -29,14 +30,14 @@ public class CareerController {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "No se encontraron carreras", "status", 404)
+                            ApiResponse.builder().message("No se encontraron carreras").status(404).build()
                     );
         }
 
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", careers, "message", "Carreras obtenidas correctamente", "status", 200)
+                        ApiResponse.builder().data(careers).message("Carreras obtenidas correctamente").status(200).build()
                 );
     }
 
@@ -45,17 +46,18 @@ public class CareerController {
         var career = careerService.show(id);
 
         if (career == null) {
+
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Carrera no encontrada", "status", 404)
+                            ApiResponse.builder().message("Carrera no encontrada").status(404).build()
                     );
         }
 
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", career, "message", "Carrera obtenida correctamente", "status", 200)
+                        ApiResponse.builder().data(career).message("Carrera obtenida correctamente").status(200).build()
                 );
     }
 
@@ -67,14 +69,14 @@ public class CareerController {
             return ResponseEntity
                     .status(400)
                     .body(
-                            Map.of("message", "Error al crear la carrera", "status", 400)
+                            ApiResponse.builder().message("Error al crear la carrera").status(400).build()
                     );
         }
 
         return ResponseEntity
                 .status(201)
                 .body(
-                        Map.of("data", savedCareer, "message", "Carrera creada correctamente", "status", 201)
+                        ApiResponse.builder().data(savedCareer).message("Carrera creada correctamente").status(201).build()
                 );
     }
 
@@ -85,14 +87,14 @@ public class CareerController {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Carrera no encontrada", "status", 404)
+                            ApiResponse.builder().message("Carrera no encontrada").status(404).build()
                     );
         }
 
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("data", updatedCareer, "message", "Carrera actualizada correctamente", "status", 200)
+                        ApiResponse.builder().data(updatedCareer).message("Carrera actualizada correctamente").status(200).build()
                 );
 
     }
@@ -104,7 +106,7 @@ public class CareerController {
             return ResponseEntity
                     .status(404)
                     .body(
-                            Map.of("message", "Carrera no encontrada", "status", 404)
+                            ApiResponse.builder().message("Carrera no encontrada").status(404).build()
                     );
         }
 
@@ -113,7 +115,7 @@ public class CareerController {
         return ResponseEntity
                 .status(200)
                 .body(
-                        Map.of("message", "Carrera eliminada correctamente", "status", 200)
+                        ApiResponse.builder().message("Carrera eliminada correctamente").status(200).build()
                 );
     }
 }

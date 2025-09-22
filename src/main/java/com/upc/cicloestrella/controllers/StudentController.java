@@ -21,21 +21,19 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<StudentResponseDTO>>> index() {
+    public ResponseEntity<?> index() {
         var users = studentService.index();
         if(users.isEmpty()) {
-
             return ResponseEntity
                     .status(404)
                     .body(
-                            new ApiResponse<>( "No se encontraron estudiantes", null   , 404)
+                            ApiResponse.builder().message("No se encontraron estudiantes").status(404).build()
                     );
         }
-
         return ResponseEntity
                 .status(200)
                 .body(
-                        new ApiResponse<>("Estudiantes obtenidos correctamente", users, 200)
+                        ApiResponse.builder().data(users).message("Estudiantes obtenidos correctamente").status(200).build()
                 );
     }
 

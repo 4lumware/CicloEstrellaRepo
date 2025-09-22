@@ -14,15 +14,20 @@ import java.util.stream.Collectors;
 
 @Service
 public class FormalityService implements FormalityServiceInterface {
-    @Autowired
-    public FormalityRepository formalityRepository;
+    private final FormalityRepository formalityRepository;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public FormalityService(FormalityRepository formalityRepository, ModelMapper modelMapper) {
+        this.formalityRepository = formalityRepository;
+        this.modelMapper = modelMapper;
+    }
 
     @Override
-    public Formality findById(Long idFormality) {
-        return formalityRepository.findById(idFormality).get();
+    public FormalityDTO findById(Long idFormality) {
+        return formalityRepository.findById(idFormality)
+                .map(formality -> modelMapper.map(formality, FormalityDTO.class))
+                .orElse(null);
     }
 
     @Override

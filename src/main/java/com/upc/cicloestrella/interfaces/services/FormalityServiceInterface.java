@@ -8,7 +8,7 @@ import com.upc.cicloestrella.entities.Formality;
 import java.util.List;
 
 public interface FormalityServiceInterface {
-    public Formality findById(Long idFormality);
+    public FormalityDTO findById(Long idFormality);
     public List<FormalityDTO> findAll();
     public FormalityDTO insert(FormalityDTO formalityDTO);
     public Formality update(Formality formality);
