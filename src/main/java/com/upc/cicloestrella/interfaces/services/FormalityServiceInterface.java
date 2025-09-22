@@ -11,7 +11,7 @@ public interface FormalityServiceInterface {
     public FormalityDTO findById(Long idFormality);
     public List<FormalityDTO> findAll();
     public FormalityDTO insert(FormalityDTO formalityDTO);
-    public Formality update(Formality formality);
+    public FormalityDTO update(Formality formality);
     public void delete(Long idFormality);
 
 }

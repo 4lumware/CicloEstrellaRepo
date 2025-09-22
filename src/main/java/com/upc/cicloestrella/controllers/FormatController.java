@@ -23,69 +23,98 @@ public class FormatController {
     }
 
     @GetMapping
-    public ResponseEntity<?> index() {
+    public ResponseEntity<ApiResponse<List<FormatResponseDTO>>> index() {
         List<FormatResponseDTO> formats = formatService.index();
+
         if (formats.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("No se encontraron formatos").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<FormatResponseDTO>>builder()
+                            .message("No se encontraron formatos")
+                            .status(404)
+                            .build());
         }
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().data(formats).message("Formatos obtenidos correctamente").status(200).build());
+
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<List<FormatResponseDTO>>builder()
+                        .data(formats)
+                        .message("Formatos obtenidos correctamente")
+                        .status(200)
+                        .build());
     }
 
     @PostMapping
-    public ResponseEntity<?> store(@Valid @RequestBody FormatRequestDTO dto) {
+    public ResponseEntity<ApiResponse<FormatResponseDTO>> store(@Valid @RequestBody FormatRequestDTO dto) {
         FormatResponseDTO format = formatService.save(dto);
         if (format == null) {
-            return ResponseEntity
-                    .status(400)
-                    .body(ApiResponse.builder().message("Error al crear el formato").status(400).build());
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<FormatResponseDTO>builder()
+                            .message("Error al crear el formato")
+                            .status(400)
+                            .build());
         }
-        return ResponseEntity
-                .status(201)
-                .body(ApiResponse.builder().data(format).message("Formato creado exitosamente").status(201).build());
+        return ResponseEntity.status(201)
+                .body(ApiResponse.<FormatResponseDTO>builder()
+                        .data(format)
+                        .message("Formato creado exitosamente")
+                        .status(201)
+                        .build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<FormatResponseDTO>> show(@PathVariable Long id) {
         FormatResponseDTO format = formatService.show(id);
+
         if (format == null) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("Formato no encontrado").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<FormatResponseDTO>builder()
+                            .message("Formato no encontrado")
+                            .status(404)
+                            .build());
         }
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().data(format).message("Formato obtenido correctamente").status(200).build());
+
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<FormatResponseDTO>builder()
+                        .data(format)
+                        .message("Formato obtenido correctamente")
+                        .status(200)
+                        .build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody FormatRequestDTO dto) {
+    public ResponseEntity<ApiResponse<FormatResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody FormatRequestDTO dto) {
         FormatResponseDTO format = formatService.update(id, dto);
         if (format == null) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("Formato no encontrado").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<FormatResponseDTO>builder()
+                            .message("Formato no encontrado")
+                            .status(404)
+                            .build());
         }
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().data(format).message("Formato actualizado correctamente").status(200).build());
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<FormatResponseDTO>builder()
+                        .data(format)
+                        .message("Formato actualizado correctamente")
+                        .status(200)
+                        .build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<FormatResponseDTO>> delete(@PathVariable Long id) {
         FormatResponseDTO format = formatService.show(id);
         if (format == null) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("Formato no encontrado").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<FormatResponseDTO>builder()
+                            .message("Formato no encontrado")
+                            .status(404)
+                            .build());
         }
         formatService.delete(id);
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().message("Formato eliminado correctamente").status(200).build());
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<FormatResponseDTO>builder()
+                        .data(format)
+                        .message("Formato eliminado correctamente")
+                        .status(200)
+                        .build());
     }
 
 }

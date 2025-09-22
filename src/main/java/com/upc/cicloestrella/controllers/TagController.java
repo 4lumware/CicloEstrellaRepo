@@ -84,7 +84,6 @@ public class TagController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<TagResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody TagRequestDTO tagRequestDTO) {
         TagResponseDTO updatedTag = tagService.update(id, tagRequestDTO);
-
         if (updatedTag == null) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<TagResponseDTO>builder()
@@ -92,7 +91,6 @@ public class TagController {
                             .status(404)
                             .build());
         }
-
         return ResponseEntity.status(200)
                 .body(ApiResponse.<TagResponseDTO>builder()
                         .data(updatedTag)
@@ -104,7 +102,6 @@ public class TagController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<TagResponseDTO>> delete(@PathVariable Long id) {
         TagResponseDTO tag = tagService.show(id);
-
         if (tag == null) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<TagResponseDTO>builder()
@@ -112,9 +109,7 @@ public class TagController {
                             .status(404)
                             .build());
         }
-
         tagService.delete(id);
-
         return ResponseEntity.status(200)
                 .body(ApiResponse.<TagResponseDTO>builder()
                         .data(tag)
