@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.services;
 
-import com.upc.cicloestrella.DTOs.CareerRequestDTO;
-import com.upc.cicloestrella.DTOs.CareerResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.CareerRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.CareerResponseDTO;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.interfaces.services.CareerServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CareerRepository;

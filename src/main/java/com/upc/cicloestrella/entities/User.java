@@ -33,10 +33,10 @@ public class User {
     @Column(nullable = false)
     private Boolean state;
 
-    @Column(nullable = false)
+    @Column(nullable = false , name = "creation_date")
     private LocalDate creationDate;
 
-    @Column(nullable = true , length = 1000)
+    @Column(nullable = true , length = 1000 , name = "profile_picture_url")
     private String profilePictureUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)

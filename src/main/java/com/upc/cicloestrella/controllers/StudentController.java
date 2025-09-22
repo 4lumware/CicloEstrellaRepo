@@ -1,15 +1,13 @@
 package com.upc.cicloestrella.controllers;
 
-import com.upc.cicloestrella.DTOs.StudentRequestDTO;
-import com.upc.cicloestrella.DTOs.StudentResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
+import com.upc.cicloestrella.DTOs.requests.StudentRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.StudentServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/students")

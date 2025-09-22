@@ -4,7 +4,7 @@ package com.upc.cicloestrella.services;
 import com.upc.cicloestrella.DTOs.FormalityDTO;
 import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.interfaces.services.FormalityServiceInterface;
-import com.upc.cicloestrella.repositories.FormalityRepository;
+import com.upc.cicloestrella.repositories.interfaces.FormalityRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

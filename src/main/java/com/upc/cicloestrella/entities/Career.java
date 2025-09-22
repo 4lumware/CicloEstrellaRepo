@@ -15,7 +15,7 @@ public class Career {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false ,name = "career_name")
     private String careerName;
 
     @ManyToMany(mappedBy = "careers")

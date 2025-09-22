@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.interfaces.services;
 
 
-import com.upc.cicloestrella.DTOs.FormatRequestDTO;
-import com.upc.cicloestrella.DTOs.FormatResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.FormatRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.FormatResponseDTO;
 
 import java.util.List;
 

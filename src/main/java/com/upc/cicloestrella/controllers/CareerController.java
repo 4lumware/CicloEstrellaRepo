@@ -1,16 +1,13 @@
 package com.upc.cicloestrella.controllers;
 
 
-import com.upc.cicloestrella.DTOs.CareerRequestDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
+import com.upc.cicloestrella.DTOs.requests.CareerRequestDTO;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.CareerServiceInterface;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/careers")

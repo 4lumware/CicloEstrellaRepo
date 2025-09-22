@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.controllers;
 
-import com.upc.cicloestrella.DTOs.CampusRequestDTO;
-import com.upc.cicloestrella.DTOs.CampusResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
+import com.upc.cicloestrella.DTOs.requests.CampusRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

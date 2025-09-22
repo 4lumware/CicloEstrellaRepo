@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.interfaces.services;
 
 
-import com.upc.cicloestrella.DTOs.CourseRequestDTO;
-import com.upc.cicloestrella.DTOs.CourseResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.CourseRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.CourseResponseDTO;
 
 import java.util.List;
 

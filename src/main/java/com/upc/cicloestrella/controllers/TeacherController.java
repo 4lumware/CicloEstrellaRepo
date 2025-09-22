@@ -1,11 +1,10 @@
 package com.upc.cicloestrella.controllers;
 
 
-import com.upc.cicloestrella.DTOs.TeacherRequestDTO;
-import com.upc.cicloestrella.DTOs.TeacherResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
+import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
-import com.upc.cicloestrella.services.TeacherService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

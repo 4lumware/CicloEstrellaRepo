@@ -15,7 +15,7 @@ public class Format {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false ,name = "format_name")
     private String formatName;
     @ManyToMany(mappedBy = "formats")
     private List<Course> courses;
