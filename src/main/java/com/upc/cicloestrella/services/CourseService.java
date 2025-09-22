@@ -4,6 +4,7 @@ import com.upc.cicloestrella.DTOs.requests.CourseRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CourseResponseDTO;
 import com.upc.cicloestrella.entities.Course;
 import com.upc.cicloestrella.entities.Format;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.CourseServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CourseRepository;
 import com.upc.cicloestrella.repositories.interfaces.FormatRepository;
@@ -38,7 +39,7 @@ public class CourseService implements CourseServiceInterface {
     public CourseResponseDTO show(Long id) {
         return courseRepository.findById(id)
                 .map(course -> modelMapper.map(course, CourseResponseDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Curso con id " + id + " no encontrado"));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class CourseService implements CourseServiceInterface {
         List<Format> formats = formatRepository.findAllById(formatIds);
 
         if (formats.size() != formatIds.size()) {
-            throw new RuntimeException("Uno o más formatos no existen");
+            throw new EntityIdNotFoundException("Uno o más formatos no existen");
         }
 
         courseEntity.setFormats(formats);
@@ -59,29 +60,29 @@ public class CourseService implements CourseServiceInterface {
 
         return modelMapper.map(savedCourse, CourseResponseDTO.class);
     }
+
     @Override
     public CourseResponseDTO update(Long id, CourseRequestDTO course) {
         return courseRepository.findById(id)
                 .map(existingCourse -> {
                     existingCourse.setCourseName(course.getCourseName());
-
                     List<Long> formatIds = course.getFormatsIds();
                     List<Format> formats = formatRepository.findAllById(formatIds);
-
                     if (formats.size() != formatIds.size()) {
-                        throw new RuntimeException("Uno o más formatos no existen");
+                        throw new EntityIdNotFoundException("Uno o más formatos no existen");
                     }
-
                     existingCourse.setFormats(formats);
-
                     Course updatedCourse = courseRepository.save(existingCourse);
                     return modelMapper.map(updatedCourse, CourseResponseDTO.class);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Curso con id " + id + " no encontrado"));
     }
 
     @Override
     public void delete(Long id) {
+        if (!courseRepository.existsById(id)) {
+            throw new EntityIdNotFoundException("Curso con id " + id + " no encontrado");
+        }
         courseRepository.deleteById(id);
     }
 }

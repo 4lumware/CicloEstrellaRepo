@@ -5,6 +5,7 @@ import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Student;
 import com.upc.cicloestrella.entities.User;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.StudentServiceInterface;
 import com.upc.cicloestrella.mappers.StudentMapper;
 import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
@@ -42,7 +43,7 @@ public class StudentService implements StudentServiceInterface {
         List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
 
         if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
-            throw new IllegalArgumentException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
+            throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
         }
 
         user.setCreationDate(LocalDate.now());
@@ -79,7 +80,7 @@ public class StudentService implements StudentServiceInterface {
     public StudentResponseDTO show(Long id) {
         return studentRepository.findById(id)
                 .map(studentMapper::toDTO)
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
     }
 
     @Override
@@ -92,7 +93,7 @@ public class StudentService implements StudentServiceInterface {
                     List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
 
                     if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
-                        throw new IllegalArgumentException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
+                        throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
                     }
                     existingStudent.setCareers(careers);
 
@@ -102,11 +103,14 @@ public class StudentService implements StudentServiceInterface {
 
                     return studentMapper.toDTO(updatedStudent);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
     }
 
     @Override
     public void delete(Long id) {
+        if (!studentRepository.existsById(id)) {
+            throw new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado");
+        }
         studentRepository.deleteById(id);
     }
 }

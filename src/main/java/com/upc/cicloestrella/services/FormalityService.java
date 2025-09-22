@@ -3,6 +3,7 @@ package com.upc.cicloestrella.services;
 
 import com.upc.cicloestrella.DTOs.FormalityDTO;
 import com.upc.cicloestrella.entities.Formality;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.FormalityServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.FormalityRepository;
 import org.modelmapper.ModelMapper;
@@ -27,7 +28,7 @@ public class FormalityService implements FormalityServiceInterface {
     public FormalityDTO findById(Long idFormality) {
         return formalityRepository.findById(idFormality)
                 .map(formality -> modelMapper.map(formality, FormalityDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
     }
 
     @Override
@@ -50,14 +51,17 @@ public class FormalityService implements FormalityServiceInterface {
 
     @Override
     public Formality update(Formality formality) {
-        if (formalityRepository.existsById(formality.getIdFormality())) {
-            return formalityRepository.save(formality); //update
+        if (!formalityRepository.existsById(formality.getIdFormality())) {
+            throw new EntityIdNotFoundException("Formalidad con id " + formality.getIdFormality() + " no encontrada");
         }
-        return null;
+        return formalityRepository.save(formality); //update
     }
 
     @Override
     public void delete(Long idFormality) {
+        if (!formalityRepository.existsById(idFormality)) {
+            throw new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada");
+        }
         formalityRepository.deleteById(idFormality);
     }
 }

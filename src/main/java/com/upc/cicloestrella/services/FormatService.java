@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.upc.cicloestrella.entities.Format;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import java.util.List;
 
 @Service
@@ -34,7 +35,7 @@ public class FormatService implements FormatServiceInterface {
     public FormatResponseDTO show(Long id) {
         return formatRepository.findById(id)
                 .map(format -> modelMapper.map(format, FormatResponseDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Formato con id " + id + " no encontrado"));
     }
 
     @Override
@@ -52,11 +53,14 @@ public class FormatService implements FormatServiceInterface {
                     var updatedFormat = formatRepository.save(existingFormat);
                     return modelMapper.map(updatedFormat, FormatResponseDTO.class);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Formato con id " + id + " no encontrado"));
     }
 
     @Override
     public void delete(Long id) {
+        if (!formatRepository.existsById(id)) {
+            throw new EntityIdNotFoundException("Formato con id " + id + " no encontrado");
+        }
         formatRepository.deleteById(id);
     }
 }

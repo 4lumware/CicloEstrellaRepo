@@ -3,6 +3,7 @@ package com.upc.cicloestrella.services;
 import com.upc.cicloestrella.DTOs.requests.CampusRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
 import com.upc.cicloestrella.entities.Campus;
+import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CampusRepository;
 import org.modelmapper.ModelMapper;
@@ -35,7 +36,7 @@ public class CampusService implements CampusServiceInterface {
     public CampusResponseDTO show(Long id) {
         return campusRepository.findById(id)
                 .map(campus -> modelMapper.map(campus, CampusResponseDTO.class))
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Campus con id " + id + " no encontrado"));
     }
 
     @Override
@@ -54,11 +55,14 @@ public class CampusService implements CampusServiceInterface {
                     Campus updatedCampus = campusRepository.save(existingCampus);
                     return modelMapper.map(updatedCampus, CampusResponseDTO.class);
                 })
-                .orElse(null);
+                .orElseThrow(() -> new EntityIdNotFoundException("Campus con id " + id + " no encontrado"));
     }
 
     @Override
     public void delete(Long id) {
+        if (!campusRepository.existsById(id)) {
+            throw new EntityIdNotFoundException("Campus con id " + id + " no encontrado");
+        }
         campusRepository.deleteById(id);
     }
 }
