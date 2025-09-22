@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.DTOs;
+package com.upc.cicloestrella.DTOs.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

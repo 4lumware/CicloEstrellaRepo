@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.services;
 
-import com.upc.cicloestrella.DTOs.FormatRequestDTO;
-import com.upc.cicloestrella.DTOs.FormatResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.FormatRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.FormatResponseDTO;
 import com.upc.cicloestrella.interfaces.services.FormatServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.FormatRepository;
 import org.modelmapper.ModelMapper;

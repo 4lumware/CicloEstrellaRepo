@@ -1,7 +1,6 @@
 package com.upc.cicloestrella.mappers;
 
-import com.upc.cicloestrella.DTOs.StudentRequestDTO;
-import com.upc.cicloestrella.DTOs.StudentResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.entities.Student;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

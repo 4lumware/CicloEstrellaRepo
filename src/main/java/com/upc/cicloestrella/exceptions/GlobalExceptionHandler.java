@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.exceptions;
 
-import com.upc.cicloestrella.DTOs.responses.GeneralErrorResponse;
-import com.upc.cicloestrella.DTOs.responses.ValidationErrorResponse;
+import com.upc.cicloestrella.DTOs.shared.GeneralErrorResponse;
+import com.upc.cicloestrella.DTOs.shared.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;

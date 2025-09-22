@@ -16,10 +16,10 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 100 , nullable = false)
+    @Column(length = 100 , nullable = false ,name = "first_name")
     private String firstName;
 
-    @Column(length = 100 , nullable = false)
+    @Column(length = 100 , nullable = false ,name = "last_name")
     private String lastName;
 
     @Column(nullable = true , name = "general_description" , length = 4000)

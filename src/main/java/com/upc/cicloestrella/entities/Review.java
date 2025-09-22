@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -46,7 +46,7 @@ public class Review {
             },
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Tags> tags;
+    private List<Tag> tags;
 
     @Column(length = 1000, nullable = false)
     private String description;
@@ -56,7 +56,7 @@ public class Review {
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date created_at;
+    private LocalDateTime created_at;
 
 
 }

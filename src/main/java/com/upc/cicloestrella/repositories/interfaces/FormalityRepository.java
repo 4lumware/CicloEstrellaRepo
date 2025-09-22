@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.repositories;
+package com.upc.cicloestrella.repositories.interfaces;
 
 
 import com.upc.cicloestrella.entities.Formality;

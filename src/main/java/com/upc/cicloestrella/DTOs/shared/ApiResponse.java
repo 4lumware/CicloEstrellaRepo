@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.DTOs.responses;
+package com.upc.cicloestrella.DTOs.shared;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;

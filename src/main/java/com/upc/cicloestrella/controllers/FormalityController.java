@@ -2,10 +2,9 @@ package com.upc.cicloestrella.controllers;
 
 
 import com.upc.cicloestrella.DTOs.FormalityDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.interfaces.services.FormalityServiceInterface;
-import com.upc.cicloestrella.services.FormalityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

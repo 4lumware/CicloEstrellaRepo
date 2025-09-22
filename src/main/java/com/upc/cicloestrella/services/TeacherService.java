@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.services;
 
-import com.upc.cicloestrella.DTOs.TeacherRequestDTO;
-import com.upc.cicloestrella.DTOs.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.TeacherResponseDTO;
 import com.upc.cicloestrella.entities.Campus;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Course;

@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.services;
 
-import com.upc.cicloestrella.DTOs.CampusRequestDTO;
-import com.upc.cicloestrella.DTOs.CampusResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.CampusRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
 import com.upc.cicloestrella.entities.Campus;
 import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.CampusRepository;

@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.DTOs;
+package com.upc.cicloestrella.DTOs.responses;
 
 import lombok.*;
 

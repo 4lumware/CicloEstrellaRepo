@@ -1,7 +1,7 @@
 package com.upc.cicloestrella.interfaces.services;
 
-import com.upc.cicloestrella.DTOs.StudentRequestDTO;
-import com.upc.cicloestrella.DTOs.StudentResponseDTO;
+import com.upc.cicloestrella.DTOs.requests.StudentRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 
 import java.util.List;
 

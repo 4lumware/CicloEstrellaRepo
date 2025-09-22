@@ -1,17 +1,13 @@
 package com.upc.cicloestrella.controllers;
 
 
-import com.upc.cicloestrella.DTOs.CourseRequestDTO;
-import com.upc.cicloestrella.DTOs.responses.ApiResponse;
-import com.upc.cicloestrella.entities.Course;
+import com.upc.cicloestrella.DTOs.requests.CourseRequestDTO;
+import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.CourseServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/courses")
