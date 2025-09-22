@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/teachers")
@@ -24,66 +23,98 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<?> index(@RequestParam(required = false) String name) {
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> index(@RequestParam(required = false) String name) {
         List<TeacherResponseDTO> teachers = teacherService.index(name);
+
         if (teachers.isEmpty()) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("No se han encontrado profesores").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("No se han encontrado profesores")
+                            .status(404)
+                            .build());
         }
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().data(teachers).message("Se han encontrado los profesores").status(200).build());
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                        .data(teachers)
+                        .message("Se han encontrado los profesores")
+                        .status(200)
+                        .build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> show(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<TeacherResponseDTO>> show(@PathVariable Long id) {
         TeacherResponseDTO teacher = teacherService.show(id);
+
         if (teacher == null) {
-            return ResponseEntity
-                    .status(404)
-                    .body(ApiResponse.builder().message("Profesor no encontrado").status(404).build());
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                            .message("Profesor no encontrado")
+                            .status(404)
+                            .build());
         }
-        return ResponseEntity
-                .status(200)
-                .body(ApiResponse.builder().data(teacher).message("Profesor obtenido correctamente").status(200).build());
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<TeacherResponseDTO>builder()
+                        .data(teacher)
+                        .message("Profesor obtenido correctamente")
+                        .status(200)
+                        .build());
     }
 
     @PostMapping
-    public ResponseEntity<?> save(@Valid @RequestBody TeacherRequestDTO teacher) {
+    public ResponseEntity<ApiResponse<TeacherResponseDTO>> save(@Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO savedTeacher = teacherService.save(teacher);
 
         if (savedTeacher == null) {
-            return ResponseEntity
-                    .status(400)
-                    .body(Map.of("message", "No se ha podido crear el profesor", "status", 400));
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                            .message("No se ha podido crear el profesor")
+                            .status(400)
+                            .build());
         }
-
-
-        return ResponseEntity
-                .status(201)
-                .body(Map.of("data", savedTeacher, "message", "Se ha creado el profesor", "status", 201));
+        return ResponseEntity.status(201)
+                .body(ApiResponse.<TeacherResponseDTO>builder()
+                        .data(savedTeacher)
+                        .message("Se ha creado el profesor")
+                        .status(201)
+                        .build());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody TeacherRequestDTO teacher) {
+    public ResponseEntity<ApiResponse<TeacherResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO updatedTeacher = teacherService.update(id, teacher);
-        if (updatedTeacher == null) {
-            return ResponseEntity
-                    .status(400)
-                    .body(Map.of("message", "No se ha podido actualizar el profesor", "status", 400));
-        }
-        return ResponseEntity
-                .status(200)
-                .body(Map.of("data", updatedTeacher, "message", "Se ha actualizado el profesor", "status", 200));
 
+        if (updatedTeacher == null) {
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                            .message("No se ha podido actualizar el profesor")
+                            .status(400)
+                            .build());
+        }
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<TeacherResponseDTO>builder()
+                        .data(updatedTeacher)
+                        .message("Se ha actualizado el profesor")
+                        .status(200)
+                        .build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<TeacherResponseDTO>> delete(@PathVariable Long id) {
+        TeacherResponseDTO teacher = teacherService.show(id);
+
+        if (teacher == null) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                            .message("Profesor no encontrado")
+                            .status(404)
+                            .build());
+        }
         teacherService.delete(id);
-        return ResponseEntity
-                .status(200)
-                .body(Map.of("message", "Se ha eliminado el profesor", "status", 200));
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<TeacherResponseDTO>builder()
+                        .data(teacher)
+                        .message("Se ha eliminado el profesor")
+                        .status(200)
+                        .build());
     }
 }
