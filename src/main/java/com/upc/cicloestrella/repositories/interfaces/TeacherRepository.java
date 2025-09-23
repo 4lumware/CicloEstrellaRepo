@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.repositories.interfaces;
 
 
+import com.upc.cicloestrella.entities.Tag;
 import com.upc.cicloestrella.entities.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

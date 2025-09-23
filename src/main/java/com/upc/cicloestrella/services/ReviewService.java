@@ -48,7 +48,6 @@ public class ReviewService implements ReviewServiceInterface {
         Student student = getStudentOrThrow(studentId);
         Teacher teacher = getTeacherOrThrow(teacherId);
         List<Tag> tags = getTagsOrThrow(reviewRequestDTO.getTagIds());
-
         Review newReview = reviewMapper.toEntity(reviewRequestDTO);
 
         newReview.setStudent(student);
@@ -92,6 +91,8 @@ public class ReviewService implements ReviewServiceInterface {
         List<Review> reviews = (keyword == null || keyword.isEmpty()) ?
                 reviewRepository.findReviewByTeacherId(teacherId) :
                 reviewRepository.findTeacherByDescriptionOrTagName(teacherId, keyword);
+
+
         List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase = reviewReactionRepository.countAllReactionsByReview(reviews);
 
         Map<Long, List<ReactionCountByDatabaseDTO>> reactionsByReview = allReactionsCountByDatabase.stream()

@@ -2,8 +2,9 @@ package com.upc.cicloestrella.controllers;
 
 
 import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherFindByIdResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
 import jakarta.validation.Valid;
@@ -31,18 +32,18 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TeacherSearchResponseDTO>>> index(@RequestParam(required = false) String name) {
-        List<TeacherSearchResponseDTO> teachers = teacherService.index(name);
+    public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
+        List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
 
         if (teachers.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherSearchResponseDTO>>builder()
+                    .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
                             .message("No se han encontrado profesores")
                             .status(404)
                             .build());
         }
         return ResponseEntity.status(200)
-                .body(ApiResponse.<List<TeacherSearchResponseDTO>>builder()
+                .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
                         .data(teachers)
                         .message("Se han encontrado los profesores")
                         .status(200)
@@ -52,18 +53,18 @@ public class TeacherController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<TeacherResponseDTO>> show(@PathVariable Long id) {
-        TeacherResponseDTO teacher = teacherService.show(id);
+    public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
+        TeacherFindByIdResponseDTO teacher = teacherService.show(id);
 
         if (teacher == null) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                    .body(ApiResponse.<TeacherFindByIdResponseDTO>builder()
                             .message("Profesor no encontrado")
                             .status(404)
                             .build());
         }
         return ResponseEntity.status(200)
-                .body(ApiResponse.<TeacherResponseDTO>builder()
+                .body(ApiResponse.<TeacherFindByIdResponseDTO>builder()
                         .data(teacher)
                         .message("Profesor obtenido correctamente")
                         .status(200)
@@ -109,19 +110,19 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<TeacherResponseDTO>> delete(@PathVariable Long id) {
-        TeacherResponseDTO teacher = teacherService.show(id);
+    public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> delete(@PathVariable Long id) {
+        TeacherFindByIdResponseDTO teacher = teacherService.show(id);
 
         if (teacher == null) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<TeacherResponseDTO>builder()
+                    .body(ApiResponse.<TeacherFindByIdResponseDTO>builder()
                             .message("Profesor no encontrado")
                             .status(404)
                             .build());
         }
         teacherService.delete(id);
         return ResponseEntity.status(200)
-                .body(ApiResponse.<TeacherResponseDTO>builder()
+                .body(ApiResponse.<TeacherFindByIdResponseDTO>builder()
                         .data(teacher)
                         .message("Se ha eliminado el profesor")
                         .status(200)

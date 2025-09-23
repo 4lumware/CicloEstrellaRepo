@@ -32,11 +32,14 @@ public class FormalityService implements FormalityServiceInterface {
     }
 
     @Override
-    public List<FormalityDTO> findAll() {
-        return formalityRepository.findAll()
-                .stream()
-                .map(formality -> modelMapper.map(formality, FormalityDTO.class))
-                .collect(Collectors.toList());
+    public List<FormalityDTO> findAll(String keyword) {
+        return keyword == null || keyword.isEmpty() ?
+                formalityRepository.findAll().stream()
+                        .map(formality -> modelMapper.map(formality, FormalityDTO.class))
+                        .collect(Collectors.toList()) :
+                formalityRepository.searchByKeyword(keyword).stream()
+                        .map(formality -> modelMapper.map(formality, FormalityDTO.class))
+                        .collect(Collectors.toList());
     }
 
     @Override

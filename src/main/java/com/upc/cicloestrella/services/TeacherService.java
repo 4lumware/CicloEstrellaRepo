@@ -1,18 +1,14 @@
 package com.upc.cicloestrella.services;
 
 import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.TagResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherFindByIdResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchResponseDTO;
-import com.upc.cicloestrella.entities.Campus;
-import com.upc.cicloestrella.entities.Career;
-import com.upc.cicloestrella.entities.Course;
-import com.upc.cicloestrella.entities.Teacher;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
+import com.upc.cicloestrella.entities.*;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
-import com.upc.cicloestrella.repositories.interfaces.CampusRepository;
-import com.upc.cicloestrella.repositories.interfaces.CareerRepository;
-import com.upc.cicloestrella.repositories.interfaces.CourseRepository;
-import com.upc.cicloestrella.repositories.interfaces.TeacherRepository;
+import com.upc.cicloestrella.repositories.interfaces.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -26,13 +22,15 @@ public class TeacherService implements TeacherServiceInterface {
     private final CampusRepository campusRepository;
     private final CareerRepository careerRepository;
     private final CourseRepository courseRepository;
+    private final TagRepository tagRepository;
     private final ModelMapper modelMapper;
 
-    public TeacherService(TeacherRepository teacherRepository, CampusRepository campusRepository, CareerRepository careerRepository, CourseRepository courseRepository, ModelMapper modelMapper) {
+    public TeacherService(TeacherRepository teacherRepository, CampusRepository campusRepository, CareerRepository careerRepository, CourseRepository courseRepository, TagRepository tagRepository, ModelMapper modelMapper) {
         this.teacherRepository = teacherRepository;
         this.campusRepository = campusRepository;
         this.careerRepository = careerRepository;
         this.courseRepository = courseRepository;
+        this.tagRepository = tagRepository;
         this.modelMapper = modelMapper;
     }
 
@@ -70,7 +68,7 @@ public class TeacherService implements TeacherServiceInterface {
     }
 
     @Override
-    public List<TeacherSearchResponseDTO> index(String firstName) {
+    public List<TeacherSearchByKeywordResponseDTO> index(String firstName) {
 
         if (firstName != null && !firstName.isEmpty()) {
             List<Teacher> teachers = teacherRepository.findByFirstNameContainingIgnoreCase(firstName);
@@ -80,20 +78,30 @@ public class TeacherService implements TeacherServiceInterface {
             });
 
             return teachers.stream()
-                    .map(teacher -> modelMapper.map(teacher, TeacherSearchResponseDTO.class))
+                    .map(teacher -> modelMapper.map(teacher, TeacherSearchByKeywordResponseDTO.class))
                     .toList();
         }
         return teacherRepository.findAll()
                 .stream()
-                .map(teacher -> modelMapper.map(teacher, TeacherSearchResponseDTO.class))
+                .map(teacher -> modelMapper.map(teacher, TeacherSearchByKeywordResponseDTO.class))
                 .toList();
     }
 
     @Override
-    public TeacherResponseDTO show(Long id) {
-        return teacherRepository.findById(id)
-                .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
-                .orElse(null);
+    public TeacherFindByIdResponseDTO show(Long id) {
+        List<Tag> tags = tagRepository.findTop4TagsByTeacher(id);
+
+        List<TagResponseDTO> tagDTOs = tags.stream()
+                .map(tag -> modelMapper.map(tag, TagResponseDTO.class))
+                .toList();
+
+        Teacher teachers = teacherRepository.findById(id).orElseThrow(() -> new EntityIdNotFoundException("Profesor con id " + id + " no encontrado"));
+
+        TeacherFindByIdResponseDTO teacherDTO = modelMapper.map(teachers, TeacherFindByIdResponseDTO.class);
+
+        teacherDTO.setTags(tagDTOs);
+
+        return teacherDTO;
     }
 
     @Override
