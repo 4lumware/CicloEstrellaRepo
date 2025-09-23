@@ -12,4 +12,7 @@ public interface TeacherServiceInterface {
     public TeacherResponseDTO show(Long id);
     public TeacherResponseDTO update(Long id, TeacherRequestDTO teacher);
     public void delete(Long id);
+    public List<Teacher> searchByCampuses(String campuses);
+    public List<Teacher> searchByCourses(String courses);
+    public List<Teacher> searchByCareers(String careers);
 }
