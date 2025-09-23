@@ -1,5 +1,8 @@
-package com.upc.cicloestrella.DTOs.responses;
+package com.upc.cicloestrella.DTOs.responses.teachers;
 
+import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.CareerResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.CourseResponseDTO;
 import lombok.Data;
 
 import java.math.BigDecimal;

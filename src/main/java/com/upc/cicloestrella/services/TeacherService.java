@@ -1,7 +1,8 @@
 package com.upc.cicloestrella.services;
 
 import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
-import com.upc.cicloestrella.DTOs.responses.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchResponseDTO;
 import com.upc.cicloestrella.entities.Campus;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Course;
@@ -69,7 +70,7 @@ public class TeacherService implements TeacherServiceInterface {
     }
 
     @Override
-    public List<TeacherResponseDTO> index(String firstName) {
+    public List<TeacherSearchResponseDTO> index(String firstName) {
 
         if (firstName != null && !firstName.isEmpty()) {
             List<Teacher> teachers = teacherRepository.findByFirstNameContainingIgnoreCase(firstName);
@@ -79,12 +80,12 @@ public class TeacherService implements TeacherServiceInterface {
             });
 
             return teachers.stream()
-                    .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
+                    .map(teacher -> modelMapper.map(teacher, TeacherSearchResponseDTO.class))
                     .toList();
         }
         return teacherRepository.findAll()
                 .stream()
-                .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
+                .map(teacher -> modelMapper.map(teacher, TeacherSearchResponseDTO.class))
                 .toList();
     }
 

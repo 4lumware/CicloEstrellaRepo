@@ -2,7 +2,8 @@ package com.upc.cicloestrella.controllers;
 
 
 import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
-import com.upc.cicloestrella.DTOs.responses.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
 import jakarta.validation.Valid;
@@ -30,18 +31,18 @@ public class TeacherController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> index(@RequestParam(required = false) String name) {
-        List<TeacherResponseDTO> teachers = teacherService.index(name);
+    public ResponseEntity<ApiResponse<List<TeacherSearchResponseDTO>>> index(@RequestParam(required = false) String name) {
+        List<TeacherSearchResponseDTO> teachers = teacherService.index(name);
 
         if (teachers.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                    .body(ApiResponse.<List<TeacherSearchResponseDTO>>builder()
                             .message("No se han encontrado profesores")
                             .status(404)
                             .build());
         }
         return ResponseEntity.status(200)
-                .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                .body(ApiResponse.<List<TeacherSearchResponseDTO>>builder()
                         .data(teachers)
                         .message("Se han encontrado los profesores")
                         .status(200)
