@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class TagService  implements TagServiceInterface {
+public class    TagService  implements TagServiceInterface {
 
     private final ModelMapper modelMapper;
     private final TagRepository tagRepository;
@@ -33,12 +33,15 @@ public class TagService  implements TagServiceInterface {
     }
 
     @Override
-    public List<TagResponseDTO> index() {
-        return tagRepository
-                .findAll()
-                .stream()
-                .map(tag -> modelMapper.map(tag, TagResponseDTO.class))
-                .collect(Collectors.toList());
+    public List<TagResponseDTO> index(String keyword) {
+        return keyword == null || keyword.isEmpty() ?
+                tagRepository.findAll().stream()
+                        .map(tag -> modelMapper.map(tag, TagResponseDTO.class))
+                        .collect(Collectors.toList())
+                :
+                tagRepository.findByTagNameContainingIgnoreCase(keyword).stream()
+                        .map(tag -> modelMapper.map(tag, TagResponseDTO.class))
+                        .collect(Collectors.toList());
     }
 
     @Override
