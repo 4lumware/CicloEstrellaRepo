@@ -30,11 +30,12 @@ public class Teacher {
 
     @Column(
             name = "average_rating",
-            precision = 2,
+            precision = 3,
             scale = 2,
             nullable = true,
-            columnDefinition = "DECIMAL(2,2) DEFAULT 0.00"
+            columnDefinition = "DECIMAL(3,2) DEFAULT 0.00"
     )
+
     private BigDecimal averageRating;
 
     @ManyToMany(fetch = FetchType.EAGER)

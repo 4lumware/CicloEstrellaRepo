@@ -44,6 +44,14 @@ public class GlobalExceptionHandler {
                 .body(new GeneralErrorResponse(404, ex.getMessage(), LocalDateTime.now()));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<GeneralErrorResponse> handleIllegalArgumentException(IllegalArgumentException ex){
+        log.error("Illegal argument: {}", ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(new GeneralErrorResponse(400, ex.getMessage(), LocalDateTime.now()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GeneralErrorResponse> handleAllExceptions(Exception ex){
         log.error("An unexpected error occurred: {}", ex.getMessage());

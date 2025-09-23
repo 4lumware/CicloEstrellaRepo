@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.entities;
 
+import com.upc.cicloestrella.entities.embeddeds.StudentTeacherID;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,50 +14,42 @@ import java.util.List;
 @Setter
 public class Review {
 
-    @EmbeddedId
-    private StudentTeacherID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @MapsId("studentId")
     @JoinColumn(name = "student_id")
     private Student student;
 
     @ManyToOne
-    @MapsId("teacherId")
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
 
     @ManyToMany
     @JoinTable(
-            name = "review_reactions",
-            joinColumns = {
-                    @JoinColumn(name = "student_id", referencedColumnName = "student_id"),
-                    @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
-            },
-            inverseJoinColumns = @JoinColumn(name = "reaction_id")
-    )
-    private List<Reaction> reactions;
-
-    @ManyToMany
-    @JoinTable(
             name = "review_tags",
-            joinColumns = {
-                    @JoinColumn(name = "student_id", referencedColumnName = "student_id"),
-                    @JoinColumn(name = "teacher_id", referencedColumnName = "teacher_id")
-            },
+            joinColumns = @JoinColumn(name = "review_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private List<Tag> tags;
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReviewReaction> reactions;
+
     @Column(length = 1000, nullable = false)
     private String description;
 
-    @Column(precision = 2, scale = 2, nullable = false)
+    @Column(precision = 3, scale = 2, nullable = false)
     private BigDecimal rating;
 
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false , name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
 
 }

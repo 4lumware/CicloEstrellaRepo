@@ -11,11 +11,19 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
+    defer-datasource-initialization: true
   mvc:
     servlet:
       path: /api
+  sql:
+    init:
+      mode: always
+      platform: postgres
+      encoding: UTF-8
+      data-locations: classpath:/db/import.sql
+
 logging:
   file:
     name: logs/cicloestrella.log
@@ -26,6 +34,4 @@ logging:
     dateformat: "yyyy-MM-dd HH:mm:ss"
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
-
-
 

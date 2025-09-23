@@ -24,6 +24,7 @@ public class StudentMapper {
                     mapper.map(Student::getCurrentSemester, StudentResponseDTO::setCurrentSemester);
                     mapper.map(Student::getCareers, StudentResponseDTO::setCareers);
                 });
+
     }
 
     public StudentResponseDTO toDTO(Student student) {
