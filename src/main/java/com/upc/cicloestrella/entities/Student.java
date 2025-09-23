@@ -23,7 +23,8 @@ public class Student {
     @JoinColumn(name = "user_id" , unique = true, nullable = false, updatable = false)
     private User user;
 
-    @Column(nullable = false)
+    @Column(nullable = false , name = "current_semester")
+    @Positive
     private int currentSemester;
 
     @ManyToMany(fetch = FetchType.EAGER)

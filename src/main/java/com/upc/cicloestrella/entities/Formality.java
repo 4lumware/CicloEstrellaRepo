@@ -25,10 +25,11 @@ public class Formality {
     @Column(length = 100, nullable = false)
     private String description;
 
-    @Column(nullable = false)
+
+    @Column(nullable = false , name = "start_date")
     private LocalDate startDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false , name="end_date")
     private LocalDate endDate;
 
 }

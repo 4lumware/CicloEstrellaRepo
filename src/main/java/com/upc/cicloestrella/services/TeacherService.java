@@ -77,6 +77,7 @@ public class TeacherService implements TeacherServiceInterface {
                 teacher.getGeneralDescription();
                 teacher.getProfilePictureURL();
             });
+
             return teachers.stream()
                     .map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class))
                     .toList();
