@@ -23,8 +23,8 @@ public class TagController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<TagResponseDTO>>> index() {
-        List<TagResponseDTO> tags = tagService.index();
+    public ResponseEntity<ApiResponse<List<TagResponseDTO>>> index(@RequestParam(required = false) String keyword) {
+        List<TagResponseDTO> tags = tagService.index(keyword);
 
         if (tags.isEmpty()) {
             return ResponseEntity.status(404)
