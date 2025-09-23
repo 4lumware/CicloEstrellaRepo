@@ -22,78 +22,76 @@ public class FormalityController {
         this.formalityService = formalityService;
     }
 
-    @GetMapping("/{idFormality}")
-    public ResponseEntity<ApiResponse<FormalityDTO>> findById(@PathVariable Long idFormality) {
-        FormalityDTO formality = formalityService.findById(idFormality);
-        if (formality == null) {
-            return ResponseEntity.status(404).body(ApiResponse.<FormalityDTO>builder().message("Formalidad no encontrada").status(404).build());
+    @GetMapping("/{formalityId}")
+    public ResponseEntity<ApiResponse<FormalityDTO>> findById(@PathVariable Long formalityId) {
+        FormalityDTO tramite = formalityService.findById(formalityId);
+        if (tramite == null) {
+            return ResponseEntity.status(404).body(ApiResponse.<FormalityDTO>builder().message("Trámite no encontrado").status(404).build());
         }
-        return ResponseEntity.status(200).body(ApiResponse.<FormalityDTO>builder().data(formality).message("Formalidad obtenida correctamente").status(200).build());
+        return ResponseEntity.status(200).body(ApiResponse.<FormalityDTO>builder().data(tramite).message("Trámite obtenido correctamente").status(200).build());
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<FormalityDTO>>> findAll() {
-        List<FormalityDTO> formalities = formalityService.findAll();
-        if (formalities.isEmpty()) {
-            return ResponseEntity.status(404).body(ApiResponse.<List<FormalityDTO>>builder().message("No se encontraron formalidades").status(404).build());
+    public ResponseEntity<ApiResponse<List<FormalityDTO>>> findAll(@RequestParam(required = false) String keyword) {
+        List<FormalityDTO> formality = formalityService.findAll(keyword);
+        if (formality.isEmpty()) {
+            return ResponseEntity.status(404).body(ApiResponse.<List<FormalityDTO>>builder().message("No se encontraron trámites").status(404).build());
         }
-        return ResponseEntity.status(200).body(ApiResponse.<List<FormalityDTO>>builder().data(formalities).message("Formalidades obtenidas correctamente").status(200).build());
+        return ResponseEntity.status(200).body(ApiResponse.<List<FormalityDTO>>builder().data(formality).message("Trámites obtenidos correctamente").status(200).build());
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<FormalityDTO>> insert(@RequestBody FormalityDTO formalityDTO) {
-        FormalityDTO created = formalityService.insert(formalityDTO);
-        if (created == null) {
+        FormalityDTO formality = formalityService.insert(formalityDTO);
+        if (formality == null) {
             return ResponseEntity.status(400)
                     .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Error al crear la formalidad")
+                            .message("Error al crear el trámite")
                             .status(400)
                             .build());
         }
         return ResponseEntity.status(201)
                 .body(ApiResponse.<FormalityDTO>builder()
-                        .data(created)
-                        .message("Formalidad creada exitosamente")
+                        .data(formality)
+                        .message("Trámite creado correctamente")
                         .status(201)
                         .build());
     }
 
     @PutMapping
     public ResponseEntity<ApiResponse<FormalityDTO>> update(@RequestBody Formality formality) {
-        FormalityDTO updated = formalityService.update(formality);
+        FormalityDTO formalityUpdated = formalityService.update(formality);
 
-        if (updated == null) {
-            return ResponseEntity.status(400)
+        if (formalityUpdated == null) {
+            return ResponseEntity.status(404)
                     .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Error al actualizar la formalidad")
-                            .status(400)
+                            .message("Trámite no encontrado")
+                            .status(404)
                             .build());
         }
         return ResponseEntity.status(200)
                 .body(ApiResponse.<FormalityDTO>builder()
-                        .data(updated)
-                        .message("Formalidad actualizada correctamente")
+                        .data(formalityUpdated)
+                        .message("Trámite actualizado correctamente")
                         .status(200)
                         .build());
     }
 
-    @DeleteMapping("/{idFormality}")
-    public ResponseEntity<ApiResponse<FormalityDTO>> delete(@PathVariable Long idFormality) {
-
-        FormalityDTO formality = formalityService.findById(idFormality);
-
+    @DeleteMapping("/{formalityId}")
+    public ResponseEntity<ApiResponse<FormalityDTO>> delete(@PathVariable Long formalityId) {
+        FormalityDTO formality = formalityService.findById(formalityId);
         if (formality == null) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Formalidad no encontrada")
+                            .message("Trámite no encontrado")
                             .status(404)
                             .build());
         }
-        formalityService.delete(idFormality);
+        formalityService.delete(formalityId);
         return ResponseEntity.status(200)
                 .body(ApiResponse.<FormalityDTO>builder()
                         .data(formality)
-                        .message("Formalidad eliminada correctamente")
+                        .message("Trámite eliminado correctamente")
                         .status(200)
                         .build());
     }
