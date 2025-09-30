@@ -4,6 +4,7 @@ import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherFindByIdResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
+import com.upc.cicloestrella.entities.Teacher;
 
 import java.util.List;
 
