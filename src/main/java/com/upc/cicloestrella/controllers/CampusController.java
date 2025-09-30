@@ -3,14 +3,13 @@ package com.upc.cicloestrella.controllers;
 import com.upc.cicloestrella.DTOs.requests.CampusRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.CampusServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.CampusServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/campuses")

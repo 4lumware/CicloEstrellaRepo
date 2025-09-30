@@ -4,7 +4,7 @@ package com.upc.cicloestrella.controllers;
 import com.upc.cicloestrella.DTOs.requests.CourseRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CourseResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.CourseServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.CourseServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

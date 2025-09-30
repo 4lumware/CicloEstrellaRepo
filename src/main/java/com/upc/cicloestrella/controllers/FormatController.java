@@ -4,7 +4,7 @@ package com.upc.cicloestrella.controllers;
 import com.upc.cicloestrella.DTOs.requests.FormatRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.FormatResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.FormatServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.FormatServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
