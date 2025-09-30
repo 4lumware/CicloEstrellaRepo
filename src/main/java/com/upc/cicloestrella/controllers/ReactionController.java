@@ -3,7 +3,7 @@ package com.upc.cicloestrella.controllers;
 import com.upc.cicloestrella.DTOs.requests.ReactionRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.ReactionResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.ReactionServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.ReactionServiceInterface;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +31,6 @@ public class ReactionController {
                             .status(404)
                             .build());
         }
-
         return ResponseEntity.status(200)
                 .body(ApiResponse.<List<ReactionResponseDTO>>builder()
                         .data(reactions)

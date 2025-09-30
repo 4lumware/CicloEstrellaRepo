@@ -2,8 +2,8 @@ spring:
   application:
     name: cicloestrella
   datasource:
-    url: jdbc:postgresql://localhost:5432/cicloestrella_db
-    username: postgres
+    url: jdbc:postgresql://localhost:5433/cicloestrella_db
+    username: root
     password: toor
   jpa:
     properties:
@@ -35,3 +35,10 @@ logging:
     file: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
     console: "%d{yyyy-MM-dd HH:mm:ss} %-5level %logger{36} - %msg%n"
 
+application:
+  security:
+    jwt:
+      secret-key : $2a$12$CI2IKB6ygwpxndKPjmXwHuVV1vWsQYippxuxYVB0YUPMeak1vX.9u
+      expiration: 3600000 # 1 hora en milisegundos
+      refresh-token:
+        expiration: 86400000 # 24 horas en milisegundos

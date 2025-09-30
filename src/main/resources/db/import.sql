@@ -126,11 +126,10 @@ INSERT INTO review_reactions (reaction_id, author_id, review_id, created_at) VAL
   (7, 7, 7, '2025-09-22T10:06:00'), (8, 8, 8, '2025-09-22T10:07:00'), (9, 9, 9, '2025-09-22T10:08:00'), (10, 10, 10, '2025-09-22T10:09:00');
 
 -- roles
-INSERT INTO role (role_name) VALUES
-  ('ADMIN'), ('USER'), ('TEACHER'), ('STUDENT'), ('MODERATOR'),
-  ('GUEST'), ('EDITOR'), ('REVIEWER'), ('MANAGER'), ('SUPPORT');
+INSERT INTO role (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR');
+
+
 
 -- user_roles (MuchosAMuchos)
 INSERT INTO user_roles (user_id, role_id) VALUES
-  (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
-  (6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2);

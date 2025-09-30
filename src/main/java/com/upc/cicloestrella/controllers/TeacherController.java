@@ -6,7 +6,7 @@ import com.upc.cicloestrella.DTOs.responses.teachers.TeacherFindByIdResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.TeacherServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.modelmapper.ModelMapper;

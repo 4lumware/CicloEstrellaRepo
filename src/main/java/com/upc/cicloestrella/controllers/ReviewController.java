@@ -4,7 +4,7 @@ import com.upc.cicloestrella.DTOs.requests.reviews.ReviewRequestDTO;
 import com.upc.cicloestrella.DTOs.requests.reviews.ReviewUpdateRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.reviews.ReviewResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
-import com.upc.cicloestrella.interfaces.services.ReviewServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.ReviewServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
