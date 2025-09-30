@@ -141,4 +141,20 @@ public class TeacherService implements TeacherServiceInterface {
     public void delete(Long id) {
         teacherRepository.deleteById(id);
     }
+
+    @Override
+    public List<Teacher> searchByCampuses(String campuses) {
+        return teacherRepository.searchByCampuses(campuses);
+    }
+
+    @Override
+    public List<Teacher> searchByCourses(String courses) {
+        return teacherRepository.searchByCourses(courses);
+    }
+
+    @Override
+    public List<Teacher> searchByCareers(String careers) {
+        return teacherRepository.searchByCareers(careers);
+    }
+
 }

@@ -8,20 +8,27 @@ import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordRespo
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/teachers")
 public class TeacherController {
     private final TeacherServiceInterface teacherService;
+    private final ModelMapper modelMapper;
 
     @Autowired
-    public TeacherController(TeacherServiceInterface teacherService) {
+    public TeacherController(TeacherServiceInterface teacherService, ModelMapper modelMapper) {
         this.teacherService = teacherService;
+        this.modelMapper = modelMapper;
     }
 
     @GetMapping
@@ -42,6 +49,8 @@ public class TeacherController {
                         .status(200)
                         .build());
     }
+
+
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
@@ -118,5 +127,106 @@ public class TeacherController {
                         .message("Se ha eliminado el profesor")
                         .status(200)
                         .build());
+    }
+
+
+    @GetMapping(params = "campuses")
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCampuses(
+            @RequestParam(required = false) String campuses) {
+
+        if (campuses == null || campuses.trim().isEmpty()) {
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("El parámetro 'campuses' no puede ser nulo o vacío")
+                            .status(400)
+                            .build());
+        }
+
+        List<TeacherResponseDTO> result = teacherService.searchByCampuses(campuses).stream()
+                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
+                .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("No se encontraron profesores para el campus especificado")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<TeacherResponseDTO>>builder()
+                        .data(result)
+                        .message("Profesores encontrados")
+                        .status(200)
+                        .build()
+        );
+    }
+
+
+    @GetMapping(params = "courses")
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCourses(
+            @RequestParam(required = false) String courses) {
+
+        if (courses == null || courses.trim().isEmpty()) {
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("El parámetro 'courses' no puede ser nulo o vacío")
+                            .status(400)
+                            .build());
+        }
+
+        List<TeacherResponseDTO> result = teacherService.searchByCourses(courses).stream()
+                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
+                .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("No se encontraron profesores para el curso especificado")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<TeacherResponseDTO>>builder()
+                        .data(result)
+                        .message("Profesores encontrados")
+                        .status(200)
+                        .build()
+        );
+    }
+
+    @GetMapping(params = "careers")
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCareers(
+            @RequestParam(required = false) String careers) {
+
+        if (careers == null || careers.trim().isEmpty()) {
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("El parámetro 'careers' no puede ser nulo o vacío")
+                            .status(400)
+                            .build());
+        }
+
+        List<TeacherResponseDTO> result = teacherService.searchByCareers(careers).stream()
+                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
+                .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("No se encontraron profesores para la carrera especificada")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<TeacherResponseDTO>>builder()
+                        .data(result)
+                        .message("Profesores encontrados")
+                        .status(200)
+                        .build()
+        );
     }
 }
