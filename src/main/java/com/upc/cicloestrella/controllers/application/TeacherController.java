@@ -27,7 +27,7 @@ public class TeacherController {
         this.teacherService = teacherService;
         this.modelMapper = modelMapper;
     }
-
+/*
     @GetMapping
     public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
         List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
@@ -47,7 +47,7 @@ public class TeacherController {
                         .build());
     }
 
-
+ */
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
@@ -127,6 +127,49 @@ public class TeacherController {
     }
 
 
+    @GetMapping("/search")
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchTeachers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String campus,
+            @RequestParam(required = false) String course,
+            @RequestParam(required = false) String career) {
+
+        // Validar que al menos uno tenga valor
+        if ((name == null || name.trim().isEmpty()) &&
+                (campus == null || campus.trim().isEmpty()) &&
+                (course == null || course.trim().isEmpty()) &&
+                (career == null || career.trim().isEmpty())) {
+
+            return ResponseEntity.status(400)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("Debe especificar al menos un parámetro de búsqueda: name, campus, course o career")
+                            .status(400)
+                            .build());
+        }
+
+        List<TeacherResponseDTO> result = teacherService.searchTeachers(name, campus, course, career)
+                .stream()
+                .map(t -> modelMapper.map(t, TeacherResponseDTO.class))
+                .collect(Collectors.toList());
+
+        if (result.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
+                            .message("No se encontraron profesores con los criterios especificados")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.ok(
+                ApiResponse.<List<TeacherResponseDTO>>builder()
+                        .data(result)
+                        .message("Profesores encontrados")
+                        .status(200)
+                        .build()
+        );
+    }
+
+/*
     @GetMapping(params = "campuses")
     public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCampuses(
             @RequestParam(required = false) String campuses) {
@@ -226,4 +269,6 @@ public class TeacherController {
                         .build()
         );
     }
+
+ */
 }
