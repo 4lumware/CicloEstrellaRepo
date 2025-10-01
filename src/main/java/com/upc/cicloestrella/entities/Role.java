@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,14 +11,22 @@ import java.util.List;
 @Getter
 @Setter
 public class Role {
+    public enum RoleName {
+        ADMIN,
+        STUDENT,
+        MODERATOR
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long id;
+    private Long id;
 
-    @Column(nullable = true , unique = true , name = "role_name", length = 50)
-    public String roleName;
+    @Enumerated(EnumType.STRING)
+    @Column(length = 20, unique = true, nullable = false , name = "role_name")
+    private RoleName roleName;
 
     @ManyToMany(mappedBy = "roles")
-    public List<User> users;
+    @JsonBackReference
+    private List<User> users;
 
 }

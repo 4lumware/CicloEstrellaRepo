@@ -1,7 +1,9 @@
 package com.upc.cicloestrella.mappers;
 
+import com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.entities.Student;
+import com.upc.cicloestrella.entities.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,6 +31,10 @@ public class StudentMapper {
 
     public StudentResponseDTO toDTO(Student student) {
         return modelMapper.map(student, StudentResponseDTO.class);
+    }
+
+    public User toUserEntity(StudentRegisterRequestDTO studentRequestDTO) {
+        return modelMapper.map(studentRequestDTO, User.class);
     }
 
 }

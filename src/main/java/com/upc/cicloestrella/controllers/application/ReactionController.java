@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.controllers;
+package com.upc.cicloestrella.controllers.application;
 
 import com.upc.cicloestrella.DTOs.requests.ReactionRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.ReactionResponseDTO;

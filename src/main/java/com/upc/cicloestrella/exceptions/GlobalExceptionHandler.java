@@ -5,6 +5,7 @@ import com.upc.cicloestrella.DTOs.shared.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,6 +35,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new GeneralErrorResponse(400, "Violacion de restriccion de la base de datos", LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<GeneralErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException ex){
+        log.error("Username not found: {}", ex.getMessage());
+        return ResponseEntity
+                .status(404)
+                .body(new GeneralErrorResponse(404, ex.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(EntityIdNotFoundException.class)

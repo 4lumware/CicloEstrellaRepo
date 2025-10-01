@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.controllers;
+package com.upc.cicloestrella.controllers.application;
 
 
 import com.upc.cicloestrella.DTOs.requests.TeacherRequestDTO;
@@ -8,14 +8,11 @@ import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordRespo
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
