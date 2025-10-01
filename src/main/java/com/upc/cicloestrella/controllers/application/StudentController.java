@@ -7,6 +7,7 @@ import com.upc.cicloestrella.interfaces.services.application.StudentServiceInter
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class StudentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<StudentResponseDTO>>> index() {
         List<StudentResponseDTO> users = studentService.index();
         if(users.isEmpty()) {
@@ -39,6 +41,7 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<ApiResponse<StudentResponseDTO>> show(@PathVariable Long id) {
         var user = studentService.show(id);
         if(user == null) {
@@ -56,43 +59,8 @@ public class StudentController {
                 );
     }
 
-    @PostMapping
-    public ResponseEntity<ApiResponse<StudentResponseDTO>> save(@Valid @RequestBody StudentRequestDTO userRequestDTO) {
-        StudentResponseDTO createdUser = studentService.save(userRequestDTO);
-        if (createdUser == null) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponse.<StudentResponseDTO>builder()
-                            .message("Error al crear el estudiante")
-                            .status(400)
-                            .build());
-        }
-        return ResponseEntity.status(201)
-                .body(ApiResponse.<StudentResponseDTO>builder()
-                        .data(createdUser)
-                        .message("Estudiante creado correctamente")
-                        .status(201)
-                        .build());
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<StudentResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody StudentRequestDTO userRequestDTO) {
-        StudentResponseDTO updatedUser = studentService.update(id, userRequestDTO);
-        if (updatedUser == null) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponse.<StudentResponseDTO>builder()
-                            .message("Error al actualizar el estudiante")
-                            .status(400)
-                            .build());
-        }
-        return ResponseEntity.status(200)
-                .body(ApiResponse.<StudentResponseDTO>builder()
-                        .data(updatedUser)
-                        .message("Estudiante actualizado correctamente")
-                        .status(200)
-                        .build());
-    }
-
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<StudentResponseDTO>> delete(@PathVariable Long id) {
         StudentResponseDTO userResponseDTO = studentService.show(id);
         if (userResponseDTO == null) {

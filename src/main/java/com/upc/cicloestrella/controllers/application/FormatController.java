@@ -5,9 +5,11 @@ import com.upc.cicloestrella.DTOs.requests.FormatRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.FormatResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.FormatServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class FormatController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<FormatResponseDTO>>> index() {
         List<FormatResponseDTO> formats = formatService.index();
 
@@ -43,8 +46,11 @@ public class FormatController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<FormatResponseDTO>> store(@Valid @RequestBody FormatRequestDTO dto) {
+
         FormatResponseDTO format = formatService.save(dto);
+
         if (format == null) {
             return ResponseEntity.status(400)
                     .body(ApiResponse.<FormatResponseDTO>builder()
@@ -61,6 +67,7 @@ public class FormatController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<FormatResponseDTO>> show(@PathVariable Long id) {
         FormatResponseDTO format = formatService.show(id);
 
@@ -81,6 +88,7 @@ public class FormatController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<FormatResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody FormatRequestDTO dto) {
         FormatResponseDTO format = formatService.update(id, dto);
         if (format == null) {
@@ -99,6 +107,7 @@ public class FormatController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<FormatResponseDTO>> delete(@PathVariable Long id) {
         FormatResponseDTO format = formatService.show(id);
         if (format == null) {

@@ -5,8 +5,10 @@ import com.upc.cicloestrella.DTOs.FormalityDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.interfaces.services.application.FormalityServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class FormalityController {
     }
 
     @GetMapping("/{formalityId}")
+    @PermitAll
     public ResponseEntity<ApiResponse<FormalityDTO>> findById(@PathVariable Long formalityId) {
         FormalityDTO tramite = formalityService.findById(formalityId);
         if (tramite == null) {
@@ -32,6 +35,7 @@ public class FormalityController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<FormalityDTO>>> findAll(@RequestParam(required = false) String keyword) {
         List<FormalityDTO> formality = formalityService.findAll(keyword);
         if (formality.isEmpty()) {
@@ -41,6 +45,7 @@ public class FormalityController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'WRITER')")
     public ResponseEntity<ApiResponse<FormalityDTO>> insert(@RequestBody FormalityDTO formalityDTO) {
         FormalityDTO formality = formalityService.insert(formalityDTO);
         if (formality == null) {
@@ -59,6 +64,7 @@ public class FormalityController {
     }
 
     @PutMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'WRITER')")
     public ResponseEntity<ApiResponse<FormalityDTO>> update(@RequestBody Formality formality) {
         FormalityDTO formalityUpdated = formalityService.update(formality);
 
@@ -78,6 +84,7 @@ public class FormalityController {
     }
 
     @DeleteMapping("/{formalityId}")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<ApiResponse<FormalityDTO>> delete(@PathVariable Long formalityId) {
         FormalityDTO formality = formalityService.findById(formalityId);
         if (formality == null) {

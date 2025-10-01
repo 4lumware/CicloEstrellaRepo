@@ -4,9 +4,11 @@ import com.upc.cicloestrella.DTOs.requests.ReactionRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.ReactionResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.ReactionServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -21,6 +23,7 @@ public class ReactionController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<ReactionResponseDTO>>> index(@RequestParam(required = false) String name ) {
         List<ReactionResponseDTO> reactions = reactionService.index(name);
 
@@ -40,6 +43,7 @@ public class ReactionController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<ReactionResponseDTO>> show(@PathVariable Long id) {
         ReactionResponseDTO reaction = reactionService.show(id);
         if (reaction == null) {
@@ -58,6 +62,7 @@ public class ReactionController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<ReactionResponseDTO>> save(@Valid @RequestBody ReactionRequestDTO reactionRequestDTO) {
         ReactionResponseDTO createdReaction = reactionService.save(reactionRequestDTO);
         if (createdReaction == null) {
@@ -76,6 +81,7 @@ public class ReactionController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<ReactionResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody ReactionRequestDTO reactionRequestDTO) {
         ReactionResponseDTO updatedReaction = reactionService.update(id, reactionRequestDTO);
         if (updatedReaction == null) {
@@ -94,6 +100,7 @@ public class ReactionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<ReactionResponseDTO>> delete(@PathVariable Long id) {
         ReactionResponseDTO reaction = reactionService.show(id);
         if (reaction == null) {

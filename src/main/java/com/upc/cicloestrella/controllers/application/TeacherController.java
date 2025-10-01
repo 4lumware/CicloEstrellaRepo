@@ -7,10 +7,12 @@ import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +30,9 @@ public class TeacherController {
         this.modelMapper = modelMapper;
     }
 
+
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
         List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
 
@@ -50,6 +54,7 @@ public class TeacherController {
 
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
         TeacherFindByIdResponseDTO teacher = teacherService.show(id);
 
@@ -69,6 +74,7 @@ public class TeacherController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<TeacherResponseDTO>> save(@Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO savedTeacher = teacherService.save(teacher);
 
@@ -88,6 +94,7 @@ public class TeacherController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<TeacherResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody TeacherRequestDTO teacher) {
         TeacherResponseDTO updatedTeacher = teacherService.update(id, teacher);
 
@@ -107,6 +114,7 @@ public class TeacherController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> delete(@PathVariable Long id) {
         TeacherFindByIdResponseDTO teacher = teacherService.show(id);
 
@@ -128,6 +136,7 @@ public class TeacherController {
 
 
     @GetMapping(params = "campuses")
+    @PermitAll
     public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCampuses(
             @RequestParam(required = false) String campuses) {
 
@@ -162,6 +171,7 @@ public class TeacherController {
 
 
     @GetMapping(params = "courses")
+    @PermitAll
     public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCourses(
             @RequestParam(required = false) String courses) {
 
@@ -195,6 +205,7 @@ public class TeacherController {
     }
 
     @GetMapping(params = "careers")
+    @PermitAll
     public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCareers(
             @RequestParam(required = false) String careers) {
 

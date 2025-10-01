@@ -7,6 +7,7 @@ import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class AuthStudentController{
     private final AuthServiceInterface authService;
 
     @PostMapping("/register")
+    @PermitAll
     public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(
             @RequestBody @Valid StudentRegisterRequestDTO userRegisterRequestDTO) {
 

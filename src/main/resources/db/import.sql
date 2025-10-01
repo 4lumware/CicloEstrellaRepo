@@ -78,28 +78,27 @@ INSERT INTO teacher_courses (teacher_id, course_id) VALUES
   (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
   (6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
 
--- usuarios
+-- usuarios con contraseñas encriptadas
 INSERT INTO users (username, email, password, state, creation_date, profile_picture_url) VALUES
-  ('alicia', 'alicia@email.com', 'clave1', true, '2025-01-01', 'alicia.png'),
-  ('roberto', 'roberto@email.com', 'clave2', true, '2025-01-02', 'roberto.png'),
-  ('carlos', 'carlos@email.com', 'clave3', true, '2025-01-03', 'carlos.png'),
-  ('diana', 'diana@email.com', 'clave4', true, '2025-01-04', 'diana.png'),
-  ('eva', 'eva@email.com', 'clave5', true, '2025-01-05', 'eva.png'),
-  ('francisco', 'francisco@email.com', 'clave6', true, '2025-01-06', 'francisco.png'),
-  ('graciela', 'graciela@email.com', 'clave7', true, '2025-01-07', 'graciela.png'),
-  ('hector', 'hector@email.com', 'clave8', true, '2025-01-08', 'hector.png'),
-  ('ines', 'ines@email.com', 'clave9', true, '2025-01-09', 'ines.png'),
-  ('juan', 'juan@email.com', 'clave10', true, '2025-01-10', 'juan.png');
+('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', 'alicia.png'),
+('roberto', 'roberto@email.com', '$2b$12$eSxBS7aKpPvaKTKzV2g1kuTnM97Cmjew8x1m63hRwZxwpKXVLnbeq', true, '2025-01-02', 'roberto.png'),
+('carlos', 'carlos@email.com', '$2b$12$BvlNL4N1rraGdur4Y2KY9.qU3tjsUrRDbngq5P6JKzueIDeV0mdwa', true, '2025-01-03', 'carlos.png'),
+('diana', 'diana@email.com', '$2b$12$e0bPeB4WRhqJ14bCwkTohOZGcB8ww0hzcoupvpgcDhtb62YJdOvou', true, '2025-01-04', 'diana.png'),
+('eva', 'eva@email.com', '$2b$12$pr7Wrwbb00kYTajP1YKWU.uY9STNGIClvqr3qW2mzo8lYJ9rZj07.', true, '2025-01-05', 'eva.png'),
+('francisco', 'francisco@email.com', '$2b$12$KgeysY9v.c6Ga/NX/QB4i.xwDbkujefABTB5s0677n.X1I2cwT1b6', true, '2025-01-06', 'francisco.png'),
+('graciela', 'graciela@email.com', '$2b$12$5Qph/Kjl6mDydEYVDHfjs.lSVKEJHJIztRvYfVGZCTMeF7YYwUhvq', true, '2025-01-07', 'graciela.png'),
+('hector', 'hector@email.com', '$2b$12$zypJrCoMgGw.L/3f1ajjiOCX0ISU8gzCLZPJ8YU1VhkOtaz.8dJ8u', true, '2025-01-08', 'hector.png'),
+('ines', 'ines@email.com', '$2b$12$cmgN6ZqXFoQD3zV8y9F.yOcDZiDD5rPAQK5LTJLSFjaeNoQoe3gxK', true, '2025-01-09', 'ines.png'),
+('juan', 'juan@email.com', '$2b$12$D6TsNrNe4OpcvqmMH6qiU.s951L1X2xW6EWbTiLcf148FFmXHhgdm', true, '2025-01-10', 'juan.png');
 
 -- estudiantes
 INSERT INTO students (user_id, current_semester) VALUES
-  (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
-  (6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+    (1, 2), (2, 3), (3, 1), (4, 4), (5, 2);
 
 -- student_careers (MuchosAMuchos)
 INSERT INTO student_careers (student_id, career_id) VALUES
   (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
-  (6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+  (1, 6), (2, 7), (3, 8), (4, 9), (5, 10);
 
 -- reseñas
 INSERT INTO review (student_id, teacher_id, description, rating, created_at) VALUES
@@ -108,28 +107,41 @@ INSERT INTO review (student_id, teacher_id, description, rating, created_at) VAL
   (3, 3, 'Explica bien los conceptos contables.', 4.5, '2025-09-03T11:00:00'),
   (4, 4, 'Gran profesional, transmite confianza.', 4.6, '2025-09-04T12:00:00'),
   (5, 5, 'Abogado con ejemplos prácticos y útiles.', 4.4, '2025-09-05T13:00:00'),
-  (6, 6, 'Fomenta el pensamiento científico y crítico.', 4.3, '2025-09-06T14:00:00'),
-  (7, 7, 'Motiva a aprender tecnología de forma sencilla.', 4.6, '2025-09-07T15:00:00'),
-  (8, 8, 'Creativa y dinámica en sus clases de diseño.', 4.2, '2025-09-08T16:00:00'),
-  (9, 9, 'Excelente metodología pedagógica.', 4.7, '2025-09-09T17:00:00'),
-  (10, 10, 'Muy dedicada al cuidado y enseñanza.', 4.5, '2025-09-10T18:00:00');
+  (1, 6, 'Fomenta el pensamiento crítico en ciencias.', 4.3, '2025-09-06T14:00:00'),
+  (2, 7, 'Muy buen enfoque en tecnología y programación.', 4.7, '2025-09-07T15:00:00'),
+  (3, 8, 'Creativa y actualizada en diseño gráfico.', 4.2, '2025-09-08T16:00:00'),
+  (4, 9, 'Pedagoga dedicada y con mucha vocación.', 4.6, '2025-09-09T17:00:00'),
+  (5, 10, 'Enfermera comprometida con la docencia.', 4.5, '2025-09-10T18:00:00');
 
 -- review_tags (MuchosAMuchos)
-INSERT INTO review_tags (review_id, tag_id) VALUES
-  (1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
-  (6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
-
+INSERT INTO review_tags (review_id , tag_id) VALUES
+    (1, 1), (1, 6),
+    (2, 2), (2, 8),
+    (3, 3), (3, 1),
+    (4, 4), (4, 6),
+    (5, 5), (5, 3),
+    (6, 6), (6, 1),
+    (7, 7), (7, 6),
+    (8, 8), (8, 2),
+    (9, 9), (9, 8),
+    (10, 10), (10, 4);
 -- review_reactions
 INSERT INTO review_reactions (reaction_id, author_id, review_id, created_at) VALUES
-  (1, 1, 1, '2025-09-22T10:00:00'), (2, 2, 2, '2025-09-22T10:01:00'), (3, 3, 3, '2025-09-22T10:02:00'),
-  (4, 4, 4, '2025-09-22T10:03:00'), (5, 5, 5, '2025-09-22T10:04:00'), (6, 6, 6, '2025-09-22T10:05:00'),
-  (7, 7, 7, '2025-09-22T10:06:00'), (8, 8, 8, '2025-09-22T10:07:00'), (9, 9, 9, '2025-09-22T10:08:00'), (10, 10, 10, '2025-09-22T10:09:00');
-
+    (1, 2, 1, '2025-09-11T10:00:00'),
+    (3, 3, 1, '2025-09-11T11:00:00'),
+    (1, 4, 2, '2025-09-12T09:30:00'),
+    (5, 5, 2, '2025-09-12T10:15:00'),
+    (2, 1, 3, '2025-09-13T14:00:00'),
+    (4, 2, 3, '2025-09-13T15:30:00'),
+    (1, 3, 4, '2025-09-14T08:45:00'),
+    (3, 4, 4, '2025-09-14T09:20:00'),
+    (5, 5, 5, '2025-09-15T13:00:00'),
+    (2, 1, 5, '2025-09-15T14:30:00');
 -- roles
-INSERT INTO role (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR');
+INSERT INTO role (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR') , ('WRITER');
 
 
 
 -- user_roles (MuchosAMuchos)
 INSERT INTO user_roles (user_id, role_id) VALUES
-(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 2), (7, 2), (8, 2), (9, 2), (10, 2);
+(1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 1), (7, 3), (8, 1), (9, 3), (10, 3);
