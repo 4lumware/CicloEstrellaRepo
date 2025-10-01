@@ -53,8 +53,6 @@ public class StudentService implements StudentServiceInterface {
                 .currentSemester(userRequestDTO.getCurrentSemester())
                 .build();
 
-
-
         student.setUser(user);
 
         student.setCareers(careers);

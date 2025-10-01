@@ -1,6 +1,8 @@
 package com.upc.cicloestrella.exceptions;
 
-public class EntityIdNotFoundException extends RuntimeException {
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+public class EntityIdNotFoundException extends UsernameNotFoundException {
     public EntityIdNotFoundException(String message) {
         super(message);
     }
