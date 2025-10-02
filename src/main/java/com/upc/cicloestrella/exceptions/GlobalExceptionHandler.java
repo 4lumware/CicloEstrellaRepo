@@ -5,6 +5,9 @@ import com.upc.cicloestrella.DTOs.shared.ValidationErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,6 +31,8 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(new ValidationErrorResponse(400, "Validacion fallida", errors, LocalDateTime.now()));
     }
+
+
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<GeneralErrorResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
@@ -60,9 +65,21 @@ public class GlobalExceptionHandler {
                 .badRequest()
                 .body(new GeneralErrorResponse(400, ex.getMessage(), LocalDateTime.now()));
     }
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<GeneralErrorResponse> handleBadCredentialsException(BadCredentialsException ex){
+        log.error("Bad credentials: {}", ex.getMessage());
+        return ResponseEntity
+                .status(401)
+                .body(new GeneralErrorResponse(401, "Credenciales incorrectas", LocalDateTime.now()));
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GeneralErrorResponse> handleAllExceptions(Exception ex){
+
+        if (ex instanceof AccessDeniedException || ex instanceof AuthenticationException) {
+            throw (RuntimeException) ex; // dejar que Spring Security lo maneje
+        }
+
         log.error("An unexpected error occurred: {}", ex.getMessage());
         return ResponseEntity
                 .status(500)

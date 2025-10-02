@@ -6,6 +6,7 @@ import com.upc.cicloestrella.DTOs.responses.auth.JWTTokensDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JsonResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,9 @@ public class AuthUserController {
     private final AuthServiceInterface authService;
 
     @PostMapping("/login")
+    @PermitAll
     public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> authenticate(@RequestBody @Valid UserLoginRequestDTO userLoginRequestDTO) {
         JsonResponseDTO<?> response = authService.login(userLoginRequestDTO);
-
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.<JsonResponseDTO<?>>builder().status(200).message("Se ha autenticado correctamente").data(response).build());
 

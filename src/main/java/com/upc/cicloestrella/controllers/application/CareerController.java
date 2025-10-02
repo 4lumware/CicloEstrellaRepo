@@ -5,9 +5,11 @@ import com.upc.cicloestrella.DTOs.requests.CareerRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CareerResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.CareerServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class CareerController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<CareerResponseDTO>>> index() {
         List<CareerResponseDTO> careers = careerService.index();
         if (careers.isEmpty()) {
@@ -41,6 +44,7 @@ public class CareerController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<CareerResponseDTO>> show(@PathVariable Long id) {
         CareerResponseDTO career = careerService.show(id);
         if (career == null) {
@@ -59,6 +63,7 @@ public class CareerController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CareerResponseDTO>> save(@Valid @RequestBody CareerRequestDTO career) {
         CareerResponseDTO savedCareer = careerService.save(career);
         if (savedCareer == null) {
@@ -77,6 +82,7 @@ public class CareerController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CareerResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody CareerRequestDTO career) {
         CareerResponseDTO updatedCareer = careerService.update(id, career);
         if (updatedCareer == null) {
@@ -95,6 +101,7 @@ public class CareerController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CareerResponseDTO>> delete(@PathVariable Long id) {
         CareerResponseDTO career = careerService.show(id);
         if (career == null) {

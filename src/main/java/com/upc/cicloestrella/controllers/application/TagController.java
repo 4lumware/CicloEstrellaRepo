@@ -5,9 +5,11 @@ import com.upc.cicloestrella.DTOs.requests.TagRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.TagResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.TagServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -22,6 +24,7 @@ public class TagController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<TagResponseDTO>>> index(@RequestParam(required = false) String keyword) {
         List<TagResponseDTO> tags = tagService.index(keyword);
 
@@ -42,6 +45,7 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<TagResponseDTO>> show(@PathVariable Long id) {
         TagResponseDTO tag = tagService.show(id);
 
@@ -63,6 +67,7 @@ public class TagController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<TagResponseDTO>> save(@Valid @RequestBody TagRequestDTO tagRequestDTO) {
         TagResponseDTO createdTag = tagService.save(tagRequestDTO);
         if (createdTag == null) {
@@ -81,6 +86,7 @@ public class TagController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<TagResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody TagRequestDTO tagRequestDTO) {
         TagResponseDTO updatedTag = tagService.update(id, tagRequestDTO);
         if (updatedTag == null) {
@@ -99,6 +105,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<TagResponseDTO>> delete(@PathVariable Long id) {
         TagResponseDTO tag = tagService.show(id);
         if (tag == null) {

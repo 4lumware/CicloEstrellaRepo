@@ -5,9 +5,11 @@ import com.upc.cicloestrella.DTOs.requests.CourseRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CourseResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.CourseServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -23,6 +25,7 @@ public class CourseController {
     }
 
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<CourseResponseDTO>>> index() {
         List<CourseResponseDTO> courses = courseService.index();
         if (courses.isEmpty()) {
@@ -41,6 +44,7 @@ public class CourseController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<CourseResponseDTO>> show(@PathVariable Long id) {
         CourseResponseDTO course = courseService.show(id);
         if (course == null) {
@@ -59,6 +63,7 @@ public class CourseController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CourseResponseDTO>> store(@Valid @RequestBody CourseRequestDTO course) {
         CourseResponseDTO createdCourse = courseService.save(course);
         if (createdCourse == null) {
@@ -77,6 +82,7 @@ public class CourseController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CourseResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody CourseRequestDTO course) {
         CourseResponseDTO updatedCourse = courseService.update(id, course);
         if (updatedCourse == null) {
@@ -95,6 +101,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CourseResponseDTO>> delete(@PathVariable Long id) {
         CourseResponseDTO course = courseService.show(id);
         if (course == null) {

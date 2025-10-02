@@ -4,9 +4,11 @@ import com.upc.cicloestrella.DTOs.requests.CampusRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.CampusResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.CampusServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,7 +23,9 @@ public class CampusController {
         this.campusService = campusService;
     }
 
+
     @GetMapping
+    @PermitAll
     public ResponseEntity<ApiResponse<List<CampusResponseDTO>>> index() {
         List<CampusResponseDTO> campuses = campusService.index();
         if (campuses.isEmpty()) {
@@ -40,6 +44,7 @@ public class CampusController {
     }
 
     @GetMapping("/{id}")
+    @PermitAll
     public ResponseEntity<ApiResponse<CampusResponseDTO>> show(@PathVariable Long id) {
         CampusResponseDTO campus = campusService.show(id);
         if (campus == null) {
@@ -58,6 +63,7 @@ public class CampusController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CampusResponseDTO>> store(@Valid @RequestBody CampusRequestDTO campusRequestDTO) {
         CampusResponseDTO campus = campusService.save(campusRequestDTO);
         if (campus == null) {
@@ -76,6 +82,7 @@ public class CampusController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
     public ResponseEntity<ApiResponse<CampusResponseDTO>> update(@PathVariable Long id, @Valid @RequestBody CampusRequestDTO campusRequestDTO) {
         CampusResponseDTO campus = campusService.update(id, campusRequestDTO);
         if (campus == null) {
@@ -94,6 +101,7 @@ public class CampusController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CampusResponseDTO>> delete(@PathVariable Long id) {
         CampusResponseDTO campus = campusService.show(id);
         if (campus == null) {

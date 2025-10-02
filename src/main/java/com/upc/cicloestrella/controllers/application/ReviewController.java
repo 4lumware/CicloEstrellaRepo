@@ -5,8 +5,10 @@ import com.upc.cicloestrella.DTOs.requests.reviews.ReviewUpdateRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.reviews.ReviewResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.ReviewServiceInterface;
+import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import java.util.List;
@@ -21,8 +23,8 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews")
+    @PermitAll
     public ResponseEntity<ApiResponse<List<ReviewResponseDTO>>> index() {
-
         List<ReviewResponseDTO> reviews = reviewService.index();
 
         if (reviews.isEmpty()) {
@@ -42,6 +44,7 @@ public class ReviewController {
     }
 
     @GetMapping("/teachers/{teacherId}/reviews")
+    @PermitAll
     public ResponseEntity<ApiResponse<List<ReviewResponseDTO>>> getReviewsByTeacher(@PathVariable("teacherId") Long teacherId , @RequestParam(required = false) String keyword) {
         List<ReviewResponseDTO> reviews = reviewService.getReviewsByTeacher(teacherId , keyword);
 
@@ -63,6 +66,7 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{reviewId}")
+    @PermitAll
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> show(@PathVariable("reviewId") Long reviewId) {
         ReviewResponseDTO review = reviewService.show(reviewId);
         if (review == null) {
@@ -81,6 +85,7 @@ public class ReviewController {
     }
 
     @PostMapping("/reviews")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> save(@Valid @RequestBody ReviewRequestDTO reviewRequestDTO) {
         ReviewResponseDTO createdReview = reviewService.save(reviewRequestDTO);
 
@@ -100,6 +105,7 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{reviewId}")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> update(@PathVariable("reviewId") Long reviewId, @Valid @RequestBody ReviewUpdateRequestDTO reviewRequestDTO) {
         ReviewResponseDTO updatedReview = reviewService.update(reviewId, reviewRequestDTO);
         if (updatedReview == null) {
@@ -118,6 +124,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{reviewId}")
+    @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN')")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> delete(@PathVariable("reviewId") Long reviewId) {
         ReviewResponseDTO review = reviewService.show(reviewId);
         if (review == null) {

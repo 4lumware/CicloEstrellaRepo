@@ -6,6 +6,7 @@ import com.upc.cicloestrella.DTOs.responses.reviews.ReviewReactionResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.ReviewReactionServiceInterface;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -18,8 +19,8 @@ public class ReviewReactionController
         this.reviewReactionService = reviewReactionService;
     }
 
-
     @PostMapping("/reviews/{reviewId}/reactions")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> addReactionToReview(@RequestBody ReviewCreateReactionRequestDTO reviewReactionRequestDTO, @PathVariable Long reviewId)
     {
         ReviewReactionResponseDTO reviewReactionResponseDTO = reviewReactionService.addReactionToReview(reviewReactionRequestDTO , reviewId);
@@ -35,6 +36,7 @@ public class ReviewReactionController
     }
 
     @DeleteMapping("/reviews/{reviewId}/reactions/{reviewReactionId}")
+    @PreAuthorize("hasAnyRole('STUDENT' , 'MODERATOR' , 'ADMIN')")
     public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> removeReactionFromReview(@PathVariable Long reviewId, @PathVariable Long reviewReactionId, @RequestBody ReviewReactionRequestDTO reviewReactionRequestDTO)
     {
         ReviewReactionResponseDTO reviewReactionResponseDTO = reviewReactionService.removeReactionFromReview(reviewId , reviewReactionId);
