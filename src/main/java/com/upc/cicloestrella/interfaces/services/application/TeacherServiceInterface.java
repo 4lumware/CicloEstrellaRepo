@@ -10,17 +10,10 @@ import java.util.List;
 
 public interface TeacherServiceInterface {
     public TeacherResponseDTO save(TeacherRequestDTO teacher);
-    //public List<TeacherSearchByKeywordResponseDTO> index(String FirstName);
+    public List<TeacherSearchByKeywordResponseDTO> index(String FirstName);
     public TeacherFindByIdResponseDTO show(Long id);
     public TeacherResponseDTO update(Long id, TeacherRequestDTO teacher);
     public void delete(Long id);
     List<Teacher> searchTeachers(String name, String campus, String course, String career);
 
-
-    /*
-    public List<Teacher> searchByCampuses(String campuses);
-    public List<Teacher> searchByCourses(String courses);
-    public List<Teacher> searchByCareers(String careers);
-
-     */
 }

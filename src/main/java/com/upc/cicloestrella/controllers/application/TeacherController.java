@@ -30,6 +30,26 @@ public class TeacherController {
         this.modelMapper = modelMapper;
     }
 
+    @GetMapping
+    @PermitAll
+    public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
+        List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
+
+        if (teachers.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
+                            .message("No se han encontrado profesores")
+                            .status(404)
+                            .build());
+        }
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
+                        .data(teachers)
+                        .message("Se han encontrado los profesores")
+                        .status(200)
+                        .build());
+    }
+
     @GetMapping("/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
