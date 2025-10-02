@@ -66,7 +66,7 @@ public class TeacherService implements TeacherServiceInterface {
 
         return modelMapper.map(savedTeacher, TeacherResponseDTO.class);
     }
-/*
+
     @Override
     public List<TeacherSearchByKeywordResponseDTO> index(String firstName) {
 
@@ -87,7 +87,6 @@ public class TeacherService implements TeacherServiceInterface {
                 .toList();
     }
 
- */
 
     @Override
     public TeacherFindByIdResponseDTO show(Long id) {
@@ -149,23 +148,5 @@ public class TeacherService implements TeacherServiceInterface {
         return teacherRepository.searchTeachers(name, campus, course, career);
     }
 
-
-/*
-    @Override
-    public List<Teacher> searchByCampuses(String campuses) {
-        return teacherRepository.searchByCampuses(campuses);
-    }
-
-    @Override
-    public List<Teacher> searchByCourses(String courses) {
-        return teacherRepository.searchByCourses(courses);
-    }
-
-    @Override
-    public List<Teacher> searchByCareers(String careers) {
-        return teacherRepository.searchByCareers(careers);
-    }
-
- */
 
 }
