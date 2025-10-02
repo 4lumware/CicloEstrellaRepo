@@ -2,7 +2,7 @@ spring:
   application:
     name: cicloestrella
   datasource:
-    url: jdbc:postgresql://localhost:5433/cicloestrella_db
+    url: jdbc:postgresql://localhost:5432/cicloestrella_db
     username: root
     password: toor
   jpa:

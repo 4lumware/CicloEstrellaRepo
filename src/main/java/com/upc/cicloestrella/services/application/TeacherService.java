@@ -66,7 +66,7 @@ public class TeacherService implements TeacherServiceInterface {
 
         return modelMapper.map(savedTeacher, TeacherResponseDTO.class);
     }
-
+/*
     @Override
     public List<TeacherSearchByKeywordResponseDTO> index(String firstName) {
 
@@ -86,6 +86,8 @@ public class TeacherService implements TeacherServiceInterface {
                 .map(teacher -> modelMapper.map(teacher, TeacherSearchByKeywordResponseDTO.class))
                 .toList();
     }
+
+ */
 
     @Override
     public TeacherFindByIdResponseDTO show(Long id) {
@@ -143,6 +145,13 @@ public class TeacherService implements TeacherServiceInterface {
     }
 
     @Override
+    public List<Teacher> searchTeachers(String name, String campus, String course, String career) {
+        return teacherRepository.searchTeachers(name, campus, course, career);
+    }
+
+
+/*
+    @Override
     public List<Teacher> searchByCampuses(String campuses) {
         return teacherRepository.searchByCampuses(campuses);
     }
@@ -156,5 +165,7 @@ public class TeacherService implements TeacherServiceInterface {
     public List<Teacher> searchByCareers(String careers) {
         return teacherRepository.searchByCareers(careers);
     }
+
+ */
 
 }

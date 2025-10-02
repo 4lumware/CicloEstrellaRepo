@@ -30,29 +30,6 @@ public class TeacherController {
         this.modelMapper = modelMapper;
     }
 
-
-    @GetMapping
-    @PermitAll
-    public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
-        List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
-
-        if (teachers.isEmpty()) {
-            return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
-                            .message("No se han encontrado profesores")
-                            .status(404)
-                            .build());
-        }
-        return ResponseEntity.status(200)
-                .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
-                        .data(teachers)
-                        .message("Se han encontrado los profesores")
-                        .status(200)
-                        .build());
-    }
-
-
-
     @GetMapping("/{id}")
     @PermitAll
     public ResponseEntity<ApiResponse<TeacherFindByIdResponseDTO>> show(@PathVariable Long id) {
@@ -135,96 +112,36 @@ public class TeacherController {
     }
 
 
-    @GetMapping(params = "campuses")
+    @GetMapping("/search")
     @PermitAll
-    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCampuses(
-            @RequestParam(required = false) String campuses) {
+    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchTeachers(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String campus,
+            @RequestParam(required = false) String course,
+            @RequestParam(required = false) String career) {
 
-        if (campuses == null || campuses.trim().isEmpty()) {
+        // Validar que al menos uno tenga valor
+        if ((name == null || name.trim().isEmpty()) &&
+                (campus == null || campus.trim().isEmpty()) &&
+                (course == null || course.trim().isEmpty()) &&
+                (career == null || career.trim().isEmpty())) {
+
             return ResponseEntity.status(400)
                     .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("El parámetro 'campuses' no puede ser nulo o vacío")
+                            .message("Debe especificar al menos un parámetro de búsqueda: name, campus, course o career")
                             .status(400)
                             .build());
         }
 
-        List<TeacherResponseDTO> result = teacherService.searchByCampuses(campuses).stream()
-                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
+        List<TeacherResponseDTO> result = teacherService.searchTeachers(name, campus, course, career)
+                .stream()
+                .map(t -> modelMapper.map(t, TeacherResponseDTO.class))
                 .collect(Collectors.toList());
 
         if (result.isEmpty()) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("No se encontraron profesores para el campus especificado")
-                            .status(404)
-                            .build());
-        }
-
-        return ResponseEntity.ok(
-                ApiResponse.<List<TeacherResponseDTO>>builder()
-                        .data(result)
-                        .message("Profesores encontrados")
-                        .status(200)
-                        .build()
-        );
-    }
-
-
-    @GetMapping(params = "courses")
-    @PermitAll
-    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCourses(
-            @RequestParam(required = false) String courses) {
-
-        if (courses == null || courses.trim().isEmpty()) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("El parámetro 'courses' no puede ser nulo o vacío")
-                            .status(400)
-                            .build());
-        }
-
-        List<TeacherResponseDTO> result = teacherService.searchByCourses(courses).stream()
-                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
-                .collect(Collectors.toList());
-
-        if (result.isEmpty()) {
-            return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("No se encontraron profesores para el curso especificado")
-                            .status(404)
-                            .build());
-        }
-
-        return ResponseEntity.ok(
-                ApiResponse.<List<TeacherResponseDTO>>builder()
-                        .data(result)
-                        .message("Profesores encontrados")
-                        .status(200)
-                        .build()
-        );
-    }
-
-    @GetMapping(params = "careers")
-    @PermitAll
-    public ResponseEntity<ApiResponse<List<TeacherResponseDTO>>> searchByCareers(
-            @RequestParam(required = false) String careers) {
-
-        if (careers == null || careers.trim().isEmpty()) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("El parámetro 'careers' no puede ser nulo o vacío")
-                            .status(400)
-                            .build());
-        }
-
-        List<TeacherResponseDTO> result = teacherService.searchByCareers(careers).stream()
-                .map(x -> modelMapper.map(x, TeacherResponseDTO.class))
-                .collect(Collectors.toList());
-
-        if (result.isEmpty()) {
-            return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherResponseDTO>>builder()
-                            .message("No se encontraron profesores para la carrera especificada")
+                            .message("No se encontraron profesores con los criterios especificados")
                             .status(404)
                             .build());
         }
