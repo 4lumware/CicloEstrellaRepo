@@ -5,7 +5,9 @@ import com.upc.cicloestrella.DTOs.requests.reviews.ReviewUpdateRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.reviews.ReviewResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.ReviewServiceInterface;
+import com.upc.cicloestrella.services.authorizations.ReviewAuthorizationService;
 import jakarta.annotation.security.PermitAll;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,13 +16,9 @@ import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ReviewController {
     private final ReviewServiceInterface reviewService;
-
-    @Autowired
-    public ReviewController(ReviewServiceInterface reviewService) {
-        this.reviewService = reviewService;
-    }
 
     @GetMapping("/reviews")
     @PermitAll
@@ -105,7 +103,7 @@ public class ReviewController {
     }
 
     @PutMapping("/reviews/{reviewId}")
-    @PreAuthorize("hasAnyRole('STUDENT')")
+    @PreAuthorize("hasAnyRole('STUDENT') and @reviewAuthorizationService.canAccess(authentication, #reviewId)")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> update(@PathVariable("reviewId") Long reviewId, @Valid @RequestBody ReviewUpdateRequestDTO reviewRequestDTO) {
         ReviewResponseDTO updatedReview = reviewService.update(reviewId, reviewRequestDTO);
         if (updatedReview == null) {
@@ -124,7 +122,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{reviewId}")
-    @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN')")
+    @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN') and @reviewAuthorizationService.canAccess(authentication, #reviewId)")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> delete(@PathVariable("reviewId") Long reviewId) {
         ReviewResponseDTO review = reviewService.show(reviewId);
         if (review == null) {

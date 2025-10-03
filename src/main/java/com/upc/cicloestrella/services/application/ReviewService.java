@@ -9,11 +9,17 @@ import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.ReviewServiceInterface;
 import com.upc.cicloestrella.mappers.ReviewMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.*;
+import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,35 +33,39 @@ public class ReviewService implements ReviewServiceInterface {
     private final TagRepository tagRepository;
     private final ReviewRepository reviewRepository;
     private final ReviewReactionRepository reviewReactionRepository;
+    private final AuthenticatedUserService authenticatedUserService;
     private final ReviewMapper reviewMapper;
 
     @Autowired
-    public ReviewService(StudentRepository studentRepository, TeacherRepository teacherRepository, TagRepository tagRepository, ReviewRepository reviewRepository, ReviewReactionRepository reviewReactionRepository, ReviewMapper reviewMapper) {
+    public ReviewService(StudentRepository studentRepository, TeacherRepository teacherRepository, TagRepository tagRepository, ReviewRepository reviewRepository, ReviewReactionRepository reviewReactionRepository, AuthenticatedUserService authenticatedUserService, ReviewMapper reviewMapper) {
         this.studentRepository = studentRepository;
         this.teacherRepository = teacherRepository;
         this.tagRepository = tagRepository;
         this.reviewRepository = reviewRepository;
         this.reviewReactionRepository = reviewReactionRepository;
+        this.authenticatedUserService = authenticatedUserService;
         this.reviewMapper = reviewMapper;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ReviewResponseDTO save(ReviewRequestDTO reviewRequestDTO) {
-
-        Long studentId = reviewRequestDTO.getStudentId();
+        Student authenticatedStudent = authenticatedUserService.getAuthenticatedStudent();
+        Long studentId = authenticatedStudent.getId();
         Long teacherId = reviewRequestDTO.getTeacherId();
         Student student = getStudentOrThrow(studentId);
         Teacher teacher = getTeacherOrThrow(teacherId);
         List<Tag> tags = getTagsOrThrow(reviewRequestDTO.getTagIds());
-        Review newReview = reviewMapper.toEntity(reviewRequestDTO);
 
+        Review newReview = reviewMapper.toEntity(reviewRequestDTO);
+        newReview.setId(null);
         newReview.setStudent(student);
         newReview.setTeacher(teacher);
         newReview.setTags(tags);
 
         Review savedReview = reviewRepository.save(newReview);
         List<ReactionCountByDatabaseDTO> reactionCounts = reviewReactionRepository.countAllReactionsByReview(List.of(savedReview));
+
         updateTeacherAverageRating(teacher);
 
         return reviewMapper.toDTO(savedReview, reactionCounts);
@@ -82,6 +92,7 @@ public class ReviewService implements ReviewServiceInterface {
     public ReviewResponseDTO show(Long reviewId) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
+        
         List<ReactionCountByDatabaseDTO> reactionCounts = reviewReactionRepository.countAllReactionsByReview(List.of(review));
         return reviewMapper.toDTO(review, reactionCounts);
     }
@@ -91,7 +102,6 @@ public class ReviewService implements ReviewServiceInterface {
         List<Review> reviews = (keyword == null || keyword.isEmpty()) ?
                 reviewRepository.findReviewByTeacherId(teacherId) :
                 reviewRepository.findTeacherByDescriptionOrTagName(teacherId, keyword);
-
 
         List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase = reviewReactionRepository.countAllReactionsByReview(reviews);
 
@@ -111,14 +121,15 @@ public class ReviewService implements ReviewServiceInterface {
     public ReviewResponseDTO update(Long reviewId, ReviewUpdateRequestDTO reviewRequestDTO) {
         Review existingReview = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
-        Student student = getStudentOrThrow(existingReview.getStudent().getId());
+
         Teacher teacher = getTeacherOrThrow(existingReview.getTeacher().getId());
         List<Tag> tags = getTagsOrThrow(reviewRequestDTO.getTagIds());
-        existingReview.setStudent(student);
+
         existingReview.setTeacher(teacher);
         existingReview.setTags(tags);
         existingReview.setDescription(reviewRequestDTO.getDescription());
         existingReview.setRating(reviewRequestDTO.getRating());
+
         Review updatedReview = reviewRepository.save(existingReview);
         List<ReactionCountByDatabaseDTO> reactionCounts = reviewReactionRepository.countAllReactionsByReview(List.of(updatedReview));
         updateTeacherAverageRating(teacher);
@@ -127,11 +138,13 @@ public class ReviewService implements ReviewServiceInterface {
 
     @Override
     public void delete(Long reviewId) {
-        if (!reviewRepository.existsById(reviewId)) {
-            throw new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada");
-        }
-        reviewRepository.deleteById(reviewId);
+        Review existingReview = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
+        reviewRepository.delete(existingReview);
+        updateTeacherAverageRating(existingReview.getTeacher());
     }
+
+
 
     private void updateTeacherAverageRating(Teacher teacher) {
         BigDecimal averageRating = reviewRepository.findAverageRatingByTeacherId(teacher.getId());

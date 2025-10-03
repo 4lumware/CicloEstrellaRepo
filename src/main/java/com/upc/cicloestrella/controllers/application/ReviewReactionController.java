@@ -1,29 +1,27 @@
 package com.upc.cicloestrella.controllers.application;
 
 import com.upc.cicloestrella.DTOs.requests.reviews.ReviewCreateReactionRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.reviews.ReviewReactionRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.reviews.ReviewReactionResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.ReviewReactionServiceInterface;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ReviewReactionController
 {
     private final ReviewReactionServiceInterface reviewReactionService;
 
-    public ReviewReactionController(ReviewReactionServiceInterface reviewReactionService) {
-        this.reviewReactionService = reviewReactionService;
-    }
-
-    @PostMapping("/reviews/{reviewId}/reactions")
+    @PostMapping("/reviews/{reviewId}/reactions/{reactionId}")
     @PreAuthorize("hasAnyRole('STUDENT')")
-    public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> addReactionToReview(@RequestBody ReviewCreateReactionRequestDTO reviewReactionRequestDTO, @PathVariable Long reviewId)
+    public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> addReactionToReview(@PathVariable Long reviewId, @PathVariable Long reactionId)
     {
-        ReviewReactionResponseDTO reviewReactionResponseDTO = reviewReactionService.addReactionToReview(reviewReactionRequestDTO , reviewId);
+        ReviewReactionResponseDTO reviewReactionResponseDTO = reviewReactionService.addReactionToReview(reviewId, reactionId );
+
         if(reviewReactionResponseDTO == null)
         {
             return ResponseEntity.status(400).body(
@@ -36,8 +34,8 @@ public class ReviewReactionController
     }
 
     @DeleteMapping("/reviews/{reviewId}/reactions/{reviewReactionId}")
-    @PreAuthorize("hasAnyRole('STUDENT' , 'MODERATOR' , 'ADMIN')")
-    public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> removeReactionFromReview(@PathVariable Long reviewId, @PathVariable Long reviewReactionId, @RequestBody ReviewReactionRequestDTO reviewReactionRequestDTO)
+    @PreAuthorize("hasAnyRole('STUDENT' , 'MODERATOR' , 'ADMIN') and @reviewReactionAuthorizationService.canAccess(authentication , #reviewReactionId)")
+    public ResponseEntity<ApiResponse<ReviewReactionResponseDTO>> removeReactionFromReview(@PathVariable Long reviewId, @PathVariable Long reviewReactionId)
     {
         ReviewReactionResponseDTO reviewReactionResponseDTO = reviewReactionService.removeReactionFromReview(reviewId , reviewReactionId);
 

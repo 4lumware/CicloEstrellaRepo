@@ -35,5 +35,6 @@ public class Student {
     )
     private List<Career> careers;
 
-
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Favorite> favorites;
 }

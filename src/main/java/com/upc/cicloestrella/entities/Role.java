@@ -8,6 +8,7 @@ import lombok.Setter;
 import java.util.List;
 
 @Entity
+@Table(name = "roles")
 @Getter
 @Setter
 public class Role {

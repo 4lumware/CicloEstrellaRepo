@@ -138,7 +138,7 @@ INSERT INTO review_reactions (reaction_id, author_id, review_id, created_at) VAL
     (5, 5, 5, '2025-09-15T13:00:00'),
     (2, 1, 5, '2025-09-15T14:30:00');
 -- roles
-INSERT INTO role (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR') , ('WRITER');
+INSERT INTO roles (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR') , ('WRITER');
 
 
 
