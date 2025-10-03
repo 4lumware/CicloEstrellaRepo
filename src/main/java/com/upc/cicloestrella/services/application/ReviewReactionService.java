@@ -1,7 +1,6 @@
 package com.upc.cicloestrella.services.application;
 
 
-import com.upc.cicloestrella.DTOs.requests.reviews.ReviewCreateReactionRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.reviews.ReviewReactionResponseDTO;
 import com.upc.cicloestrella.entities.Reaction;
 import com.upc.cicloestrella.entities.Review;
@@ -13,52 +12,51 @@ import com.upc.cicloestrella.repositories.interfaces.application.ReactionReposit
 import com.upc.cicloestrella.repositories.interfaces.application.ReviewReactionRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.ReviewRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
+import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class ReviewReactionService implements ReviewReactionServiceInterface {
     private final ReviewReactionRepository reviewReactionRepository;
     private final ReactionRepository reactionRepository;
     private final StudentRepository studentRepository;
     private final ReviewRepository reviewRepository;
+    private final AuthenticatedUserService authenticatedUserService;
     private final ModelMapper modelMapper;
 
-    public ReviewReactionService(ReviewReactionRepository reviewReactionRepository, ReactionRepository reactionRepository, StudentRepository studentRepository, ReviewRepository reviewRepository, ModelMapper modelMapper) {
-        this.reviewReactionRepository = reviewReactionRepository;
-        this.reactionRepository = reactionRepository;
-        this.studentRepository = studentRepository;
-        this.reviewRepository = reviewRepository;
-        this.modelMapper = modelMapper;
-    }
-
-    // TODO: Implementar Spring Security para que solo un usuario autenticado pueda agregar una reacción
-
     @Override
-    public ReviewReactionResponseDTO addReactionToReview(ReviewCreateReactionRequestDTO reviewReactionRequestDTO , Long reviewId) {
+    public ReviewReactionResponseDTO addReactionToReview(Long reviewId, Long reviewReactionId) {
+
         Review review = getReviewOrThrow(reviewId);
-        Reaction reaction = getReactionOrThrow(reviewReactionRequestDTO.getReactionId());
-        Student author = getStudentOrThrow(reviewReactionRequestDTO.getAuthorId());
+        Reaction reaction = getReactionOrThrow(reviewReactionId);
+
+        Student author = authenticatedUserService.getAuthenticatedStudent();
 
         if(existsThisAuthorInTheSameReaction(reviewId, author.getId(), reaction.getId())){
             throw new EntityIdNotFoundException("El autor con ID " + author.getId() + " ya ha reaccionado con la reacción con ID " + reaction.getId() + " a la reseña con ID " + reviewId);
         }
 
-        ReviewReaction reviewReaction = modelMapper.map(reviewReactionRequestDTO, ReviewReaction.class);
-
-        reviewReaction.setReview(review);
-        reviewReaction.setReaction(reaction);
-        reviewReaction.setAuthor(author);
+        ReviewReaction reviewReaction = ReviewReaction
+                .builder()
+                .review(review)
+                .reaction(reaction)
+                .author(author)
+                .build();
 
         ReviewReaction savedReviewReaction =   reviewReactionRepository.save(reviewReaction);
         return modelMapper.map(savedReviewReaction , ReviewReactionResponseDTO.class);
 
     }
 
-    // TODO: Implementar Spring Security para que solo el autor pueda eliminar su reacción
 
     @Override
     public ReviewReactionResponseDTO removeReactionFromReview(Long reviewId, Long reviewReactionId) {
+
+        Student author = authenticatedUserService.getAuthenticatedStudent();
 
         if(!existReviewReactionWithReviewId(reviewId)){
             throw new EntityIdNotFoundException("No existe ninguna reacción asociada a la reseña con ID " + reviewId);
@@ -66,6 +64,10 @@ public class ReviewReactionService implements ReviewReactionServiceInterface {
 
         ReviewReaction reviewReaction = reviewReactionRepository.findById(reviewReactionId)
                 .orElseThrow(() -> new EntityIdNotFoundException("Reacción de reseña no encontrada con ID " + reviewReactionId));
+
+        if(!reviewReaction.getAuthor().getId().equals(author.getId())){
+            throw new SecurityException("No tienes permiso para eliminar esta reacción de reseña");
+        }
 
         reviewReactionRepository.delete(reviewReaction);
 

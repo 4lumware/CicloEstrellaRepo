@@ -7,6 +7,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -32,6 +33,14 @@ public class GlobalExceptionHandler {
                 .body(new ValidationErrorResponse(400, "Validacion fallida", errors, LocalDateTime.now()));
     }
 
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<GeneralErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex){
+        log.error("Authorization denied: {}", ex.getMessage());
+        return ResponseEntity
+                .status(403)
+                .body(new GeneralErrorResponse(403, "No tienes permiso para realizar esta accion", LocalDateTime.now()));
+    }
+
 
 
     @ExceptionHandler(DataIntegrityViolationException.class)
@@ -40,6 +49,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .badRequest()
                 .body(new GeneralErrorResponse(400, "Violacion de restriccion de la base de datos", LocalDateTime.now()));
+    }
+
+    @ExceptionHandler(SecurityException.class)
+    public ResponseEntity<GeneralErrorResponse> handleSecurityException(SecurityException ex){
+        log.error("Security exception: {}", ex.getMessage());
+        return ResponseEntity
+                .status(403)
+                .body(new GeneralErrorResponse(403, ex.getMessage(), LocalDateTime.now()));
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)

@@ -11,5 +11,4 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ReviewCreateReactionRequestDTO {
     private Long reactionId;
-    private Long authorId;
 }

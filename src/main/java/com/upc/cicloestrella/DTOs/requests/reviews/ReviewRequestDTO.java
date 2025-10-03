@@ -15,9 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 
 public class ReviewRequestDTO{
-    @NotNull(message = "El identificador del estudiante es requerido")
-    private Long studentId;
-
     @NotNull(message = "El identificador del profesor es requerido")
     private Long teacherId;
 

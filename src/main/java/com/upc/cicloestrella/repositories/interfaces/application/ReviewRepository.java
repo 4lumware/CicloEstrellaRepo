@@ -23,4 +23,6 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             )
     List<Review> findTeacherByDescriptionOrTagName(@Param("teacherId") Long teacherId,  @Param("keyword") String keyword);
 
+    boolean existsByIdAndStudent_User_Email(Long id, String studentUserEmail);
+
 }

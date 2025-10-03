@@ -6,7 +6,7 @@ import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.User;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.repositories.interfaces.application.RoleRepository;
-import com.upc.cicloestrella.repositories.interfaces.application.RoleServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.RoleServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

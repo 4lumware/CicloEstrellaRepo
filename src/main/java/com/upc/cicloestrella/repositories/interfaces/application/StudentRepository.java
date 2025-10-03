@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
    Optional<Student> findStudentByUserId(Long userId);
-
+   Optional<Student> findStudentByUser_Email(String email);
     Long user(User user);
 }

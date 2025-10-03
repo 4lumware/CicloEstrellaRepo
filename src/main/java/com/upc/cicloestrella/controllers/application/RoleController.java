@@ -4,7 +4,7 @@ import com.upc.cicloestrella.DTOs.responses.RoleResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 
-import com.upc.cicloestrella.repositories.interfaces.application.RoleServiceInterface;
+import com.upc.cicloestrella.interfaces.services.application.RoleServiceInterface;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.repositories.interfaces.application;
+package com.upc.cicloestrella.interfaces.services.application;
 
 import com.upc.cicloestrella.DTOs.responses.RoleResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
