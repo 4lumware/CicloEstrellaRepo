@@ -45,20 +45,20 @@ Desde ahí podrás probar todos los endpoints, ver los modelos de datos y las re
 5. La base de datos se inicializará automáticamente con los datos de `import.sql`.
 
 ## Usuarios de prueba
-En el archivo `import.sql` encontrarás usuarios de ejemplo con los siguientes roles:
+En el archivo `import.sql` encontrarás usuarios de ejemplo con los siguientes roles y contraseñas originales (solo para testing):
 
-| Usuario   | Email               | Rol principal         |
-|-----------|---------------------|----------------------|
-| alicia    | alicia@email.com    | ADMIN                |
-| roberto   | roberto@email.com   | MODERATOR            |
-| carlos    | carlos@email.com    | STUDENT              |
-| diana     | diana@email.com     | STUDENT              |
-| eva       | eva@email.com       | ADMIN, MODERATOR     |
-| francisco | francisco@email.com | STUDENT              |
-| graciela  | graciela@email.com  | STUDENT              |
-| hector    | hector@email.com    | STUDENT              |
-| ines      | ines@email.com      | STUDENT              |
-| juan      | juan@email.com      | STUDENT              |
+| Usuario   | Email               | Contraseña | Rol principal         |
+|-----------|---------------------|------------|----------------------|
+| alicia    | alicia@email.com    | clave1     | ADMIN                |
+| roberto   | roberto@email.com   | clave2     | MODERATOR            |
+| carlos    | carlos@email.com    | clave3     | STUDENT              |
+| diana     | diana@email.com     | clave4     | STUDENT              |
+| eva       | eva@email.com       | clave5     | ADMIN, MODERATOR     |
+| francisco | francisco@email.com | clave6     | STUDENT              |
+| graciela  | graciela@email.com  | clave7     | STUDENT              |
+| hector    | hector@email.com    | clave8     | STUDENT              |
+| ines      | ines@email.com      | clave9     | STUDENT              |
+| juan      | juan@email.com      | clave10    | STUDENT              |
 
 ## Contribución
 Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para sugerencias o mejoras.
