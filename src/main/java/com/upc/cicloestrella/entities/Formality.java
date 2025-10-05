@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Setter
 @Getter
@@ -17,7 +18,7 @@ import java.time.LocalDate;
 public class Formality {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idFormality;
+    private Long id;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -32,4 +33,6 @@ public class Formality {
     @Column(nullable = false , name="end_date")
     private LocalDate endDate;
 
+    @OneToMany(mappedBy = "formality", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
 }

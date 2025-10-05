@@ -138,6 +138,7 @@ public class ReviewService implements ReviewServiceInterface {
 
     @Override
     public void delete(Long reviewId) {
+
         Review existingReview = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
         reviewRepository.delete(existingReview);

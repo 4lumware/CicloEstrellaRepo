@@ -54,8 +54,8 @@ public class FormalityService implements FormalityServiceInterface {
 
     @Override
     public FormalityDTO update(Formality formality) {
-        if (!formalityRepository.existsById(formality.getIdFormality())) {
-            throw new EntityIdNotFoundException("Formalidad con id " + formality.getIdFormality() + " no encontrada");
+        if (!formalityRepository.existsById(formality.getId())) {
+            throw new EntityIdNotFoundException("Formalidad con id " + formality.getId() + " no encontrada");
         }
         Formality updatedFormality = formalityRepository.save(formality);
         return modelMapper.map(updatedFormality, FormalityDTO.class);
