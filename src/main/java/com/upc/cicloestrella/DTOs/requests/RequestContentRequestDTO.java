@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.DTOs.requests;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.upc.cicloestrella.enums.RequestTypeEnum;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,9 +15,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestContentRequestDTO {
 
-    @NotBlank(message = "El tipo de solicitud no puede estar vacío")
+    @NotNull(message = "El tipo de solicitud no puede estar vacío")
     private RequestTypeEnum requestType;
 
     @NotNull(message = "El contenido de la solicitud no puede estar vacío")
-    private Object content;
+    private JsonNode content;
 }

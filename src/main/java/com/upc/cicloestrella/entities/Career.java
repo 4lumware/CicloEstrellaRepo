@@ -1,5 +1,7 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,9 +21,11 @@ public class Career {
     private String careerName;
 
     @ManyToMany(mappedBy = "careers")
+    @JsonIgnore
     private List<Teacher> teachers;
 
     @ManyToMany(mappedBy = "careers")
+    @JsonIgnore
     private List<Student> students;
 
 }

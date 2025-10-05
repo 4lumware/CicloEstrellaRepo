@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class Campus {
     @Column(unique = true , nullable = false, name = "campus_name")
     private String campusName;
     @ManyToMany(mappedBy ="campuses")
+    @JsonIgnore
     private List<Teacher> teachers;
 
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 public class RequestContentResponseDTO {
     private Long id;
+    private StudentResponseDTO student;
     private RequestTypeEnum requestType;
     private Object content;
     private Request.RequestStatus status;
