@@ -65,7 +65,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        final Optional<User> user = userRepository.findByEmail(userEmail);
+        final Optional<User> user = userRepository.findByEmailAndStateTrue(userEmail);
 
         if(user.isEmpty() || !jwtService.isTokenValid(jwt , user.get())) {
             filterChain.doFilter(request, response);

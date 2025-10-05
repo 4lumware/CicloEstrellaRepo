@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 public class StaffRegisterService implements RoleRegisterInterface<StaffRegisterRequestDTO , User> {
     private final UserRepository userRepository;
-    private final RoleService roleService;
     private final ModelMapper modelMapper;
 
     @Transactional

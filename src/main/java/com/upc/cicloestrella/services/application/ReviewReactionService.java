@@ -75,7 +75,7 @@ public class ReviewReactionService implements ReviewReactionServiceInterface {
     }
 
     private boolean existReviewReactionWithReviewId(Long reviewId) {
-        return reviewReactionRepository.existsReviewReactionByReview_Id(reviewId);
+        return reviewReactionRepository.existsReviewReactionByReview_IdAndAuthor_User_StateTrue(reviewId);
     }
 
     private Review getReviewOrThrow(Long reviewId) {
@@ -84,7 +84,7 @@ public class ReviewReactionService implements ReviewReactionServiceInterface {
 
     }
     private boolean existsThisAuthorInTheSameReaction(Long reviewId,  Long authorId, Long reactionId) {
-        return reviewReactionRepository.existsReviewReactionByReview_IdAndAuthor_IdAndReaction_Id(reviewId, authorId, reactionId);
+        return reviewReactionRepository.existsReviewReactionByReview_IdAndAuthor_IdAndReaction_IdAndAuthor_User_StateTrue(reviewId, authorId, reactionId);
     }
     private Reaction getReactionOrThrow(Long reactionId) {
         return reactionRepository.findById(reactionId)

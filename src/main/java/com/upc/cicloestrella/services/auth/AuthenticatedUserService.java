@@ -28,7 +28,7 @@ public class AuthenticatedUserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        return userRepository.findByEmail(username)
+        return userRepository.findByEmailAndStateTrue(username)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email " + username));
     }
 }

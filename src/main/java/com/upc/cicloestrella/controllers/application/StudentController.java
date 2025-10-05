@@ -59,6 +59,25 @@ public class StudentController {
                 );
     }
 
+    @PutMapping("/{studentId}")
+    @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")
+    public ResponseEntity<ApiResponse<StudentResponseDTO>> update(@PathVariable Long studentId, @Valid @RequestBody StudentRequestDTO studentRequestDTO) {
+        StudentResponseDTO updatedUser = studentService.update(studentId, studentRequestDTO);
+        if(updatedUser == null) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<StudentResponseDTO>builder()
+                            .message("Estudiante no encontrado")
+                            .status(404)
+                            .build());
+        }
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<StudentResponseDTO>builder()
+                        .data(updatedUser)
+                        .message("Estudiante actualizado correctamente")
+                        .status(200)
+                        .build());
+    }
+
     @DeleteMapping("/{studentId}")
     @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")
     public ResponseEntity<ApiResponse<StudentResponseDTO>> delete(@PathVariable Long studentId) {

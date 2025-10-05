@@ -73,7 +73,7 @@ public class ReviewService implements ReviewServiceInterface {
 
     @Override
     public List<ReviewResponseDTO> index() {
-        List<Review> reviews = reviewRepository.findAll();
+        List<Review> reviews = reviewRepository.findReviewsByStudent_User_StateTrue().orElseThrow(() -> new EntityIdNotFoundException("No se encontraron reseñas"));
         if (reviews.isEmpty()) {
             return List.of();
         }
@@ -90,7 +90,7 @@ public class ReviewService implements ReviewServiceInterface {
 
     @Override
     public ReviewResponseDTO show(Long reviewId) {
-        Review review = reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findByIdAndStudent_User_StateTrue(reviewId)
                 .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
         
         List<ReactionCountByDatabaseDTO> reactionCounts = reviewReactionRepository.countAllReactionsByReview(List.of(review));
@@ -100,8 +100,8 @@ public class ReviewService implements ReviewServiceInterface {
     @Override
     public List<ReviewResponseDTO> getReviewsByTeacher(Long teacherId , String keyword) {
         List<Review> reviews = (keyword == null || keyword.isEmpty()) ?
-                reviewRepository.findReviewByTeacherId(teacherId) :
-                reviewRepository.findTeacherByDescriptionOrTagName(teacherId, keyword);
+                reviewRepository.findReviewsByTeacherIdAndStudent_User_StateTrue(teacherId) :
+                reviewRepository.findTeacherByDescriptionOrTagNameAndStudent_User_StateTrue(teacherId, keyword);
 
         List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase = reviewReactionRepository.countAllReactionsByReview(reviews);
 

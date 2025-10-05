@@ -29,7 +29,7 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
-            User user = userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("El usuario no existe"));
+            User user = userRepository.findByEmailAndStateTrue(username).orElseThrow(() -> new UsernameNotFoundException("El usuario no existe"));
 
             List<GrantedAuthority> authorities = user.getRoles().stream()
                     .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getRoleName().name()))

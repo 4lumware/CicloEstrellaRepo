@@ -15,11 +15,12 @@ public interface ReviewReactionRepository extends JpaRepository<ReviewReaction, 
             "r.review.id , r.reaction.id , r.reaction.reactionName , r.reaction.icon_url, COUNT(r)) " +
             "FROM ReviewReaction r " +
             "WHERE r.review IN :reviews " +
+            "AND r.author.user.state IS true " +
             "GROUP BY r.review.id , r.reaction.id , r.reaction.reactionName , r.reaction.icon_url")
     List<ReactionCountByDatabaseDTO> countAllReactionsByReview(@Param("reviews") List<Review> reviews);
 
-    boolean existsReviewReactionByReview_IdAndAuthor_IdAndReaction_Id(Long reviewId, Long authorId, Long reactionId);
-    boolean existsReviewReactionByReview_Id(Long reviewId);
+    boolean existsReviewReactionByReview_IdAndAuthor_IdAndReaction_IdAndAuthor_User_StateTrue(Long reviewId, Long authorId, Long reactionId);
+    boolean existsReviewReactionByReview_IdAndAuthor_User_StateTrue(Long reviewId);
 
     boolean existsReviewReactionByIdAndAuthor_User_Email(Long id, String authorUserEmail);
 }

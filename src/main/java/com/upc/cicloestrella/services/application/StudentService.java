@@ -11,60 +11,25 @@ import com.upc.cicloestrella.mappers.StudentMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.CareerRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ =  @Autowired)
 public class StudentService implements StudentServiceInterface {
 
     private final StudentRepository studentRepository;
     private final CareerRepository careerRepository;
     private final ModelMapper modelMapper ;
     private final StudentMapper studentMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    public StudentService(StudentRepository studentRepository,  CareerRepository careerRepository, ModelMapper modelMapper, StudentMapper studentMapper) {
-        this.studentRepository = studentRepository;
-        this.modelMapper = modelMapper;
-        this.studentMapper = studentMapper;
-        this.careerRepository = careerRepository;
-    }
-
-    @Override
-    @Transactional
-    public StudentResponseDTO save(StudentRequestDTO userRequestDTO) {
-
-        User user  = modelMapper.map(userRequestDTO, User.class);
-
-        List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
-
-        if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
-            throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
-        }
-
-        user.setCreationDate(LocalDate.now());
-        user.setState(true);
-
-        Student student = Student.builder()
-                .currentSemester(userRequestDTO.getCurrentSemester())
-                .build();
-
-        student.setUser(user);
-
-        student.setCareers(careers);
-        student.setCurrentSemester(userRequestDTO.getCurrentSemester());
-
-        user.setStudent(student);
-
-        Student savedStudent = studentRepository.save(student);
-
-        return studentMapper.toDTO(savedStudent);
-
-    }
 
     @Override
     public List<StudentResponseDTO> index() {
@@ -94,8 +59,8 @@ public class StudentService implements StudentServiceInterface {
                         throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
                     }
                     existingStudent.setCareers(careers);
-
                     existingStudent.setCurrentSemester(userRequestDTO.getCurrentSemester());
+                    existingStudent.getUser().setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
 
                     Student updatedStudent = studentRepository.save(existingStudent);
 
@@ -106,9 +71,17 @@ public class StudentService implements StudentServiceInterface {
 
     @Override
     public void delete(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
+
         if (!studentRepository.existsById(id)) {
             throw new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado");
         }
-        studentRepository.deleteById(id);
+
+        User user = student.getUser();
+        user.setState(false);
+        studentRepository.save(student);
+
+
     }
 }
