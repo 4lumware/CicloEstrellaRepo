@@ -6,9 +6,8 @@ import com.upc.cicloestrella.DTOs.responses.FavoriteResponseDTO;
 import java.util.List;
 
 public interface FavoriteServiceInterface  {
-    FavoriteResponseDTO save(FavoriteRequestDTO favoriteRequestDTO);
-    List<FavoriteResponseDTO> index();
-    FavoriteResponseDTO findById(Long favoriteId);
-    FavoriteResponseDTO delete(Long favoriteId);
-
+    FavoriteResponseDTO save(Long studentId ,  FavoriteRequestDTO favoriteRequestDTO);
+    List<FavoriteResponseDTO> index(Long studentId);
+    FavoriteResponseDTO findById(Long studentId , Long favoriteId);
+    FavoriteResponseDTO delete(Long studentId,    Long favoriteId);
 }
