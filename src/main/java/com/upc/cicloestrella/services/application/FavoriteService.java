@@ -15,13 +15,12 @@ import com.upc.cicloestrella.repositories.interfaces.application.FormalityReposi
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.TeacherRepository;
 import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
+import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authorization.AuthorizationDeniedException;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ import java.util.List;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FavoriteService implements FavoriteServiceInterface {
 
-    private final AuthenticatedUserService authenticatedUserService;
+    private final StudentRepository studentRepository;
     private final FavoriteRepository favoriteRepository;
     private final TeacherRepository teacherRepository;
     private final FormalityRepository formalityRepository;
@@ -38,11 +37,11 @@ public class FavoriteService implements FavoriteServiceInterface {
     private Object getFavoriteData(Favorite favorite) {
         if (favorite.getFavoriteType() == Favorite.FavoriteType.TEACHER) {
             Teacher teacher = teacherRepository.findById(favorite.getReferenceId())
-                    .orElseThrow(() -> new RuntimeException("Profesor no encontrado con id " + favorite.getReferenceId()));
+                    .orElseThrow(() -> new EntityIdNotFoundException("Profesor no encontrado con id " + favorite.getReferenceId()));
             return modelMapper.map(teacher, TeacherResponseDTO.class);
         } else if (favorite.getFavoriteType() == Favorite.FavoriteType.FORMALITY) {
             Formality formality = formalityRepository.findById(favorite.getReferenceId())
-                    .orElseThrow(() -> new RuntimeException("Formalidad no encontrada con id " + favorite.getReferenceId()));
+                    .orElseThrow(() -> new EntityIdNotFoundException("Formalidad no encontrada con id " + favorite.getReferenceId()));
             return modelMapper.map(formality, FormalityDTO.class);
         }
 
@@ -50,20 +49,21 @@ public class FavoriteService implements FavoriteServiceInterface {
     }
 
     @Override
-    public FavoriteResponseDTO save(FavoriteRequestDTO favoriteRequestDTO) {
+    public FavoriteResponseDTO save(Long studentId, FavoriteRequestDTO favoriteRequestDTO) {
 
-        Student student = authenticatedUserService.getAuthenticatedStudent();
+        Student student =  studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante no encontrado con id " + studentId));
 
         if (Favorite.FavoriteType.FORMALITY.equals(favoriteRequestDTO.getType())) {
 
             if (!formalityRepository.existsById(favoriteRequestDTO.getReferenceId())) {
-                throw new RuntimeException("Formalidad no encontrada con id " + favoriteRequestDTO.getReferenceId());
+                throw new EntityIdNotFoundException("Formalidad no encontrada con id " + favoriteRequestDTO.getReferenceId());
             }
 
         } else if (Favorite.FavoriteType.TEACHER.equals(favoriteRequestDTO.getType())) {
 
             if (!teacherRepository.existsById(favoriteRequestDTO.getReferenceId())) {
-                throw new RuntimeException("Profesor no encontrado con id " + favoriteRequestDTO.getReferenceId());
+                throw new EntityIdNotFoundException("Profesor no encontrado con id " + favoriteRequestDTO.getReferenceId());
             }
 
         }
@@ -75,10 +75,11 @@ public class FavoriteService implements FavoriteServiceInterface {
         );
 
         if (exists) {
-            throw new RuntimeException("El favorito ya existe para este estudiante");
+            throw new IllegalArgumentException("El favorito ya existe para este estudiante");
         }
 
         Favorite favorite = modelMapper.map(favoriteRequestDTO, Favorite.class);
+        favorite.setId(null);
         favorite.setStudent(student);
         Favorite savedFavorite = favoriteRepository.save(favorite);
         Object data = getFavoriteData(savedFavorite);
@@ -91,10 +92,8 @@ public class FavoriteService implements FavoriteServiceInterface {
     }
 
     @Override
-    public List<FavoriteResponseDTO> index() {
-        Student student = authenticatedUserService.getAuthenticatedStudent();
-        List<Favorite> favorites = favoriteRepository.findAllByStudent(student);
-
+    public List<FavoriteResponseDTO> index(Long studentId) {
+        List<Favorite> favorites = favoriteRepository.findAllByStudent_User_Id(studentId);
         return favorites.stream().map(favorite ->  {
             Object data = getFavoriteData(favorite);
             return FavoriteResponseDTO.builder()
@@ -106,9 +105,11 @@ public class FavoriteService implements FavoriteServiceInterface {
     }
 
     @Override
-    public FavoriteResponseDTO findById(Long favoriteId) {
-        Favorite favorite = favoriteRepository.findById(favoriteId)
-                .orElseThrow(() -> new EntityIdNotFoundException("Favorito no encontrado con id " + favoriteId));
+    public FavoriteResponseDTO findById(Long studentId, Long favoriteId) {
+        Favorite favorite = favoriteRepository
+                .findByIdAndStudent_User_Id(favoriteId, studentId)
+                .orElseThrow(() -> new EntityIdNotFoundException("No se encontró el favorito"));
+
         Object data = getFavoriteData(favorite);
         return FavoriteResponseDTO.builder()
                 .id(favorite.getId())
@@ -117,19 +118,17 @@ public class FavoriteService implements FavoriteServiceInterface {
                 .build();
     }
 
+    @Transactional
     @Override
-    public FavoriteResponseDTO delete(Long favoriteId) {
-        Student student = authenticatedUserService.getAuthenticatedStudent();
+    public FavoriteResponseDTO delete(Long studentId, Long favoriteId) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante no encontrado con id " + studentId));
 
-        Favorite favorite = favoriteRepository.findById(favoriteId)
-                .orElseThrow(() -> new EntityIdNotFoundException("Favorito no encontrado con id " + favoriteId));
-
-        if (!favorite.getStudent().getId().equals(student.getId())) {
-            throw new AuthorizationDeniedException("No tienes permiso para eliminar este favorito");
-        }
+        Favorite favorite = favoriteRepository.findByIdAndStudent_User_Id(favoriteId, studentId)
+                .orElseThrow(() -> new EntityIdNotFoundException("No se encontró el favorito para el estudiante especificado"));
 
         Object data = getFavoriteData(favorite);
-        favoriteRepository.delete(favorite);
+        student.getFavorites().remove(favorite);
 
         return FavoriteResponseDTO.builder()
                 .id(favorite.getId())

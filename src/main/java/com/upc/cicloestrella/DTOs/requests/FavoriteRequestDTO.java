@@ -7,8 +7,6 @@ import lombok.Data;
 
 @Data
 public class FavoriteRequestDTO {
-    @NotNull(message = "El ID del estudiante no puede ser nulo")
-    private Long studentId;
     @NotNull(message = "El tipo de favorito no puede ser nulo")
     private Favorite.FavoriteType type;
     @NotNull(message = "El ID de referencia no puede ser nulo")

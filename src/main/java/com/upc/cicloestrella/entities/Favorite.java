@@ -12,6 +12,7 @@ import lombok.*;
 @Builder
 public class Favorite {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     public enum FavoriteType {
         TEACHER,

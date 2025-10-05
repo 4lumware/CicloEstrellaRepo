@@ -40,10 +40,10 @@ public class StudentController {
                         .build());
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
-    public ResponseEntity<ApiResponse<StudentResponseDTO>> show(@PathVariable Long id) {
-        var user = studentService.show(id);
+    @GetMapping("/{studentId}")
+    @PreAuthorize("hasAnyRole('STUDENT','ADMIN', 'MODERATOR') and @studentAuthorizationService.canAccess(authentication , #studentId)")
+    public ResponseEntity<ApiResponse<StudentResponseDTO>> show(@PathVariable Long studentId) {
+        var user = studentService.show(studentId);
         if(user == null) {
             return ResponseEntity
                     .status(404)
@@ -59,10 +59,10 @@ public class StudentController {
                 );
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<StudentResponseDTO>> delete(@PathVariable Long id) {
-        StudentResponseDTO userResponseDTO = studentService.show(id);
+    @DeleteMapping("/{studentId}")
+    @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")
+    public ResponseEntity<ApiResponse<StudentResponseDTO>> delete(@PathVariable Long studentId) {
+        StudentResponseDTO userResponseDTO = studentService.show(studentId);
         if (userResponseDTO == null) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<StudentResponseDTO>builder()
@@ -70,7 +70,8 @@ public class StudentController {
                             .status(404)
                             .build());
         }
-        studentService.delete(id);
+
+        studentService.delete(studentId);
         return ResponseEntity.status(200)
                 .body(ApiResponse.<StudentResponseDTO>builder()
                         .data(userResponseDTO)
