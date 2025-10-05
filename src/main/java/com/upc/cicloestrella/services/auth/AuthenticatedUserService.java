@@ -10,15 +10,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AuthenticatedUserService {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
-
+    private final List<String> ALLOWED_ROLES = List.of("ROLE_ADMIN", "ROLE_MODERATOR");
     public Student getAuthenticatedStudent() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
+
+
 
         return studentRepository.findStudentByUser_Email(username)
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado con email " + username));
