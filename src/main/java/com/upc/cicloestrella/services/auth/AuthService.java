@@ -51,7 +51,7 @@ public class AuthService implements AuthServiceInterface {
                 )
         );
 
-        User user = userRepository.findByEmail(userLoginRequestDTO.getEmail())
+        User user = userRepository.findByEmailAndStateTrue(userLoginRequestDTO.getEmail())
                 .orElseThrow(() -> new RuntimeException("El usuario con email " + userLoginRequestDTO.getEmail() + " no existe"));
 
         String accessToken = jwtService.generateAccessToken(user);
@@ -111,7 +111,7 @@ public class AuthService implements AuthServiceInterface {
 
         if(userEmail == null) throw new IllegalArgumentException("Token invalido");
 
-        final User user = userRepository.findByEmail(userEmail)
+        final User user = userRepository.findByEmailAndStateTrue(userEmail)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + userEmail));
 
         final boolean isValidToken = jwtService.isTokenValid(refreshToken , user);
