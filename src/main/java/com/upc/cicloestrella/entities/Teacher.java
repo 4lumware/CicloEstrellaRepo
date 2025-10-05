@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,6 +11,10 @@ import java.util.List;
 @Table(name = "teachers")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+
 public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +26,10 @@ public class Teacher {
     @Column(length = 100 , nullable = false ,name = "last_name")
     private String lastName;
 
-    @Column(nullable = true , name = "general_description" , length = 4000)
+    @Column(name = "general_description" , length = 4000)
     private String generalDescription;
 
-    @Column(nullable = true , name = "profile_picture_url" , length = 1000)
+    @Column(name = "profile_picture_url" , length = 1000)
     private String profilePictureURL;
 
     @Column(
@@ -44,13 +48,16 @@ public class Teacher {
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "career_id")
     )
+    @JsonManagedReference
     private List<Career> careers;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "teacher_campuses",
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "campus_id")
     )
+    @JsonManagedReference
     private List<Campus> campuses;
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -59,6 +66,14 @@ public class Teacher {
             joinColumns = @JoinColumn(name = "teacher_id"),
             inverseJoinColumns = @JoinColumn(name = "course_id")
     )
+    @JsonManagedReference
     private List<Course> courses;
+
+    @PrePersist
+    public void prePersist() {
+        if (averageRating == null) {
+            averageRating = BigDecimal.valueOf(0.00);
+        }
+    }
 
 }

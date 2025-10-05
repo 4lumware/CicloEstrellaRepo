@@ -44,6 +44,7 @@ public class FavoriteController {
     @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN' , 'MODERATOR') and @favoriteAuthorizationService.canAccess(authentication , #studentId)")
     @GetMapping("/students/{studentId}/favorites/{favoriteId}")
     public ResponseEntity<ApiResponse<FavoriteResponseDTO>> show(@PathVariable("studentId") Long studentId , @PathVariable("favoriteId") Long favoriteId) {
+
         FavoriteResponseDTO favorite = favoriteService.findById(studentId, favoriteId);
         if (favorite == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -58,6 +59,7 @@ public class FavoriteController {
                         .message("Favorito obtenido correctamente")
                         .status(200)
                         .build());
+
     }
 
     @PreAuthorize("hasRole('STUDENT') and @favoriteAuthorizationService.canAccess(authentication , #studentId)")

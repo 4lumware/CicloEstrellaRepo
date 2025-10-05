@@ -41,6 +41,18 @@ public class GlobalExceptionHandler {
                 .body(new GeneralErrorResponse(403, "No tienes permiso para realizar esta accion", LocalDateTime.now()));
     }
 
+    @ExceptionHandler(ValidationWithFieldsException.class)
+    public ResponseEntity<ValidationErrorResponse> handleValidationExceptions(ValidationWithFieldsException ex) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ValidationErrorResponse(
+                        400,
+                        ex.getMessage(),
+                        ex.getErrors(),
+                        LocalDateTime.now()
+                ));
+    }
+
 
 
     @ExceptionHandler(DataIntegrityViolationException.class)

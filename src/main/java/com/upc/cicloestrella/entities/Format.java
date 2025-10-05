@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,5 +19,6 @@ public class Format {
     @Column(unique = true, nullable = false ,name = "format_name")
     private String formatName;
     @ManyToMany(mappedBy = "formats")
+    @JsonIgnore
     private List<Course> courses;
 }

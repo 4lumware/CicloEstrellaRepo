@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
@@ -21,6 +22,7 @@ public class Course {
     private String courseName;
 
     @ManyToMany(mappedBy = "courses")
+    @JsonIgnore
     private List<Teacher> teacher;
 
     @ManyToMany
@@ -31,5 +33,6 @@ public class Course {
             },
             inverseJoinColumns = @JoinColumn(name = "format_id")
     )
+    @JsonIgnore
     private List<Format> formats;
 }

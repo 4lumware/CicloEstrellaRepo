@@ -56,6 +56,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<Token> tokens = new HashSet<>();
 
+    @JsonManagedReference
     @OneToOne(mappedBy = "user")
     private Student student;
 
