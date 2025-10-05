@@ -145,3 +145,36 @@ INSERT INTO roles (role_name) VALUES ('ADMIN'), ('STUDENT'), ('MODERATOR') , ('W
 -- user_roles (MuchosAMuchos)
 INSERT INTO user_roles (user_id, role_id) VALUES
 (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 1), (7, 3), (8, 1), (9, 3), (10, 3);
+
+-- favoritos
+INSERT INTO favorites (student_id, favorite_type, reference_id) VALUES
+(1, 'TEACHER', 1),
+(3, 'FORMALITY', 3),
+(4, 'TEACHER', 4),
+(1, 'FORMALITY', 6),
+(2, 'TEACHER', 7),
+(4, 'FORMALITY', 9),
+(5, 'TEACHER', 10);
+
+-- comentarios
+INSERT INTO comments (text, created_at, student_id, formality_id) VALUES
+('Muy útil el trámite, atención rápida.', '2025-01-06T10:00:00', 1, 1),
+('Fácil de realizar, personal amable.', '2025-02-11T11:00:00', 2, 2),
+('Me gustaría que fuera más digital.', '2025-03-02T12:00:00', 3, 3),
+('El proceso fue un poco lento.', '2025-04-11T13:00:00', 4, 4),
+('Excelente orientación en la oficina.', '2025-05-06T14:00:00', 5, 5),
+('Recomiendo hacer el trámite temprano.', '2025-06-02T15:00:00', 1, 6),
+('Faltó información en la web.', '2025-07-11T16:00:00', 2, 7),
+('Muy buena experiencia.', '2025-08-02T17:00:00', 3, 8),
+('El trámite fue sencillo.', '2025-09-06T18:00:00', 4, 9),
+('Me ayudaron en todo momento.', '2025-10-02T19:00:00', 5, 10),
+('Me atendieron rápido y resolvieron todas mis dudas.', '2025-01-07T09:30:00', 2, 1),
+('El trámite online fue sencillo y eficiente.', '2025-02-12T10:45:00', 3, 2),
+('Hubo mucha cola, pero el personal fue amable.', '2025-03-03T11:20:00', 4, 3),
+('No encontré toda la información en la web.', '2025-04-12T12:10:00', 5, 4),
+('El sistema de citas podría mejorar.', '2025-05-07T13:15:00', 1, 5),
+('Me guiaron paso a paso, muy recomendable.', '2025-06-03T14:25:00', 2, 6),
+('El trámite presencial fue más rápido de lo esperado.', '2025-07-12T15:35:00', 3, 7),
+('Me gustaría que todo fuera digital.', '2025-08-03T16:40:00', 4, 8),
+('Excelente atención telefónica.', '2025-09-07T17:50:00', 5, 9),
+('El proceso fue claro y transparente.', '2025-10-03T18:55:00', 1, 10);
