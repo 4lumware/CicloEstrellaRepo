@@ -7,7 +7,7 @@ import com.upc.cicloestrella.DTOs.responses.comments.CommentResponseDTO;
 import java.util.List;
 
 public interface CommentServiceInterface {
-    List<CommentResponseDTO> allByFormalityId(Long formalityId);
+    List<CommentResponseDTO> allByFormalityId(Long formalityId, String keyword);
     CommentResponseDTO findById(Long commentId , Long formalityId);
     CommentResponseDTO delete(Long commentId , Long formalityId);
     CommentResponseDTO save(CommentRequestDTO comment , Long formalityId);
