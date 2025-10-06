@@ -11,8 +11,10 @@ import com.upc.cicloestrella.mappers.CommentMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.CommentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.FormalityRepository;
 import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
+import com.upc.cicloestrella.specifications.application.CommentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +29,15 @@ public class CommentService implements CommentServiceInterface {
     private final CommentMapper commentMapper;
 
     @Override
-    public List<CommentResponseDTO> allByFormalityId(Long formalityId) {
-        return commentRepository.findCommentsByFormality_IdAndStudent_User_StateTrue(formalityId)
+    public List<CommentResponseDTO> allByFormalityId(Long formalityId, String keyword) {
+        Specification<Comment> spec = (root, query, cb) -> cb.equal(root.get("formality").get("id"), formalityId);
+        spec = spec.and((root, query, cb) -> cb.isTrue(root.get("student").get("user").get("state")));
+
+        if (keyword != null && !keyword.isEmpty()) {
+            spec = spec.and(CommentSpecification.hasKeyword(keyword));
+        }
+
+        return commentRepository.findAll(spec)
                 .stream()
                 .map(commentMapper::toDTO)
                 .toList();
