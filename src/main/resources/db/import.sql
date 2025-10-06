@@ -147,14 +147,15 @@ INSERT INTO user_roles (user_id, role_id) VALUES
 (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 1), (7, 3), (8, 1), (9, 3), (10, 3);
 
 -- favoritos
-INSERT INTO favorites (student_id, favorite_type, reference_id) VALUES
-(1, 'TEACHER', 1),
-(3, 'FORMALITY', 3),
-(4, 'TEACHER', 4),
-(1, 'FORMALITY', 6),
-(2, 'TEACHER', 7),
-(4, 'FORMALITY', 9),
-(5, 'TEACHER', 10);
+INSERT INTO favorites (student_id, favorite_type, reference_id, note) VALUES
+(1, 'TEACHER', 1, 'Me gusta cómo explica el profesor Carlos'),
+(3, 'FORMALITY', 3, 'Trámite de actividades extracurriculares muy útil'),
+(4, 'TEACHER', 4, 'La profesora Ana es muy dedicada'),
+(1, 'FORMALITY', 6, 'Constancia de estudios necesaria para beca'),
+(2, 'TEACHER', 7, 'El profesor Miguel motiva mucho en clase'),
+(4, 'FORMALITY', 9, 'Examen de recuperación importante para mi avance'),
+(5, 'TEACHER', 10, 'La profesora Paula es muy atenta');
+
 
 -- comentarios
 INSERT INTO comments (text, created_at, student_id, formality_id) VALUES
