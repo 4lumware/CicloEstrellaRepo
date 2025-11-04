@@ -6,6 +6,7 @@ import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.services.application.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,15 +39,17 @@ public class UserController {
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<List<UserResponseDTO>>> filter(
+    public ResponseEntity<ApiResponse<Page<UserResponseDTO>>> filter(
             @RequestParam(required = false) String username,
             @RequestParam(required = false) String roleName,
             @RequestParam(required = false) Boolean state,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate ,
+            @RequestParam(required = false) Integer page ,
+            @RequestParam(required = false) Integer size
     ) {
-        List<UserResponseDTO> users = userService.index(username, roleName, state, startDate, endDate);
-        return ResponseEntity.ok(ApiResponse.<List<UserResponseDTO>>builder()
+        Page<UserResponseDTO> users = userService.index(username, roleName, state, startDate, endDate , page != null ? page : 0 , size != null ? size : 10);
+        return ResponseEntity.ok(ApiResponse.<Page<UserResponseDTO>>builder()
                 .data(users)
                 .message("Usuarios filtrados correctamente")
                 .status(200)
