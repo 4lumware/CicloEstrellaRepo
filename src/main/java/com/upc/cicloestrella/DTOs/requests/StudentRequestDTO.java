@@ -16,22 +16,18 @@ public class StudentRequestDTO {
     @Email(message = "Debe ser un correo electrónico válido")
     private String email;
 
-    @NotBlank(message = "La contraseña no puede estar vacía")
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
 
     @NotNull(message = "El nombre no puede estar vacío")
-    @Size(max = 500, message = "La URL de la foto no debe superar los 500 caracteres")
-    @Pattern(
-            regexp = "^(https?|ftp)://.*$",
-            message = "La URL de la foto debe ser válida"
-    )
     private String profilePictureUrl;
+
+    @NotNull(message = "El rol no puede estar vacío")
+    private Long roleId;
 
     @NotNull(message = "El semestre actual no puede estar vacío")
     @Min(value = 1, message = "El semestre actual debe ser al menos 1")
     @Max(value = 20, message = "El semestre actual no debe superar 20")
-
     private int currentSemester;
 
     @NotNull(message = "La lista de carreras no puede ser null")

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -61,7 +62,7 @@ public class StudentController {
 
     @PutMapping("/{studentId}")
     @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")
-    public ResponseEntity<ApiResponse<StudentResponseDTO>> update(@PathVariable Long studentId, @Valid @RequestBody StudentRequestDTO studentRequestDTO) {
+    public ResponseEntity<ApiResponse<StudentResponseDTO>> update(@PathVariable Long studentId, @Valid @RequestBody StudentRequestDTO studentRequestDTO) throws IOException {
         StudentResponseDTO updatedUser = studentService.update(studentId, studentRequestDTO);
         if(updatedUser == null) {
             return ResponseEntity.status(404)

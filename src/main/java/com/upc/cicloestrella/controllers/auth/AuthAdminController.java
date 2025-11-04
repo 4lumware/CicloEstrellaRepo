@@ -1,7 +1,10 @@
 package com.upc.cicloestrella.controllers.auth;
 
 
+import com.upc.cicloestrella.DTOs.requests.StaffRequestDTO;
+import com.upc.cicloestrella.DTOs.requests.auth.register.StaffRegisterRequestDTO;
 import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestDTO;
+import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestWithImageDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JsonResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;

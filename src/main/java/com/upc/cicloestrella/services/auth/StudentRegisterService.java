@@ -17,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -34,41 +36,44 @@ public class StudentRegisterService implements RoleRegisterInterface<StudentRegi
     @Override
     public Student register(StudentRegisterRequestDTO userRequestDTO) {
 
-        log.debug("StudentRegisterService.register: incoming DTO class={} dto={}", userRequestDTO != null ? userRequestDTO.getClass().getName() : null, userRequestDTO);
-
         if (userRequestDTO == null) {
             throw new IllegalArgumentException("El request de registro no puede ser null");
         }
-
-        log.debug("StudentRegisterService.register: careerIds={}", userRequestDTO.getCareerIds());
 
         if (userRequestDTO.getCareerIds() == null || userRequestDTO.getCareerIds().isEmpty()) {
             throw new EntityIdNotFoundException("No se proporcionaron IDs de carreras válidos");
         }
 
-        User user  = studentMapper.toUserEntity(userRequestDTO);
+        if (userRepository.existsByEmail(userRequestDTO.getEmail())) {
+            throw new IllegalArgumentException("El usuario con ese correo ya existe");
+        }
+
+        User user = studentMapper.toUserEntity(userRequestDTO);
 
         user.setStudent(null);
+        user.setId(null); // casi muero aqui
 
-        user = userRepository.save(user);
+        if (user.getCreationDate() == null) user.setCreationDate(LocalDate.now());
+        if (user.getState() == null) user.setState(true);
 
-        roleService.assignRoleToUser(user  , Role.RoleName.STUDENT);
-        user = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
-        List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
 
-        if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
-            throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
+        roleService.assignRoleToUser(savedUser, Role.RoleName.STUDENT);
+        savedUser = userRepository.save(savedUser);
+
+        List<Career> careers = careerRepository.findAllById(userRequestDTO.getCareerIds());
+        if (careers.size() != userRequestDTO.getCareerIds().size()) {
+            throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen");
         }
 
         Student student = Student.builder()
-                .user(user)
+                .user(savedUser)
                 .careers(careers)
                 .currentSemester(userRequestDTO.getCurrentSemester())
                 .build();
 
-        user.setStudent(student);
-
+        savedUser.setStudent(student);
         return studentRepository.save(student);
     }
 

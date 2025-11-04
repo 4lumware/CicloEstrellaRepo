@@ -1,13 +1,12 @@
 package com.upc.cicloestrella.DTOs.requests.auth.register;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 
 @Data
@@ -31,4 +30,12 @@ public class UserRegisterRequestWithImageDTO {
     @Size(max = 1000, message = "La URL de la foto no debe superar los 1000 caracteres")
 
     private String profilePictureUrl;
+
+    @NotNull(message = "El rol no puede estar vacío")
+    private Long roleId;
+
+    private int currentSemester;
+    private List<@Positive(message = "El ID de la carrera debe ser positivo") Long> careerIds;
+
+
 }
