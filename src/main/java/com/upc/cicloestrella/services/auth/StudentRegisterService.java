@@ -1,7 +1,6 @@
 package com.upc.cicloestrella.services.auth;
 
 import com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.entities.Career;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.Student;
@@ -14,11 +13,13 @@ import com.upc.cicloestrella.repositories.interfaces.application.auth.UserReposi
 import com.upc.cicloestrella.repositories.interfaces.auth.RoleRegisterInterface;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ =  @Autowired)
 public class StudentRegisterService implements RoleRegisterInterface<StudentRegisterRequestDTO , Student> {
@@ -33,7 +34,27 @@ public class StudentRegisterService implements RoleRegisterInterface<StudentRegi
     @Override
     public Student register(StudentRegisterRequestDTO userRequestDTO) {
 
+        log.debug("StudentRegisterService.register: incoming DTO class={} dto={}", userRequestDTO != null ? userRequestDTO.getClass().getName() : null, userRequestDTO);
+
+        if (userRequestDTO == null) {
+            throw new IllegalArgumentException("El request de registro no puede ser null");
+        }
+
+        log.debug("StudentRegisterService.register: careerIds={}", userRequestDTO.getCareerIds());
+
+        if (userRequestDTO.getCareerIds() == null || userRequestDTO.getCareerIds().isEmpty()) {
+            throw new EntityIdNotFoundException("No se proporcionaron IDs de carreras válidos");
+        }
+
         User user  = studentMapper.toUserEntity(userRequestDTO);
+
+        user.setStudent(null);
+
+        user = userRepository.save(user);
+
+        roleService.assignRoleToUser(user  , Role.RoleName.STUDENT);
+        user = userRepository.save(user);
+
         List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
 
         if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
@@ -47,7 +68,6 @@ public class StudentRegisterService implements RoleRegisterInterface<StudentRegi
                 .build();
 
         user.setStudent(student);
-        roleService.assignRoleToUser(user  , Role.RoleName.STUDENT);
 
         return studentRepository.save(student);
     }
