@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.controllers.auth;
 
 import com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO;
+import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JsonResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
@@ -29,7 +30,7 @@ public class AuthStudentController{
     @PostMapping("/register")
     @PermitAll
     public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(
-            @RequestBody @Valid StudentRegisterRequestDTO userRegisterRequestDTO) throws IOException {
+            @RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) throws IOException {
 
         JsonResponseDTO<?> jsonResponseDTO = authService.register(
                 userRegisterRequestDTO , RoleByAuthenticationMethods.STUDENT

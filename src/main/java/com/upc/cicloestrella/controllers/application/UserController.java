@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -58,7 +60,7 @@ public class UserController {
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> update(@PathVariable Long userId, @Valid @RequestBody UserRequestDTO userRequestDTO) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> update(@PathVariable Long userId, @Valid @RequestBody UserRequestDTO userRequestDTO) throws IOException {
         UserResponseDTO updatedUser = userService.update(userId, userRequestDTO);
         return ResponseEntity.ok(ApiResponse.<UserResponseDTO>builder()
                 .data(updatedUser)
@@ -69,7 +71,7 @@ public class UserController {
 
     @DeleteMapping("/{userId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<UserResponseDTO>> delete(@PathVariable Long userId) {
+    public ResponseEntity<ApiResponse<UserResponseDTO>> delete(@PathVariable Long userId) throws IOException, URISyntaxException {
         UserResponseDTO deletedUser = userService.delete(userId);
         return ResponseEntity.ok(ApiResponse.<UserResponseDTO>builder()
                 .data(deletedUser)

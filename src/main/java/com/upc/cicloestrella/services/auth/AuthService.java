@@ -18,6 +18,7 @@ import com.upc.cicloestrella.repositories.interfaces.application.auth.TokenRepos
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.auth.JWTServiceInterface;
+import com.upc.cicloestrella.services.logic.ImageCreatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -32,8 +33,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Base64;
+import java.util.UUID;
 
 
 @Slf4j
@@ -49,6 +52,7 @@ public class AuthService implements AuthServiceInterface {
     private final StudentMapper studentMapper;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final ImageCreatorService imageCreatorService;
 
 
     @Override
@@ -96,42 +100,16 @@ public class AuthService implements AuthServiceInterface {
     @Override
     public JsonResponseDTO<Object> register(UserRegisterRequestDTO dto, RoleByAuthenticationMethods roleName) throws IOException {
 
-        // Log incoming DTO details to help debug binding issues
-        try {
-            if (dto instanceof com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO sDto) {
-                log.debug("AuthService.register: received StudentRegisterRequestDTO currentSemester={} careerIds={}", sDto.getCurrentSemester(), sDto.getCareerIds());
-            } else {
-                log.debug("AuthService.register: received DTO of type {}", dto.getClass().getName());
-            }
-        } catch (Exception e) {
-            log.warn("AuthService.register: error while logging incoming DTO: {}", e.getMessage());
-        }
-
-        // Create a temporary DTO for image/password processing so we don't lose subclass fields like careerIds
         UserRegisterRequestWithImageDTO userWithImage = modelMapper.map(dto, UserRegisterRequestWithImageDTO.class);
-
+        log.info("Registering user: username={} roleId={})", userWithImage.getUsername() , userWithImage.getRoleId());
         userWithImage.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        if (dto.getProfilePictureUrl() != null && !dto.getProfilePictureUrl().isEmpty()) {
-            String base64Data = dto.getProfilePictureUrl().split(",")[1];
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+        String prefix = userWithImage.getProfilePictureUrl().split(",")[0];
+        String data = userWithImage.getProfilePictureUrl().split(",")[1];
 
-            Path uploadDir = Paths.get("src/main/resources/static/images/profiles");
-            Files.createDirectories(uploadDir);
+        userWithImage.setProfilePictureUrl(imageCreatorService.saveBase64Image(prefix , data , userWithImage.getUsername()));
 
-            String fileName = dto.getUsername() + "_" + System.currentTimeMillis() + ".png";
-            Path filePath = uploadDir.resolve(fileName);
-
-            Files.write(filePath, imageBytes);
-
-            userWithImage.setProfilePictureUrl("/images/profiles/" + fileName);
-        }
-
-        // Copy back the processed password and profilePictureUrl into the original dto so subclass fields remain intact
-        dto.setPassword(userWithImage.getPassword());
-        dto.setProfilePictureUrl(userWithImage.getProfilePictureUrl());
-
-        Object entity = registerUserByRole(dto, roleName);
+        Object entity = registerUserByRole(userWithImage, roleName);
 
         Object responseDto = mapEntityToDTO(entity, roleName);
 
@@ -177,16 +155,11 @@ public class AuthService implements AuthServiceInterface {
                 .build();
     }
 
-    private Object registerUserByRole(UserRegisterRequestDTO userRegisterRequestDTO, RoleByAuthenticationMethods roleName) {
+    private Object registerUserByRole(UserRegisterRequestWithImageDTO userRegisterRequestDTO, RoleByAuthenticationMethods roleName) {
         return switch (roleName) {
             case STUDENT -> {
-                if (userRegisterRequestDTO instanceof StudentRegisterRequestDTO studentDto) {
-                    // already the correct subtype, avoid remapping which can drop fields
-                    yield studentRegisterService.register(studentDto);
-                } else {
-                    StudentRegisterRequestDTO student = modelMapper.map(userRegisterRequestDTO, StudentRegisterRequestDTO.class);
-                    yield studentRegisterService.register(student);
-                }
+                StudentRegisterRequestDTO student = modelMapper.map(userRegisterRequestDTO, StudentRegisterRequestDTO.class);
+                yield studentRegisterService.register(student);
             }
             case STAFF -> {
                 StaffRegisterRequestDTO admin = modelMapper.map(userRegisterRequestDTO, StaffRegisterRequestDTO.class);
@@ -221,7 +194,7 @@ public class AuthService implements AuthServiceInterface {
     }
 
     @Override
-    public JsonResponseDTO logout(String token) {
+    public JsonResponseDTO<Object> logout(String token) {
         return null;
     }
 
