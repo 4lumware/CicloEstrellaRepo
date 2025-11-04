@@ -80,16 +80,16 @@ INSERT INTO teacher_courses (teacher_id, course_id) VALUES
 
 -- usuarios con contraseñas encriptadas
 INSERT INTO users (username, email, password, state, creation_date, profile_picture_url) VALUES
-('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', 'alicia.png'),
-('roberto', 'roberto@email.com', '$2b$12$eSxBS7aKpPvaKTKzV2g1kuTnM97Cmjew8x1m63hRwZxwpKXVLnbeq', true, '2025-01-02', 'roberto.png'),
-('carlos', 'carlos@email.com', '$2b$12$BvlNL4N1rraGdur4Y2KY9.qU3tjsUrRDbngq5P6JKzueIDeV0mdwa', true, '2025-01-03', 'carlos.png'),
-('diana', 'diana@email.com', '$2b$12$e0bPeB4WRhqJ14bCwkTohOZGcB8ww0hzcoupvpgcDhtb62YJdOvou', true, '2025-01-04', 'diana.png'),
-('eva', 'eva@email.com', '$2b$12$pr7Wrwbb00kYTajP1YKWU.uY9STNGIClvqr3qW2mzo8lYJ9rZj07.', true, '2025-01-05', 'eva.png'),
-('francisco', 'francisco@email.com', '$2b$12$KgeysY9v.c6Ga/NX/QB4i.xwDbkujefABTB5s0677n.X1I2cwT1b6', true, '2025-01-06', 'francisco.png'),
-('graciela', 'graciela@email.com', '$2b$12$5Qph/Kjl6mDydEYVDHfjs.lSVKEJHJIztRvYfVGZCTMeF7YYwUhvq', true, '2025-01-07', 'graciela.png'),
-('hector', 'hector@email.com', '$2b$12$zypJrCoMgGw.L/3f1ajjiOCX0ISU8gzCLZPJ8YU1VhkOtaz.8dJ8u', true, '2025-01-08', 'hector.png'),
-('ines', 'ines@email.com', '$2b$12$cmgN6ZqXFoQD3zV8y9F.yOcDZiDD5rPAQK5LTJLSFjaeNoQoe3gxK', true, '2025-01-09', 'ines.png'),
-('juan', 'juan@email.com', '$2b$12$D6TsNrNe4OpcvqmMH6qiU.s951L1X2xW6EWbTiLcf148FFmXHhgdm', true, '2025-01-10', 'juan.png');
+('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', decode('SG9sYQ==', 'base64') ),
+('roberto', 'roberto@email.com', '$2b$12$eSxBS7aKpPvaKTKzV2g1kuTnM97Cmjew8x1m63hRwZxwpKXVLnbeq', true, '2025-01-02', decode('SG9sYQ==', 'base64')),
+('carlos', 'carlos@email.com', '$2b$12$BvlNL4N1rraGdur4Y2KY9.qU3tjsUrRDbngq5P6JKzueIDeV0mdwa', true, '2025-01-03', decode('SG9sYQ==', 'base64')),
+('diana', 'diana@email.com', '$2b$12$e0bPeB4WRhqJ14bCwkTohOZGcB8ww0hzcoupvpgcDhtb62YJdOvou', true, '2025-01-04', decode('SG9sYQ==', 'base64')),
+('eva', 'eva@email.com', '$2b$12$pr7Wrwbb00kYTajP1YKWU.uY9STNGIClvqr3qW2mzo8lYJ9rZj07.', true, '2025-01-05', decode('SG9sYQ==', 'base64')),
+('francisco', 'francisco@email.com', '$2b$12$KgeysY9v.c6Ga/NX/QB4i.xwDbkujefABTB5s0677n.X1I2cwT1b6', true, '2025-01-06', decode('SG9sYQ==', 'base64')),
+('graciela', 'graciela@email.com', '$2b$12$5Qph/Kjl6mDydEYVDHfjs.lSVKEJHJIztRvYfVGZCTMeF7YYwUhvq', true, '2025-01-07', decode('SG9sYQ==', 'base64')),
+('hector', 'hector@email.com', '$2b$12$zypJrCoMgGw.L/3f1ajjiOCX0ISU8gzCLZPJ8YU1VhkOtaz.8dJ8u', true, '2025-01-08', decode('SG9sYQ==', 'base64')),
+('ines', 'ines@email.com', '$2b$12$cmgN6ZqXFoQD3zV8y9F.yOcDZiDD5rPAQK5LTJLSFjaeNoQoe3gxK', true, '2025-01-09', decode('SG9sYQ==', 'base64')),
+('juan', 'juan@email.com', '$2b$12$D6TsNrNe4OpcvqmMH6qiU.s951L1X2xW6EWbTiLcf148FFmXHhgdm', true, '2025-01-10', decode('SG9sYQ==', 'base64'));
 
 -- estudiantes
 INSERT INTO students (user_id, current_semester) VALUES

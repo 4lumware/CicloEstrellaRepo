@@ -9,9 +9,12 @@ import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/auth/staffs")
@@ -21,7 +24,7 @@ public class AuthAdminController {
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(@RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) {
+    public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(@RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) throws IOException {
 
         JsonResponseDTO<?> jsonResponseDTO = authService.register(userRegisterRequestDTO , RoleByAuthenticationMethods.STAFF);
 

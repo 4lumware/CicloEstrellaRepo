@@ -8,6 +8,9 @@ import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.UserServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import com.upc.cicloestrella.specifications.application.UserSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,6 +29,7 @@ import java.util.stream.Collectors;
 public class UserService implements UserServiceInterface {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+
 
 
     @Override
@@ -52,12 +58,11 @@ public class UserService implements UserServiceInterface {
 
 
     @Override
-    public List<UserResponseDTO> index(String username, String roleName, Boolean state, LocalDate startDate, LocalDate endDate) {
+    public Page<UserResponseDTO> index(String username, String roleName, Boolean state, LocalDate startDate, LocalDate endDate , int page , int size) {
         Specification<User> spec = UserSpecification.build(username, roleName, state, startDate, endDate);
-        List<User> users = userRepository.findAll(spec);
-        return users.stream()
-                .map(user -> modelMapper.map(user, UserResponseDTO.class))
-                .collect(Collectors.toList());
+        Pageable pageable = PageRequest.of(page, size);
+        Page<User> usersPage = userRepository.findAll(spec, pageable);
+        return usersPage.map(user -> modelMapper.map(user, UserResponseDTO.class));
     }
 
     public UserResponseDTO revokeBan(Long userId) {

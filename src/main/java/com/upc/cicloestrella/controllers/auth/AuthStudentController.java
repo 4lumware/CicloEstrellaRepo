@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/auth/students")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -27,7 +29,7 @@ public class AuthStudentController{
     @PostMapping("/register")
     @PermitAll
     public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(
-            @RequestBody @Valid StudentRegisterRequestDTO userRegisterRequestDTO) {
+            @RequestBody @Valid StudentRegisterRequestDTO userRegisterRequestDTO) throws IOException {
 
         JsonResponseDTO<?> jsonResponseDTO = authService.register(
                 userRegisterRequestDTO , RoleByAuthenticationMethods.STUDENT
