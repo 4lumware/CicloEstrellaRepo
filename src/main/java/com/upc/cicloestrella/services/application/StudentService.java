@@ -34,7 +34,6 @@ public class StudentService implements StudentServiceInterface {
     private final StudentRepository studentRepository;
     private final UserRepository userRepository;
     private final CareerRepository careerRepository;
-    private final ModelMapper modelMapper ;
     private final StudentMapper studentMapper;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -59,7 +58,7 @@ public class StudentService implements StudentServiceInterface {
     @Override
     public StudentResponseDTO update(Long id, StudentRequestDTO userRequestDTO)  {
 
-        if(userRepository.existsByEmail(userRequestDTO.getEmail())) {
+        if(userRepository.existsByEmailAndIdNot(userRequestDTO.getEmail() , id)) {
             throw new UniqueException("El email " + userRequestDTO.getEmail() + " ya está en uso.");
         }
         return studentRepository.findById(id)

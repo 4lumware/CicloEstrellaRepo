@@ -62,7 +62,7 @@ public class UserService implements UserServiceInterface {
     public UserResponseDTO update(Long userId, UserRequestDTO user) throws IOException {
 
 
-        if(userRepository.existsByEmail(user.getEmail())) {
+        if(userRepository.existsByEmailAndIdNot(user.getEmail() , userId)) {
             throw new UniqueException("El email " + user.getEmail() + " ya está en uso.");
         }
 
