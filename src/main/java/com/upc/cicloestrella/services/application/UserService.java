@@ -6,6 +6,7 @@ import com.upc.cicloestrella.DTOs.responses.UserResponseDTO;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.User;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
+import com.upc.cicloestrella.exceptions.UniqueException;
 import com.upc.cicloestrella.interfaces.services.application.UserServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.RoleRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
@@ -59,6 +60,13 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public UserResponseDTO update(Long userId, UserRequestDTO user) throws IOException {
+
+
+        if(userRepository.existsByEmail(user.getEmail())) {
+            throw new UniqueException("El email " + user.getEmail() + " ya está en uso.");
+        }
+
+
         User existingUser = userRepository.findById(userId).orElseThrow(() -> new EntityIdNotFoundException("No se encontro el usuario con id: " + userId));
         List<Long> roleIds = Collections.singletonList(user.getRoleId());
         List<Role> roles = roleRepository.findAllById(roleIds);

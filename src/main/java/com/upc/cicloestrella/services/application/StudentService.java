@@ -7,6 +7,7 @@ import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.Student;
 import com.upc.cicloestrella.entities.User;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
+import com.upc.cicloestrella.exceptions.UniqueException;
 import com.upc.cicloestrella.interfaces.services.application.StudentServiceInterface;
 import com.upc.cicloestrella.mappers.StudentMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.CareerRepository;
@@ -57,8 +58,15 @@ public class StudentService implements StudentServiceInterface {
 
     @Override
     public StudentResponseDTO update(Long id, StudentRequestDTO userRequestDTO)  {
+
+        if(userRepository.existsByEmail(userRequestDTO.getEmail())) {
+            throw new UniqueException("El email " + userRequestDTO.getEmail() + " ya está en uso.");
+        }
         return studentRepository.findById(id)
                 .map(existingStudent -> {
+
+
+
                     User existingUser = existingStudent.getUser();
                     existingUser.setUsername(userRequestDTO.getUsername());
                     existingUser.setEmail(userRequestDTO.getEmail());

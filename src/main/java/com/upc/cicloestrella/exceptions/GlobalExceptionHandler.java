@@ -33,6 +33,14 @@ public class GlobalExceptionHandler {
                 .body(new ValidationErrorResponse(400, "Validacion fallida", errors, LocalDateTime.now()));
     }
 
+    @ExceptionHandler(UniqueException.class)
+    public ResponseEntity<GeneralErrorResponse> handleUniqueException(UniqueException ex){
+        log.error("Unique constraint violation: {}", ex.getMessage());
+        return ResponseEntity
+                .badRequest()
+                .body(new GeneralErrorResponse(400,  ex.getMessage(), LocalDateTime.now()));
+    }
+
     @ExceptionHandler(AuthorizationDeniedException.class)
     public ResponseEntity<GeneralErrorResponse> handleAuthorizationDeniedException(AuthorizationDeniedException ex){
         log.error("Authorization denied: {}", ex.getMessage());

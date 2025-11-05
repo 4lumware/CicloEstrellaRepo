@@ -1,10 +1,6 @@
 package com.upc.cicloestrella.services.auth;
 
 import com.upc.cicloestrella.DTOs.requests.auth.login.UserLoginRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.StaffRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestWithImageDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JWTTokensDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JsonResponseDTO;
@@ -12,13 +8,12 @@ import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.Student;
 import com.upc.cicloestrella.entities.Token;
 import com.upc.cicloestrella.entities.User;
-import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;
 import com.upc.cicloestrella.mappers.StudentMapper;
+import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.TokenRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.auth.JWTServiceInterface;
-import com.upc.cicloestrella.services.logic.ImageCreatorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -26,37 +21,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.nio.file.FileAlreadyExistsException;
-import java.util.Base64;
-import java.util.UUID;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ =  @Autowired)
 public class AuthService implements AuthServiceInterface {
-    private final StudentRegisterService studentRegisterService;
-    private final PasswordEncoder passwordEncoder;
-    private final StaffRegisterService adminRegisterService;
     private final JWTServiceInterface jwtService;
     private final TokenRepository tokenRepository;
     private final ModelMapper modelMapper;
     private final StudentMapper studentMapper;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-    private final ImageCreatorService imageCreatorService;
-
+    private final StudentRepository studentRepository;
 
     @Override
     public JsonResponseDTO<Object> login(UserLoginRequestDTO userLoginRequestDTO) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userLoginRequestDTO.getEmail(),
@@ -84,8 +67,12 @@ public class AuthService implements AuthServiceInterface {
     private Object getUserDTOByRole(User user) {
         for (Role role : user.getRoles()) {
             switch (role.getRoleName()) {
+
                 case STUDENT -> {
-                    Student student = studentRegisterService.getStudentByUserId(user.getId());
+
+                    Student student = studentRepository.findStudentByUserId(user.getId())
+                            .orElseThrow(() -> new UsernameNotFoundException("Estudiante no encontrado para el usuario con ID: " + user.getId()));
+
                     return studentMapper.toDTO(student);
                 }
                 case ADMIN , MODERATOR -> {
@@ -95,38 +82,9 @@ public class AuthService implements AuthServiceInterface {
             }
         }
         throw new IllegalArgumentException("El usuario no tiene un rol soportado");
+
     }
 
-    @Override
-    public JsonResponseDTO<Object> register(UserRegisterRequestDTO dto, RoleByAuthenticationMethods roleName) throws IOException {
-
-        UserRegisterRequestWithImageDTO userWithImage = modelMapper.map(dto, UserRegisterRequestWithImageDTO.class);
-        log.info("Registering user: username={} roleId={})", userWithImage.getUsername() , userWithImage.getRoleId());
-        userWithImage.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        String prefix = userWithImage.getProfilePictureUrl().split(",")[0];
-        String data = userWithImage.getProfilePictureUrl().split(",")[1];
-
-        userWithImage.setProfilePictureUrl(imageCreatorService.saveBase64Image(prefix , data , userWithImage.getUsername()));
-
-        Object entity = registerUserByRole(userWithImage, roleName);
-
-        Object responseDto = mapEntityToDTO(entity, roleName);
-
-        User user = extractUserFromEntity(entity);
-        String accessToken = generateAccessToken(user);
-        String refreshToken = generateRefreshToken(user);
-
-        saveUserToken(user, accessToken);
-
-        return JsonResponseDTO.builder()
-                .user(responseDto)
-                .tokens(JWTTokensDTO.builder()
-                        .access_token(accessToken)
-                        .refresh_token(refreshToken)
-                        .build())
-                .build();
-    }
 
     @Override
     public JWTTokensDTO refreshToken(String authHeader) {
@@ -155,52 +113,14 @@ public class AuthService implements AuthServiceInterface {
                 .build();
     }
 
-    private Object registerUserByRole(UserRegisterRequestWithImageDTO userRegisterRequestDTO, RoleByAuthenticationMethods roleName) {
-        return switch (roleName) {
-            case STUDENT -> {
-                StudentRegisterRequestDTO student = modelMapper.map(userRegisterRequestDTO, StudentRegisterRequestDTO.class);
-                yield studentRegisterService.register(student);
-            }
-            case STAFF -> {
-                StaffRegisterRequestDTO admin = modelMapper.map(userRegisterRequestDTO, StaffRegisterRequestDTO.class);
-                yield adminRegisterService.register(admin);
-            }
-        };
-    }
 
-    private Object mapEntityToDTO(Object entity, RoleByAuthenticationMethods roleName) {
-        return switch (roleName) {
-            case STUDENT -> studentMapper.toDTO((Student) entity);
-            case STAFF -> modelMapper.map(entity, StaffResponseDTO.class);
-        };
-    }
-
-    private User extractUserFromEntity(Object entity) {
-        if (entity instanceof Student student) {
-            return student.getUser();
-        } else if (entity instanceof User user) {
-            return user;
-        } else {
-            throw new IllegalStateException("Tipo de entidad inesperado: " + entity.getClass().getName());
-        }
-    }
-
-    private String generateAccessToken(User user) {
-        return jwtService.generateAccessToken(user);
-    }
-
-    private String generateRefreshToken(User user) {
-        return jwtService.generateRefreshToken(user);
-    }
 
     @Override
     public JsonResponseDTO<Object> logout(String token) {
         return null;
     }
 
-
-
-    private void saveUserToken(User user, String jwtToken) {
+    public void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)

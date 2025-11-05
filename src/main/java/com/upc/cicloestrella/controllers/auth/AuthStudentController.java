@@ -8,6 +8,7 @@ import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
+import com.upc.cicloestrella.services.auth.register.AuthStudentRegister;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,23 +26,23 @@ import java.io.IOException;
 @RequestMapping("/auth/students")
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class AuthStudentController{
-    private final AuthServiceInterface authService;
+    private final AuthStudentRegister authStudentRegister;
 
     @PostMapping("/register")
     @PermitAll
-    public ResponseEntity<ApiResponse<JsonResponseDTO<?>>> register(
-            @RequestBody @Valid UserRegisterRequestDTO userRegisterRequestDTO) throws IOException {
+    public ResponseEntity<ApiResponse<JsonResponseDTO<StudentResponseDTO>>> register(
+            @RequestBody @Valid StudentRegisterRequestDTO userRegisterRequestDTO) throws IOException {
 
-        JsonResponseDTO<?> jsonResponseDTO = authService.register(
-                userRegisterRequestDTO , RoleByAuthenticationMethods.STUDENT
-        );
+        JsonResponseDTO<StudentResponseDTO> jsonResponseDTO = authStudentRegister.register(userRegisterRequestDTO);
 
-        ApiResponse<JsonResponseDTO<?>> response = ApiResponse.<JsonResponseDTO<?>>builder()
-                .data(jsonResponseDTO)
-                .message("El estudiante se registró correctamente")
-                .status(200)
-                .build();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(
+                        ApiResponse.<JsonResponseDTO<StudentResponseDTO>>builder()
+                                .data(jsonResponseDTO)
+                                .message("Éxito al registrar un nuevo estudiante")
+                                .status(200)
+                                .build()
+                );
     }
+
 }
