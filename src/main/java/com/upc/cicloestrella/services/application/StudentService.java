@@ -73,14 +73,6 @@ public class StudentService implements StudentServiceInterface {
                         existingUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
                     }
 
-                    List<Long> rolesSingleton = Collections.singletonList(userRequestDTO.getRoleId());
-                    List<Role> roles = roleRepository.findAllById(rolesSingleton);
-                    if (roles.isEmpty() || roles.size() != rolesSingleton.size()) {
-                        throw new EntityIdNotFoundException("El rol proporcionado no existe");
-                    }
-                    existingUser.setRoles(roles);
-
-
                     List<Career> careers = careerRepository.findAllById(userRequestDTO.getCareerIds());
                     if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
                         throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
