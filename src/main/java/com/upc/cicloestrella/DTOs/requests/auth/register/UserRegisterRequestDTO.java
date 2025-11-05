@@ -5,9 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -29,11 +26,4 @@ public class UserRegisterRequestDTO {
 
     @NotNull(message = "El nombre no puede estar vacío")
     private String profilePictureUrl;
-
-    @NotNull(message = "El rol no puede estar vacío")
-    private Long roleId;
-
-    private int currentSemester;
-    private List<@Positive(message = "El ID de la carrera debe ser positivo") Long> careerIds;
-
 }

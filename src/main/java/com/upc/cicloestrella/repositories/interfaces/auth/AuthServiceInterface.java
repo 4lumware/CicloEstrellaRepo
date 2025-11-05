@@ -11,7 +11,6 @@ import java.io.IOException;
 
 public interface AuthServiceInterface {
     public JsonResponseDTO<?> login(UserLoginRequestDTO userLoginRequestDTO);
-    public JsonResponseDTO<?> register(UserRegisterRequestDTO userRegisterRequestDTO , RoleByAuthenticationMethods roleName) throws IOException;
     public JsonResponseDTO<?> logout(String token);
     public JWTTokensDTO refreshToken(String refreshToken);
 }
