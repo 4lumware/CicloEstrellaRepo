@@ -22,9 +22,6 @@ public class StudentRequestDTO {
     @NotNull(message = "El nombre no puede estar vacío")
     private String profilePictureUrl;
 
-    @NotNull(message = "El rol no puede estar vacío")
-    private Long roleId;
-
     @NotNull(message = "El semestre actual no puede estar vacío")
     @Min(value = 1, message = "El semestre actual debe ser al menos 1")
     @Max(value = 20, message = "El semestre actual no debe superar 20")
