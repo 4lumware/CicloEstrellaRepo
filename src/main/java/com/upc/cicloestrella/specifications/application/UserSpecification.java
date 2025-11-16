@@ -34,6 +34,12 @@ public class UserSpecification {
             return cb.equal(root.get("state"), state);
         };
     }
+    public static Specification<User> notCurrentUserEmail(String currentUserEmail) {
+        return (root, query, cb) -> {
+            if (currentUserEmail == null || currentUserEmail.isEmpty()) return null;
+            return cb.notEqual(cb.lower(root.get("email")), currentUserEmail.toLowerCase());
+        };
+    }
 
     public static Specification<User> creationDateBetween(LocalDate start, LocalDate end) {
         return (root, query, cb) -> {
@@ -48,11 +54,12 @@ public class UserSpecification {
         };
     }
 
-    public static Specification<User> build(String username, String roleName, Boolean state, LocalDate startDate, LocalDate endDate) {
+    public static Specification<User> build(String username, String roleName, Boolean state, LocalDate startDate, LocalDate endDate , String currentUserEmail) {
         return Specification.<User>unrestricted()
                 .and(usernameContains(username))
                 .and(hasRole(roleName))
                 .and(hasState(state))
-                .and(creationDateBetween(startDate, endDate));
+                .and(creationDateBetween(startDate, endDate))
+                .and(notCurrentUserEmail(currentUserEmail));
     }
 }
