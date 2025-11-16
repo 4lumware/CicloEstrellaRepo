@@ -20,6 +20,9 @@ import org.springframework.data.jpa.domain.Specification;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -93,7 +96,11 @@ public class UserService implements UserServiceInterface {
 
     @Override
     public Page<UserResponseDTO> index(String username, String roleName, Boolean state, LocalDate startDate, LocalDate endDate , int page , int size) {
-        Specification<User> spec = UserSpecification.build(username, roleName, state, startDate, endDate);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        Specification<User> spec = UserSpecification.build(username, roleName, state, startDate, endDate , currentUsername);
         Pageable pageable = PageRequest.of(page, size);
         Page<User> usersPage = userRepository.findAll(spec, pageable);
         return usersPage.map(user -> modelMapper.map(user, UserResponseDTO.class));
