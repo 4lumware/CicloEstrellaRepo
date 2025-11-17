@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.interfaces.services.application;
 
 import com.upc.cicloestrella.DTOs.responses.RoleResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.RoleVerificationResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.User;
@@ -13,4 +14,5 @@ public interface RoleServiceInterface {
     public StaffResponseDTO assignRoleToUser(Long userId, Long roleId);
     public StaffResponseDTO removeRoleFromUser(Long userId, Long roleId);
     public void assignRoleToUser(User user, Role.RoleName roleName);
+    RoleVerificationResponseDTO userHasRole(Long userId, List<Role.RoleName> roleNames);
 }
