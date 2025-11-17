@@ -178,3 +178,106 @@ INSERT INTO comments (text, created_at, student_id, formality_id) VALUES
 ('Me gustaría que todo fuera digital.', '2025-08-03T16:40:00', 4, 8),
 ('Excelente atención telefónica.', '2025-09-07T17:50:00', 5, 9),
 ('El proceso fue claro y transparente.', '2025-10-03T18:55:00', 1, 10);
+
+
+-- Requests
+INSERT INTO requests (student_id, request_type, content, status, created_at) VALUES
+    (1, 'TEACHER', '{
+    "firstName": "Carlos",
+    "lastName": "Ramírez",
+    "generalDescription": "Docente con amplia experiencia en ingeniería y proyectos tecnológicos.",
+    "profilePictureUrl": "carlos.png",
+    "campusIds": [1],
+    "careerIds": [1],
+    "courseIds": [1]
+}', 'PENDING', '2025-11-17T10:00:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "María",
+    "lastName": "González",
+    "generalDescription": "Especialista en arte y creatividad, apasionada por la enseñanza.",
+    "profilePictureUrl": "maria.png",
+    "campusIds": [2],
+    "careerIds": [2],
+    "courseIds": [2]
+}', 'PENDING', '2025-11-17T10:05:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "José",
+    "lastName": "Fernández",
+    "generalDescription": "Contador público con enfoque en educación financiera.",
+    "profilePictureUrl": "jose.png",
+    "campusIds": [3],
+    "careerIds": [3],
+    "courseIds": [3]
+}', 'PENDING', '2025-11-17T10:10:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Ana",
+    "lastName": "Martínez",
+    "generalDescription": "Médica dedicada a la formación de futuros profesionales de la salud.",
+    "profilePictureUrl": "ana.png",
+    "campusIds": [4],
+    "careerIds": [4],
+    "courseIds": [4]
+}', 'PENDING', '2025-11-17T10:15:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "Luis",
+    "lastName": "Torres",
+    "generalDescription": "Abogado con experiencia en derecho civil y docente universitario.",
+    "profilePictureUrl": "luis.png",
+    "campusIds": [1],
+    "careerIds": [5],
+    "courseIds": [5]
+}', 'PENDING', '2025-11-17T10:20:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "Sofía",
+    "lastName": "López",
+    "generalDescription": "Investigadora en ciencias y promotora de la educación científica.",
+    "profilePictureUrl": "sofia.png",
+    "campusIds": [2],
+    "careerIds": [6],
+    "courseIds": [6]
+}', 'PENDING', '2025-11-17T10:25:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Miguel",
+    "lastName": "Vargas",
+    "generalDescription": "Experto en tecnología y programación, motivador de jóvenes talentos.",
+    "profilePictureUrl": "miguel.png",
+    "campusIds": [3],
+    "careerIds": [7],
+    "courseIds": [7]
+}', 'PENDING', '2025-11-17T10:30:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "Valeria",
+    "lastName": "Castro",
+    "generalDescription": "Diseñadora gráfica con enfoque en innovación y creatividad.",
+    "profilePictureUrl": "valeria.png",
+    "campusIds": [4],
+    "careerIds": [8],
+    "courseIds": [8]
+}', 'PENDING', '2025-11-17T10:35:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "Javier",
+    "lastName": "Mendoza",
+    "generalDescription": "Educador con vocación y experiencia en pedagogía moderna.",
+    "profilePictureUrl": "javier.png",
+    "campusIds": [1],
+    "careerIds": [9],
+    "courseIds": [9]
+}', 'PENDING', '2025-11-17T10:40:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Paula",
+    "lastName": "Ríos",
+    "generalDescription": "Enfermera con pasión por la docencia y el cuidado integral.",
+    "profilePictureUrl": "paula.png",
+    "campusIds": [2],
+    "careerIds": [10],
+    "courseIds": [10]
+}', 'PENDING', '2025-11-17T10:45:00');

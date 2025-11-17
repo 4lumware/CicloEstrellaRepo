@@ -11,11 +11,16 @@ import com.upc.cicloestrella.mappers.CommentMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.CommentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.FormalityRepository;
 import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
+import com.upc.cicloestrella.specifications.application.CommentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -25,6 +30,14 @@ public class CommentService implements CommentServiceInterface {
     private final CommentRepository commentRepository;
     private final FormalityRepository formalityRepository;
     private final CommentMapper commentMapper;
+
+    @Override
+    public Page<CommentResponseDTO> index(String keyword, String studentName, Long formalityId, String formalityTitle, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        Specification<Comment> comments = CommentSpecification.build(keyword, studentName, formalityId, formalityTitle, from, to);
+        Page<Comment> commentPage = commentRepository.findAll(comments, pageable);
+
+        return commentPage.map(commentMapper::toDTO);
+    }
 
     @Override
     public List<CommentResponseDTO> allByFormalityId(Long formalityId) {

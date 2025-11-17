@@ -11,10 +11,12 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,18 +34,27 @@ public class TeacherController {
 
     @GetMapping
     @PermitAll
-    public ResponseEntity<ApiResponse<List<TeacherSearchByKeywordResponseDTO>>> index(@RequestParam(required = false) String name) {
-        List<TeacherSearchByKeywordResponseDTO> teachers = teacherService.index(name);
+    public ResponseEntity<ApiResponse<Page<TeacherResponseDTO>>> index(
+            @RequestParam(required = false) String fullName,
+            @RequestParam(required = false) BigDecimal minRating,
+            @RequestParam(required = false) BigDecimal maxRating,
+            @RequestParam(required = false) List<Long> careerIds,
+            @RequestParam(required = false) List<Long> courseIds,
+            @RequestParam(required = false) List<Long> campusIds,
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size
+    ) {
+        Page<TeacherResponseDTO> teachers = teacherService.index(fullName, minRating, maxRating, careerIds, courseIds, campusIds, page != null ? page : 0, size != null ? size : 10);
 
         if (teachers.isEmpty()) {
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
+                    .body(ApiResponse.<Page<TeacherResponseDTO>>builder()
                             .message("No se han encontrado profesores")
                             .status(404)
                             .build());
         }
         return ResponseEntity.status(200)
-                .body(ApiResponse.<List<TeacherSearchByKeywordResponseDTO>>builder()
+                .body(ApiResponse.<Page<TeacherResponseDTO>>builder()
                         .data(teachers)
                         .message("Se han encontrado los profesores")
                         .status(200)
