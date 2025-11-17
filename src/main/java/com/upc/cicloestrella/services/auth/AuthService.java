@@ -22,7 +22,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
 
 @Slf4j
@@ -38,6 +40,7 @@ public class AuthService implements AuthServiceInterface {
     private final StudentRepository studentRepository;
 
     @Override
+    @Transactional
     public JsonResponseDTO<Object> login(UserLoginRequestDTO userLoginRequestDTO) {
 
         authenticationManager.authenticate(
@@ -87,6 +90,7 @@ public class AuthService implements AuthServiceInterface {
 
 
     @Override
+    @Transactional
     public JWTTokensDTO refreshToken(String authHeader) {
         if(authHeader == null  || !authHeader.startsWith("Bearer ")) throw new IllegalArgumentException("Invalid token header");
 
@@ -105,6 +109,7 @@ public class AuthService implements AuthServiceInterface {
         final String accessToken = jwtService.generateAccessToken(user);
 
         revokeAllUserTokens(user);
+
         saveUserToken(user, accessToken);
 
         return JWTTokensDTO.builder()
@@ -131,15 +136,17 @@ public class AuthService implements AuthServiceInterface {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
+
+    @Transactional
+    protected void revokeAllUserTokens(User user) {
+        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
         if (validUserTokens.isEmpty()) return;
+
+        System.out.println("Revoking tokens for user ID: " + user.getId());
 
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
-
-        tokenRepository.saveAll(validUserTokens);
     }
 }
