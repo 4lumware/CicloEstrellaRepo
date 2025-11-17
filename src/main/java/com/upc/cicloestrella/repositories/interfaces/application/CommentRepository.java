@@ -14,5 +14,4 @@ public interface CommentRepository extends JpaRepository<Comment , Long>  , JpaS
 
 
     boolean existsByStudent_User_EmailAndStudent_User_StateTrueAndId(String studentUserEmail , Long id);
-
 }

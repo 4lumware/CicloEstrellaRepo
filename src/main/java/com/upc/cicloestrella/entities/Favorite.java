@@ -23,6 +23,9 @@ public class Favorite {
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
+    @Column(length = 4000)
+    private String note;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "favorite_type", nullable = false)
     private FavoriteType favoriteType;
