@@ -36,19 +36,25 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> {
+                            // Auth endpoints
                             authorize.requestMatchers("/auth/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/campuses/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/careers/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/courses/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET, "/formats/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/formalities/**" ).permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/teachers/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/students/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reactions/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reviews/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reactions/**").permitAll();
+
+
+                            // Swagger
+
+                            authorize.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui/index.html", "/webjars/**").permitAll();
+
+                            // Rutas públicas GET
+
+
+
+                            authorize.requestMatchers(HttpMethod.GET, "/campuses/**", "/careers/**", "/courses/**",
+                            "/formats/**", "/formalities/**", "/teachers/**", "/students/**",
+                            "/reactions/**", "/reviews/**").permitAll();
+
                             // Permitir acceso público a imágenes estáticas (cubre /images/profiles/...)
                             authorize.requestMatchers("/images/**", "/static/**").permitAll();
+
                             authorize.anyRequest().authenticated();
                         }
                 ).exceptionHandling(exception -> {
