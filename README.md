@@ -49,16 +49,16 @@ En el archivo `import.sql` encontrarás usuarios de ejemplo con los siguientes r
 
 | Usuario   | Email               | Contraseña | Rol principal         |
 |-----------|---------------------|------------|----------------------|
-| alicia    | alicia@email.com    | clave1     | ADMIN                |
-| roberto   | roberto@email.com   | clave2     | MODERATOR            |
+| alicia    | alicia@email.com    | clave1     | STUDENT              |
+| roberto   | roberto@email.com   | clave2     | STUDENT              |
 | carlos    | carlos@email.com    | clave3     | STUDENT              |
 | diana     | diana@email.com     | clave4     | STUDENT              |
-| eva       | eva@email.com       | clave5     | ADMIN, MODERATOR     |
-| francisco | francisco@email.com | clave6     | STUDENT              |
-| graciela  | graciela@email.com  | clave7     | STUDENT              |
-| hector    | hector@email.com    | clave8     | STUDENT              |
-| ines      | ines@email.com      | clave9     | STUDENT              |
-| juan      | juan@email.com      | clave10    | STUDENT              |
+| eva       | eva@email.com       | clave5     | STUDENT              |
+| francisco | francisco@email.com | clave6     | ADMIN                |
+| graciela  | graciela@email.com  | clave7     | MODERATOR            |
+| hector    | hector@email.com    | clave8     | ADMIN                |
+| ines      | ines@email.com      | clave9     | MODERATOR            |
+| juan      | juan@email.com      | clave10    | MODERATOR            |
 
 ## Contribución
 Las contribuciones son bienvenidas. Por favor, abre un issue o pull request para sugerencias o mejoras.
