@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.List;
 import java.util.Optional;
 
-public interface CommentRepository extends JpaRepository<Comment , Long>, JpaSpecificationExecutor<Comment> {
+public interface CommentRepository extends JpaRepository<Comment , Long>  , JpaSpecificationExecutor<Comment> {
     List<Comment> findCommentsByFormality_IdAndStudent_User_StateTrue(Long formalityId);
 
     Optional<Comment> findByIdAndStudent_User_StateTrueAndFormality_Id(Long id, Long formalityId);

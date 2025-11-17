@@ -14,10 +14,13 @@ import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
 import com.upc.cicloestrella.specifications.application.CommentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -29,15 +32,16 @@ public class CommentService implements CommentServiceInterface {
     private final CommentMapper commentMapper;
 
     @Override
-    public List<CommentResponseDTO> allByFormalityId(Long formalityId, String keyword) {
-        Specification<Comment> spec = (root, query, cb) -> cb.equal(root.get("formality").get("id"), formalityId);
-        spec = spec.and((root, query, cb) -> cb.isTrue(root.get("student").get("user").get("state")));
+    public Page<CommentResponseDTO> index(String keyword, String studentName, Long formalityId, String formalityTitle, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        Specification<Comment> comments = CommentSpecification.build(keyword, studentName, formalityId, formalityTitle, from, to);
+        Page<Comment> commentPage = commentRepository.findAll(comments, pageable);
 
-        if (keyword != null && !keyword.isEmpty()) {
-            spec = spec.and(CommentSpecification.hasKeyword(keyword));
-        }
+        return commentPage.map(commentMapper::toDTO);
+    }
 
-        return commentRepository.findAll(spec)
+    @Override
+    public List<CommentResponseDTO> allByFormalityId(Long formalityId) {
+        return commentRepository.findCommentsByFormality_IdAndStudent_User_StateTrue(formalityId)
                 .stream()
                 .map(commentMapper::toDTO)
                 .toList();

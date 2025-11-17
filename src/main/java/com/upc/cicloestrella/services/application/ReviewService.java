@@ -10,7 +10,11 @@ import com.upc.cicloestrella.interfaces.services.application.ReviewServiceInterf
 import com.upc.cicloestrella.mappers.ReviewMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.*;
 import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
+import com.upc.cicloestrella.specifications.application.ReviewSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.security.core.Authentication;
@@ -20,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -72,20 +77,40 @@ public class ReviewService implements ReviewServiceInterface {
     }
 
     @Override
-    public List<ReviewResponseDTO> index() {
-        List<Review> reviews = reviewRepository.findReviewsByStudent_User_StateTrue().orElseThrow(() -> new EntityIdNotFoundException("No se encontraron reseñas"));
-        if (reviews.isEmpty()) {
-            return List.of();
-        }
-        List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase = reviewReactionRepository.countAllReactionsByReview(reviews);
+    public Page<ReviewResponseDTO> index(
+            String keyword,
+            Long studentId,
+            Long teacherId,
+            String teacherName,
+            String studentName,
+            BigDecimal minRating,
+            BigDecimal maxRating,
+            Long tagId,
+            String tagName,
+            LocalDateTime from,
+            LocalDateTime to,
+            Pageable pageable
+    ) {
+
+        Specification<Review> reviews = ReviewSpecification.build(
+                keyword, studentId, teacherId, teacherName, studentName,
+                minRating, maxRating, tagId, tagName, from, to
+        );
+
+        Page<Review> reviewPage = reviewRepository.findAll(reviews, pageable);
+        List<Review> reviewsInPage = reviewPage.getContent();
+
+        List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase =
+                reviewReactionRepository.countAllReactionsByReview(reviewsInPage);
+        
+
         Map<Long, List<ReactionCountByDatabaseDTO>> reactionsByReview = allReactionsCountByDatabase.stream()
                 .collect(Collectors.groupingBy(ReactionCountByDatabaseDTO::getReviewId));
-        return reviews.stream()
-                .map(review -> {
-                    List<ReactionCountByDatabaseDTO> reactionCounts = reactionsByReview.getOrDefault(review.getId(), List.of());
-                    return reviewMapper.toDTO(review, reactionCounts);
-                })
-                .toList();
+
+        return reviewPage.map(review -> {
+            List<ReactionCountByDatabaseDTO> reactionCounts = reactionsByReview.getOrDefault(review.getId(), List.of());
+            return reviewMapper.toDTO(review, reactionCounts);
+        });
     }
 
     @Override
@@ -143,6 +168,42 @@ public class ReviewService implements ReviewServiceInterface {
                 .orElseThrow(() -> new EntityIdNotFoundException("Reseña con id " + reviewId + " no encontrada"));
         reviewRepository.delete(existingReview);
         updateTeacherAverageRating(existingReview.getTeacher());
+    }
+
+    public Page<ReviewResponseDTO> findBySpecification(
+            String keyword,
+            Long studentId,
+            Long teacherId,
+            String teacherName,
+            String studentName,
+            BigDecimal minRating,
+            BigDecimal maxRating,
+            Long tagId,
+            String tagName,
+            LocalDateTime from,
+            LocalDateTime to,
+            Pageable pageable) {
+
+        Specification<Review> spec = ReviewSpecification.build(
+                keyword, studentId, teacherId, teacherName, studentName,
+                minRating, maxRating, tagId, tagName, from, to
+        );
+
+        Page<Review> reviews = reviewRepository.findAll(spec, pageable);
+
+        List<Review> reviewList = reviews.getContent();
+        List<ReactionCountByDatabaseDTO> allReactionsCountByDatabase =
+                reviewReactionRepository.countAllReactionsByReview(reviewList);
+
+        Map<Long, List<ReactionCountByDatabaseDTO>> reactionsByReview =
+                allReactionsCountByDatabase.stream()
+                .collect(Collectors.groupingBy(ReactionCountByDatabaseDTO::getReviewId));
+
+        return reviews.map(review -> {
+            List<ReactionCountByDatabaseDTO> reactionCounts =
+                    reactionsByReview.getOrDefault(review.getId(), List.of());
+            return reviewMapper.toDTO(review, reactionCounts);
+        });
     }
 
 

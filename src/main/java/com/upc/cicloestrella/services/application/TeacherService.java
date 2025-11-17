@@ -9,7 +9,12 @@ import com.upc.cicloestrella.entities.*;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.*;
+import com.upc.cicloestrella.specifications.application.TeacherSpecification;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -68,23 +73,18 @@ public class TeacherService implements TeacherServiceInterface {
     }
 
     @Override
-    public List<TeacherSearchByKeywordResponseDTO> index(String firstName) {
-
-        if (firstName != null && !firstName.isEmpty()) {
-            List<Teacher> teachers = teacherRepository.findByFirstNameContainingIgnoreCase(firstName);
-            teachers.forEach(teacher -> {
-                teacher.getGeneralDescription();
-                teacher.getProfilePictureURL();
-            });
-
-            return teachers.stream()
-                    .map(teacher -> modelMapper.map(teacher, TeacherSearchByKeywordResponseDTO.class))
-                    .toList();
-        }
-        return teacherRepository.findAll()
-                .stream()
-                .map(teacher -> modelMapper.map(teacher, TeacherSearchByKeywordResponseDTO.class))
-                .toList();
+    public Page<TeacherResponseDTO> index(String fullName,
+                                          BigDecimal minRating,
+                                          BigDecimal maxRating,
+                                          List<Long> careerIds,
+                                          List<Long> courseIds,
+                                          List<Long> campusIds,
+                                          Integer page,
+                                          Integer size) {
+        Specification<Teacher> spec = TeacherSpecification.build(fullName, minRating, maxRating, careerIds, courseIds, campusIds);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Teacher> teacherPage = teacherRepository.findAll(spec, pageable);
+        return teacherPage.map(teacher -> modelMapper.map(teacher, TeacherResponseDTO.class));
     }
 
 

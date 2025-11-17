@@ -3,12 +3,13 @@ package com.upc.cicloestrella.repositories.interfaces.application;
 
 import com.upc.cicloestrella.entities.Teacher;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface TeacherRepository extends JpaRepository<Teacher, Long> {
+public interface TeacherRepository extends JpaRepository<Teacher, Long> , JpaSpecificationExecutor<Teacher> {
     public List<Teacher> findByFirstNameContainingIgnoreCase(String firstName);
 
     @Query(value = "SELECT DISTINCT t.* FROM teachers t " +

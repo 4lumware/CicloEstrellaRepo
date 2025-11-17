@@ -5,14 +5,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.upc.cicloestrella.DTOs.requests.RequestContentRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.RequestContentResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
+import com.upc.cicloestrella.entities.Request;
+import com.upc.cicloestrella.enums.RequestTypeEnum;
 import com.upc.cicloestrella.interfaces.services.application.RequestServiceInterface;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -23,19 +28,33 @@ public class RequestController {
 
     @GetMapping("/requests")
     @PreAuthorize("hasAnyRole('ADMIN' , 'MODERATOR')")
-    public ResponseEntity<ApiResponse<List<RequestContentResponseDTO>>> index(){
-        List<RequestContentResponseDTO> requests = requestService.index();
+    public ResponseEntity<ApiResponse<Page<RequestContentResponseDTO>>> index(
+            @RequestParam(required = false) Request.RequestStatus status ,
+            @RequestParam(required = false) RequestTypeEnum type ,
+            @RequestParam(required = false) String studentName ,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate ,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate ,
+            @RequestParam(required = false) String teacherName ,
+            @RequestParam(required = false)  Long courseId ,
+            @RequestParam(required = false) Long campusId ,
+            @RequestParam(required = false)  Integer page ,
+            @RequestParam(required = false)  Integer size
+    ){
+
+        int pageNumber = page != null ? page : 0;
+        int pageSize = size != null ? size : 10;
+        Page<RequestContentResponseDTO> requests = requestService.index(status , type , studentName , startDate , endDate , teacherName , courseId , campusId , pageNumber , pageSize);
 
         if(requests.isEmpty()){
             return ResponseEntity.status(404)
-                    .body(ApiResponse.<List<RequestContentResponseDTO>>builder()
+                    .body(ApiResponse.<Page<RequestContentResponseDTO>>builder()
                             .message("No hay solicitudes")
                             .status(404)
                             .build());
         }
 
         return ResponseEntity.status(200)
-                .body(ApiResponse.<List<RequestContentResponseDTO>>builder()
+                .body(ApiResponse.<Page<RequestContentResponseDTO>>builder()
                         .data(requests)
                         .message("Se han encontrado las solicitudes")
                         .status(200)
