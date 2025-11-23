@@ -30,10 +30,20 @@ public class AuthUserController {
 
     }
 
+
+
     @PostMapping("/refresh-token")
     public ResponseEntity<ApiResponse<JWTTokensDTO>> refreshToken(@RequestHeader(HttpHeaders.AUTHORIZATION) String refreshToken) {
         JWTTokensDTO response = authService.refreshToken(refreshToken);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(ApiResponse.<JWTTokensDTO>builder().status(200).message("Se ha refrescado el token correctamente").data(response).build());
     }
+
+
+    @PostMapping("/logout")
+    public ResponseEntity<ApiResponse<String>> logout(@RequestHeader(HttpHeaders.AUTHORIZATION) String token) {
+        authService.logout(token);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(ApiResponse.<String>builder().status(200).message("Se ha cerrado sesión correctamente").data("Logout successful").build());
+    }   
 }

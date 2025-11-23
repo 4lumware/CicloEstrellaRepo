@@ -121,8 +121,17 @@ public class AuthService implements AuthServiceInterface {
 
 
     @Override
-    public JsonResponseDTO<Object> logout(String token) {
-        return null;
+    @Transactional
+    public void logout(String token) {
+        String jwt = token.substring(7);
+        String userEmail = jwtService.extractUsername(jwt);
+
+        if(userEmail == null) throw new IllegalArgumentException("Token invalido");
+
+        final User user = userRepository.findByEmailAndStateTrue(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + userEmail));
+
+        revokeAllUserTokens(user);
     }
 
     public void saveUserToken(User user, String jwtToken) {
