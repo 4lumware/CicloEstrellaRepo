@@ -9,6 +9,7 @@ import com.upc.cicloestrella.entities.*;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.TeacherServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.*;
+import com.upc.cicloestrella.services.logic.ImageCreatorService;
 import com.upc.cicloestrella.specifications.application.TeacherSpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -29,14 +30,16 @@ public class TeacherService implements TeacherServiceInterface {
     private final CourseRepository courseRepository;
     private final TagRepository tagRepository;
     private final ModelMapper modelMapper;
+    private final ImageCreatorService imageCreatorService;
 
-    public TeacherService(TeacherRepository teacherRepository, CampusRepository campusRepository, CareerRepository careerRepository, CourseRepository courseRepository, TagRepository tagRepository, ModelMapper modelMapper) {
+    public TeacherService(TeacherRepository teacherRepository, CampusRepository campusRepository, CareerRepository careerRepository, CourseRepository courseRepository, TagRepository tagRepository, ModelMapper modelMapper, ImageCreatorService imageCreatorService) {
         this.teacherRepository = teacherRepository;
         this.campusRepository = campusRepository;
         this.careerRepository = careerRepository;
         this.courseRepository = courseRepository;
         this.tagRepository = tagRepository;
         this.modelMapper = modelMapper;
+        this.imageCreatorService = imageCreatorService;
     }
 
 
@@ -46,8 +49,14 @@ public class TeacherService implements TeacherServiceInterface {
         teacherEntity.setFirstName(teacher.getFirstName());
         teacherEntity.setLastName(teacher.getLastName());
         teacherEntity.setGeneralDescription(teacher.getGeneralDescription());
+        try{
+            String profilePictureUrl = imageCreatorService.generateDefaultProfileImage(teacher.getProfilePictureUrl(), teacher.getFirstName() + " " + teacher.getLastName());
+            teacherEntity.setProfilePictureURL(profilePictureUrl);
+        } catch (Exception e){
+            throw new RuntimeException("Error al guardar la imagen del profesor: " + e.getMessage());
+        }
         teacherEntity.setProfilePictureURL(teacher.getProfilePictureUrl());
-        teacherEntity.setAverageRating(BigDecimal.ZERO);  // Inicializar en 0
+        teacherEntity.setAverageRating(BigDecimal.ZERO);
 
         List<Campus> campuses = campusRepository.findAllById(teacher.getCampusIds());
         if (campuses.size() != teacher.getCampusIds().size()) {
@@ -112,7 +121,14 @@ public class TeacherService implements TeacherServiceInterface {
                     existingTeacher.setFirstName(teacher.getFirstName());
                     existingTeacher.setLastName(teacher.getLastName());
                     existingTeacher.setGeneralDescription(teacher.getGeneralDescription());
-                    existingTeacher.setProfilePictureURL(teacher.getProfilePictureUrl());
+
+                    try{
+                        String profilePictureUrl = imageCreatorService.generateDefaultProfileImage(teacher.getProfilePictureUrl(), teacher.getFirstName() + " " + teacher.getLastName());
+                        existingTeacher.setProfilePictureURL(profilePictureUrl);
+                    } catch (Exception e){
+                        throw new RuntimeException("Error al guardar la imagen del profesor: " + e.getMessage());
+                    }
+
 
                     List<Campus> campuses = campusRepository.findAllById(teacher.getCampusIds());
                     if (campuses.size() != teacher.getCampusIds().size()) {

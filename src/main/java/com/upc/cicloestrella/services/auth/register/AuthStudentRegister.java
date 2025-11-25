@@ -66,7 +66,7 @@ public class AuthStudentRegister implements AuthRegisterInterface<JsonResponseDT
         String profileImagePath = null;
 
         try {
-            profileImagePath = generateDefaultProfileImage(dto.getProfilePictureUrl(), user.getUsername());
+            profileImagePath = imageCreatorService.generateDefaultProfileImage(dto.getProfilePictureUrl(), user.getUsername());
             user.setProfilePictureUrl(profileImagePath);
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar la imagen de perfil");
@@ -107,20 +107,5 @@ public class AuthStudentRegister implements AuthRegisterInterface<JsonResponseDT
 
     }
 
-    private String generateDefaultProfileImage(String base64 , String username) throws IOException {
 
-        String prefix = null;
-        String data = null;
-
-        if (base64.contains(",")) {
-            String[] parts = base64.split(",");
-            prefix = parts[0];
-            data = parts[1];
-        } else {
-            prefix = "data:image/png;base64";
-            data = base64;
-        }
-
-        return imageCreatorService.saveBase64Image(prefix, data, username);
-    }
 }

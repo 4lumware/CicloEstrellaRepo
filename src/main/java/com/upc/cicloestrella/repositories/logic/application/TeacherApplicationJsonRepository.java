@@ -31,7 +31,6 @@ public class TeacherApplicationJsonRepository {
 
     public Teacher save(JsonNode content) throws JsonProcessingException {
         TeacherJsonResponseConversionDTO teacher = objectMapper.treeToValue(content , TeacherJsonResponseConversionDTO.class);
-
         Teacher newTeacher = Teacher.builder()
                 .firstName(teacher.getFirstName())
                 .lastName(teacher.getLastName())

@@ -67,4 +67,21 @@ public class ImageCreatorService {
         }
         return extension;
     }
+
+    public  String generateDefaultProfileImage(String base64 , String username) throws IOException {
+
+        String prefix = null;
+        String data = null;
+
+        if (base64.contains(",")) {
+            String[] parts = base64.split(",");
+            prefix = parts[0];
+            data = parts[1];
+        } else {
+            prefix = "data:image/png;base64";
+            data = base64;
+        }
+
+        return saveBase64Image(prefix, data, username);
+    }
 }

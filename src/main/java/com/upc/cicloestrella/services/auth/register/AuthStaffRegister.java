@@ -60,7 +60,7 @@ public class AuthStaffRegister implements AuthRegisterInterface<JsonResponseDTO<
 
         try {
 
-            profileImagePath = generateDefaultProfileImage(dto.getProfilePictureUrl(), user.getUsername());
+            profileImagePath = imageCreatorService.generateDefaultProfileImage(dto.getProfilePictureUrl(), user.getUsername());
             user.setProfilePictureUrl(profileImagePath);
 
         } catch (IOException e) {
@@ -87,21 +87,5 @@ public class AuthStaffRegister implements AuthRegisterInterface<JsonResponseDTO<
                 .tokens(tokensDTO)
                 .build();
 
-    }
-
-    private String generateDefaultProfileImage(String base64 , String username) throws IOException {
-
-        String prefix = null;
-        String data = null;
-
-        if (base64.contains(",")) {
-            String[] parts = base64.split(",");
-            prefix = parts[0];
-            data = parts[1];
-        } else {
-            prefix = "data:image/png;base64";
-            data = base64;
-        }
-        return imageCreatorService.saveBase64Image(prefix, data, username);
     }
 }
