@@ -14,6 +14,7 @@ import com.upc.cicloestrella.exceptions.ValidationWithFieldsException;
 import com.upc.cicloestrella.repositories.interfaces.application.CampusRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.CareerRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.CourseRepository;
+import com.upc.cicloestrella.services.logic.ImageCreatorService;
 import com.upc.cicloestrella.validators.ValidatorInterface;
 import jakarta.validation.ConstraintViolation;
 
@@ -23,6 +24,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,6 +39,7 @@ public class TeacherValidationJsonService implements ValidatorInterface<RequestC
     private final ModelMapper modelMapper;
     private final Validator validator;
     private final ObjectMapper objectMapper;
+    private final ImageCreatorService imageCreatorService;
 
     @Override
     public TeacherJsonResponseConversionDTO validate(RequestContentRequestDTO obj) throws ValidationWithFieldsException {
@@ -49,6 +52,12 @@ public class TeacherValidationJsonService implements ValidatorInterface<RequestC
                 existCoursesByIds(teacherRequestDTO.getCourseIds())) {
 
             Teacher teacher = modelMapper.map(teacherRequestDTO, Teacher.class);
+            try {
+                String profileImageUrl = imageCreatorService.generateDefaultProfileImage(teacherRequestDTO.getProfilePictureUrl(), teacher.getFirstName() + teacher.getLastName());
+                teacher.setProfilePictureURL(profileImageUrl);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al generar la imagen de perfil por defecto", e);
+            }
             return TeacherJsonResponseConversionDTO.builder()
                     .id(teacher.getId())
                     .firstName(teacher.getFirstName())
@@ -102,4 +111,6 @@ public class TeacherValidationJsonService implements ValidatorInterface<RequestC
         }
         return true;
     }
+
+
 }

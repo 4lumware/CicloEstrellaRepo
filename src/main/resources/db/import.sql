@@ -80,7 +80,7 @@ INSERT INTO teacher_courses (teacher_id, course_id) VALUES
 
 -- usuarios con contraseñas encriptadas
 INSERT INTO users (username, email, password, state, creation_date, profile_picture_url) VALUES
-('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', decode('SG9sYQ==', 'base64') ),
+('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', 'http://localhost:8080/api/images/profiles/123213312_17c70027-16a7-44ca-951f-63b8eb8883fa.jpg' ),
 ('roberto', 'roberto@email.com', '$2b$12$eSxBS7aKpPvaKTKzV2g1kuTnM97Cmjew8x1m63hRwZxwpKXVLnbeq', true, '2025-01-02', decode('SG9sYQ==', 'base64')),
 ('carlos', 'carlos@email.com', '$2b$12$BvlNL4N1rraGdur4Y2KY9.qU3tjsUrRDbngq5P6JKzueIDeV0mdwa', true, '2025-01-03', decode('SG9sYQ==', 'base64')),
 ('diana', 'diana@email.com', '$2b$12$e0bPeB4WRhqJ14bCwkTohOZGcB8ww0hzcoupvpgcDhtb62YJdOvou', true, '2025-01-04', decode('SG9sYQ==', 'base64')),
