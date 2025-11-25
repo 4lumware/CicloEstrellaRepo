@@ -9,5 +9,6 @@ import lombok.Data;
 public class FavoriteResponseDTO {
     private Long id;
     private Favorite.FavoriteType type;
+    private String note;
     private Object favorite;
 }
