@@ -19,11 +19,7 @@ public class TeacherRequestDTO {
     @Size(max = 1000, message = "La descripción no debe superar los 1000 caracteres")
     private String generalDescription;
 
-    @Size(max = 500, message = "La URL de la foto no debe superar los 500 caracteres")
-    @Pattern(
-            regexp = "^(https?|ftp)://.*$",
-            message = "La URL de la foto debe ser válida"
-    )
+    @NotNull(message = "La foto de perfil no puede ser nula")
     private String profilePictureUrl;
 
     @NotEmpty(message = "Debe seleccionar al menos un campus")

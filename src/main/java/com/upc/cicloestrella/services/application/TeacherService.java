@@ -55,7 +55,7 @@ public class TeacherService implements TeacherServiceInterface {
         } catch (Exception e){
             throw new RuntimeException("Error al guardar la imagen del profesor: " + e.getMessage());
         }
-        teacherEntity.setProfilePictureURL(teacher.getProfilePictureUrl());
+
         teacherEntity.setAverageRating(BigDecimal.ZERO);
 
         List<Campus> campuses = campusRepository.findAllById(teacher.getCampusIds());
@@ -122,13 +122,17 @@ public class TeacherService implements TeacherServiceInterface {
                     existingTeacher.setLastName(teacher.getLastName());
                     existingTeacher.setGeneralDescription(teacher.getGeneralDescription());
 
-                    try{
-                        String profilePictureUrl = imageCreatorService.generateDefaultProfileImage(teacher.getProfilePictureUrl(), teacher.getFirstName() + " " + teacher.getLastName());
-                        existingTeacher.setProfilePictureURL(profilePictureUrl);
-                    } catch (Exception e){
-                        throw new RuntimeException("Error al guardar la imagen del profesor: " + e.getMessage());
+                    if(!teacher.getProfilePictureUrl().equals(existingTeacher.getProfilePictureURL())) {
+                        try {
+                            String profilePictureUrl = imageCreatorService.generateDefaultProfileImage(teacher.getProfilePictureUrl(), teacher.getFirstName() + " " + teacher.getLastName());
+                            existingTeacher.setProfilePictureURL(profilePictureUrl);
+                        } catch (Exception e) {
+                            throw new RuntimeException("Error al guardar la imagen del profesor: " + e.getMessage());
+                        }
                     }
-
+                    else {
+                        existingTeacher.setProfilePictureURL(teacher.getProfilePictureUrl());
+                    }
 
                     List<Campus> campuses = campusRepository.findAllById(teacher.getCampusIds());
                     if (campuses.size() != teacher.getCampusIds().size()) {
