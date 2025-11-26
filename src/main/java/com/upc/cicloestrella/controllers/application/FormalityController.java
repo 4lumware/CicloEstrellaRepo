@@ -7,11 +7,14 @@ import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.interfaces.services.application.FormalityServiceInterface;
 import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/formalities")
@@ -36,12 +39,13 @@ public class FormalityController {
 
     @GetMapping
     @PermitAll
-    public ResponseEntity<ApiResponse<List<FormalityDTO>>> findAll(@RequestParam(required = false) String keyword) {
-        List<FormalityDTO> formality = formalityService.findAll(keyword);
+    public ResponseEntity<ApiResponse<Page<FormalityDTO>>> findAll(@RequestParam(required = false) String description, @RequestParam(required = false) String title, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to, Pageable pageable) {
+        Page<FormalityDTO> formality = formalityService.findAll(title, description, from, to, pageable);
         if (formality.isEmpty()) {
-            return ResponseEntity.status(404).body(ApiResponse.<List<FormalityDTO>>builder().message("No se encontraron trámites").status(404).build());
+            return ResponseEntity.status(404).body(ApiResponse.<Page<FormalityDTO>>builder().message("No se encontraron trámites").status(404).build());
         }
-        return ResponseEntity.status(200).body(ApiResponse.<List<FormalityDTO>>builder().data(formality).message("Trámites obtenidos correctamente").status(200).build());
+
+        return ResponseEntity.status(200).body(ApiResponse.<Page<FormalityDTO>>builder().data(formality).message("Trámites obtenidos correctamente").status(200).build());
     }
 
     @PostMapping
@@ -49,18 +53,9 @@ public class FormalityController {
     public ResponseEntity<ApiResponse<FormalityDTO>> insert(@RequestBody FormalityDTO formalityDTO) {
         FormalityDTO formality = formalityService.insert(formalityDTO);
         if (formality == null) {
-            return ResponseEntity.status(400)
-                    .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Error al crear el trámite")
-                            .status(400)
-                            .build());
+            return ResponseEntity.status(400).body(ApiResponse.<FormalityDTO>builder().message("Error al crear el trámite").status(400).build());
         }
-        return ResponseEntity.status(201)
-                .body(ApiResponse.<FormalityDTO>builder()
-                        .data(formality)
-                        .message("Trámite creado correctamente")
-                        .status(201)
-                        .build());
+        return ResponseEntity.status(201).body(ApiResponse.<FormalityDTO>builder().data(formality).message("Trámite creado correctamente").status(201).build());
     }
 
     @PutMapping
@@ -69,18 +64,9 @@ public class FormalityController {
         FormalityDTO formalityUpdated = formalityService.update(formality);
 
         if (formalityUpdated == null) {
-            return ResponseEntity.status(404)
-                    .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Trámite no encontrado")
-                            .status(404)
-                            .build());
+            return ResponseEntity.status(404).body(ApiResponse.<FormalityDTO>builder().message("Trámite no encontrado").status(404).build());
         }
-        return ResponseEntity.status(200)
-                .body(ApiResponse.<FormalityDTO>builder()
-                        .data(formalityUpdated)
-                        .message("Trámite actualizado correctamente")
-                        .status(200)
-                        .build());
+        return ResponseEntity.status(200).body(ApiResponse.<FormalityDTO>builder().data(formalityUpdated).message("Trámite actualizado correctamente").status(200).build());
     }
 
     @DeleteMapping("/{formalityId}")
@@ -88,18 +74,9 @@ public class FormalityController {
     public ResponseEntity<ApiResponse<FormalityDTO>> delete(@PathVariable Long formalityId) {
         FormalityDTO formality = formalityService.findById(formalityId);
         if (formality == null) {
-            return ResponseEntity.status(404)
-                    .body(ApiResponse.<FormalityDTO>builder()
-                            .message("Trámite no encontrado")
-                            .status(404)
-                            .build());
+            return ResponseEntity.status(404).body(ApiResponse.<FormalityDTO>builder().message("Trámite no encontrado").status(404).build());
         }
         formalityService.delete(formalityId);
-        return ResponseEntity.status(200)
-                .body(ApiResponse.<FormalityDTO>builder()
-                        .data(formality)
-                        .message("Trámite eliminado correctamente")
-                        .status(200)
-                        .build());
+        return ResponseEntity.status(200).body(ApiResponse.<FormalityDTO>builder().data(formality).message("Trámite eliminado correctamente").status(200).build());
     }
 }
