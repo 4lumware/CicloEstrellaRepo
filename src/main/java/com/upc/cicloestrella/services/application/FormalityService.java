@@ -6,12 +6,15 @@ import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.FormalityServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.FormalityRepository;
+import com.upc.cicloestrella.specifications.application.FormalitySpecification;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
 
 @Service
 public class FormalityService implements FormalityServiceInterface {
@@ -26,21 +29,16 @@ public class FormalityService implements FormalityServiceInterface {
 
     @Override
     public FormalityDTO findById(Long idFormality) {
-        return formalityRepository.findById(idFormality)
-                .map(formality -> modelMapper.map(formality, FormalityDTO.class))
-                .orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
+        return formalityRepository.findById(idFormality).map(formality -> modelMapper.map(formality, FormalityDTO.class)).orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
     }
 
     @Override
-    public List<FormalityDTO> findAll(String keyword) {
-        return keyword == null || keyword.isEmpty() ?
-                formalityRepository.findAll().stream()
-                        .map(formality -> modelMapper.map(formality, FormalityDTO.class))
-                        .collect(Collectors.toList()) :
-                formalityRepository.searchByKeyword(keyword).stream()
-                        .map(formality -> modelMapper.map(formality, FormalityDTO.class))
-                        .collect(Collectors.toList());
+    public Page<FormalityDTO> findAll(String title, String description, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+        Specification<Formality> formalities = FormalitySpecification.build(title, description, from, to);
+        Page<Formality> formalityPage = formalityRepository.findAll(formalities, pageable);
+        return formalityPage.map(formality -> modelMapper.map(formality, FormalityDTO.class));
     }
+
 
     @Override
     public FormalityDTO insert(FormalityDTO formalityDTO) {
