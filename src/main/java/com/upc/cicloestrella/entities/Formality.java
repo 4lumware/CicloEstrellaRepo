@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class Formality {
     @Column(length = 100, nullable = false)
     private String title;
 
-    @Column(length = 100, nullable = false)
+    @Column(length = 1000, nullable = false)
     private String description;
 
 
@@ -33,6 +34,8 @@ public class Formality {
     @Column(nullable = false , name="end_date")
     private LocalDate endDate;
 
+
+    @JsonManagedReference
     @OneToMany(mappedBy = "formality", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 }

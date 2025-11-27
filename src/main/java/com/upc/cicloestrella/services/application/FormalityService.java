@@ -1,7 +1,8 @@
 package com.upc.cicloestrella.services.application;
 
 
-import com.upc.cicloestrella.DTOs.FormalityDTO;
+import com.upc.cicloestrella.DTOs.requests.FormalityRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.FormalityResponseDTO;
 import com.upc.cicloestrella.entities.Formality;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
 import com.upc.cicloestrella.interfaces.services.application.FormalityServiceInterface;
@@ -28,35 +29,31 @@ public class FormalityService implements FormalityServiceInterface {
     }
 
     @Override
-    public FormalityDTO findById(Long idFormality) {
-        return formalityRepository.findById(idFormality).map(formality -> modelMapper.map(formality, FormalityDTO.class)).orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
+    public FormalityResponseDTO findById(Long idFormality) {
+        return formalityRepository.findById(idFormality).map(formality -> modelMapper.map(formality, FormalityResponseDTO.class)).orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
     }
 
     @Override
-    public Page<FormalityDTO> findAll(String title, String description, LocalDateTime from, LocalDateTime to, Pageable pageable) {
+    public Page<FormalityResponseDTO> findAll(String title, String description, LocalDateTime from, LocalDateTime to, Pageable pageable) {
         Specification<Formality> formalities = FormalitySpecification.build(title, description, from, to);
         Page<Formality> formalityPage = formalityRepository.findAll(formalities, pageable);
-        return formalityPage.map(formality -> modelMapper.map(formality, FormalityDTO.class));
+        return formalityPage.map(formality -> modelMapper.map(formality, FormalityResponseDTO.class));
     }
 
 
     @Override
-    public FormalityDTO insert(FormalityDTO formalityDTO) {
-        if (formalityDTO.getIdFormality() == null) {
-            Formality formality = modelMapper.map(formalityDTO, Formality.class);
-            formality = formalityRepository.save(formality);
-            return modelMapper.map(formality, FormalityDTO.class);
-        }
-        return null;
+    public FormalityResponseDTO insert(FormalityRequestDTO formalityDTO) {
+        Formality formality = modelMapper.map(formalityDTO, Formality.class);
+        Formality savedFormality = formalityRepository.save(formality);
+        return modelMapper.map(savedFormality, FormalityResponseDTO.class);
     }
 
     @Override
-    public FormalityDTO update(Formality formality) {
-        if (!formalityRepository.existsById(formality.getId())) {
-            throw new EntityIdNotFoundException("Formalidad con id " + formality.getId() + " no encontrada");
-        }
+    public FormalityResponseDTO update(FormalityRequestDTO formalityRequestDTO, Long idFormality) {
+        Formality formality = formalityRepository.findById(idFormality).orElseThrow(() -> new EntityIdNotFoundException("Formalidad con id " + idFormality + " no encontrada"));
+        modelMapper.map(formalityRequestDTO , formality);
         Formality updatedFormality = formalityRepository.save(formality);
-        return modelMapper.map(updatedFormality, FormalityDTO.class);
+        return modelMapper.map(updatedFormality, FormalityResponseDTO.class);
     }
 
     @Override

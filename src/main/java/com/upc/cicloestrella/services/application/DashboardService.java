@@ -1,8 +1,8 @@
 package com.upc.cicloestrella.services.application;
 
+import com.upc.cicloestrella.DTOs.responses.dashboard.ChartDataDTO;
+import com.upc.cicloestrella.DTOs.responses.dashboard.ChartDatasetDTO;
 import com.upc.cicloestrella.DTOs.responses.dashboard.DashboardKpiResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.dashboard.NameValueResponseDTO;
-import com.upc.cicloestrella.DTOs.responses.dashboard.RegistrationSeriesResponseDTO;
 import com.upc.cicloestrella.interfaces.services.application.DashboardServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.ReviewRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
@@ -23,75 +23,9 @@ public class DashboardService implements DashboardServiceInterface {
 
     private final DateTimeFormatter monthFormatter = DateTimeFormatter.ofPattern("yyyy-MM");
     private final UserRepository userRepository;
-    private final StudentRepository studentRepository;
     private final ReviewRepository reviewRepository;
+    private final StudentRepository studentRepository;
 
-
-    @Override
-    public List<RegistrationSeriesResponseDTO> getRegistrationsByMonth(int months) {
-        LocalDate now = LocalDate.now();
-        List<String> labels = new ArrayList<>();
-        for (int i = months - 1; i >= 0; i--) {
-            labels.add(now.minusMonths(i).format(monthFormatter));
-        }
-
-        List<Object[]> raw = userRepository.countRegistrationsByRolePerMonth();
-        Map<String, Map<String, Long>> pivot = new HashMap<>();
-        Set<String> roles = new TreeSet<>();
-
-        raw.forEach(row -> {
-            String role = Objects.toString(row[0], "");
-            String month = Objects.toString(row[1], "");
-            Long count = row[2] == null ? 0L : ((Number) row[2]).longValue();
-
-            roles.add(role);
-            pivot.computeIfAbsent(role, k -> new HashMap<>()).put(month, count);
-        });
-
-        List<RegistrationSeriesResponseDTO> out = new ArrayList<>();
-        for (String role : roles) {
-            List<RegistrationSeriesResponseDTO.DataPoint> series = new ArrayList<>();
-            Map<String, Long> counts = pivot.getOrDefault(role, Collections.emptyMap());
-            for (String label : labels) {
-                series.add(new RegistrationSeriesResponseDTO.DataPoint(label, counts.getOrDefault(label, 0L)));
-            }
-            out.add(new RegistrationSeriesResponseDTO(role, series));
-        }
-        return out;
-    }
-
-    @Override
-    public List<NameValueResponseDTO> getUsersByRole() {
-        List<Object[]> raw = userRepository.countUsersGroupByRole();
-        return getNameValueResponseDTOS(raw);
-
-    }
-
-    private List<NameValueResponseDTO> getNameValueResponseDTOS(List<Object[]> raw) {
-        return raw.stream().filter(r -> r[0] != null).map(r -> {
-            String name = Objects.toString(r[0], "");
-            double cnt = r[1] == null ? 0D : ((Number) r[1]).doubleValue();
-            return new NameValueResponseDTO(name, cnt);
-        }).toList();
-    }
-
-    @Override
-    public List<NameValueResponseDTO> getStudentsByCareer() {
-        List<Object[]> raw = studentRepository.countStudentsByCareer();
-        return getNameValueResponseDTOS(raw);
-    }
-
-    @Override
-    public List<NameValueResponseDTO> getAvgRatingPerTeacher(int limit) {
-        List<Object[]> raw = reviewRepository.findAvgRatingPerTeacher(limit);
-
-        return raw.stream().map(r -> {
-            Long teacherId = ((Number) r[0]).longValue();
-            String name = r[1] + " " + r[2];
-            double avg = r[3] == null ? 0 : ((Number) r[3]).doubleValue();
-            return new NameValueResponseDTO(name, avg);
-        }).toList();
-    }
 
     @Override
     public DashboardKpiResponseDTO getKpis(int currentDays, int previousDays) {
@@ -141,4 +75,81 @@ public class DashboardService implements DashboardServiceInterface {
         if (previous == 0) return current == 0 ? 0D : 100D;
         return ((current - previous) / Math.abs(previous)) * 100.0;
     }
+
+    @Override
+    public ChartDataDTO getRegistrationsByMonthChart(int months) {
+        // build labels for last `months` (e.g. "2025-11")
+        LocalDate now = LocalDate.now();
+        List<String> labels = new ArrayList<>();
+        for (int i = months - 1; i >= 0; i--) {
+            labels.add(now.minusMonths(i).format(monthFormatter));
+        }
+
+        // raw: role, month, count
+        List<Object[]> raw = userRepository.countRegistrationsByRolePerMonth();
+        Map<String, Map<String, Long>> pivot = new LinkedHashMap<>();
+        Set<String> roles = new TreeSet<>();
+
+        for (Object[] row : raw) {
+            String role = Objects.toString(row[0], "");
+            String month = Objects.toString(row[1], "");
+            Long cnt = row[2] == null ? 0L : ((Number) row[2]).longValue();
+            roles.add(role);
+            pivot.computeIfAbsent(role, k -> new HashMap<>()).put(month, cnt);
+        }
+
+        List<ChartDatasetDTO> datasets = new ArrayList<>();
+        for (String role : roles) {
+            List<Long> data = new ArrayList<>();
+            Map<String, Long> counts = pivot.getOrDefault(role, Collections.emptyMap());
+            for (String label : labels) {
+                data.add(counts.getOrDefault(label, 0L));
+            }
+            datasets.add(new ChartDatasetDTO(role, data, null));
+        }
+
+        return new ChartDataDTO(labels, datasets);
+    }
+
+    @Override
+    public ChartDataDTO getUsersByRoleChart() {
+        List<Object[]> raw = userRepository.countUsersGroupByRole();
+        List<String> labels = new ArrayList<>();
+        List<Long> data = new ArrayList<>();
+        for (Object[] r : raw) {
+            labels.add(Objects.toString(r[0], ""));
+            data.add(r[1] == null ? 0L : ((Number) r[1]).longValue());
+        }
+        ChartDatasetDTO ds = new ChartDatasetDTO("Users by Role", data, null);
+        return new ChartDataDTO(labels, List.of(ds));
+    }
+
+    @Override
+    public ChartDataDTO getStudentsByCareerChart() {
+        List<Object[]> raw = studentRepository.countStudentsByCareer();
+        List<String> labels = new ArrayList<>();
+        List<Long> data = new ArrayList<>();
+        for (Object[] r : raw) {
+            labels.add(Objects.toString(r[0], ""));
+            data.add(r[1] == null ? 0L : ((Number) r[1]).longValue());
+        }
+        ChartDatasetDTO ds = new ChartDatasetDTO("Students by Career", data, null);
+        return new ChartDataDTO(labels, List.of(ds));
+    }
+
+    @Override
+    public ChartDataDTO getAvgRatingPerTeacherChart(int limit) {
+        List<Object[]> raw = reviewRepository.findAvgRatingPerTeacher(limit);
+        List<String> labels = new ArrayList<>();
+        List<Double> data = new ArrayList<>();
+        for (Object[] r : raw) {
+            String name = Objects.toString(r[1], "") + " " + Objects.toString(r[2], "");
+            labels.add(name.trim());
+            data.add(r[3] == null ? 0.0 : ((Number) r[3]).doubleValue());
+        }
+        ChartDatasetDTO ds = new ChartDatasetDTO("Avg rating per teacher", data, null);
+        return new ChartDataDTO(labels, List.of(ds));
+    }
+
+
 }

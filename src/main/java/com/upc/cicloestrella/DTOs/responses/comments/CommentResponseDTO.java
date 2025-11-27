@@ -1,6 +1,6 @@
 package com.upc.cicloestrella.DTOs.responses.comments;
 
-import com.upc.cicloestrella.DTOs.FormalityDTO;
+import com.upc.cicloestrella.DTOs.responses.FormalityResponseDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,7 @@ public class CommentResponseDTO
 {
     private Long id;
     private StudentCommentResponseDTO author;
-    private FormalityDTO formality;
+    private FormalityResponseDTO formality;
     private String text;
     private LocalDateTime createdAt;
 }
