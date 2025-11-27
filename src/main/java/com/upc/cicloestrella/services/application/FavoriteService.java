@@ -1,6 +1,6 @@
 package com.upc.cicloestrella.services.application;
 
-import com.upc.cicloestrella.DTOs.FormalityDTO;
+import com.upc.cicloestrella.DTOs.responses.FormalityResponseDTO;
 import com.upc.cicloestrella.DTOs.requests.FavoriteRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.FavoriteResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
@@ -14,8 +14,6 @@ import com.upc.cicloestrella.repositories.interfaces.application.FavoriteReposit
 import com.upc.cicloestrella.repositories.interfaces.application.FormalityRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.TeacherRepository;
-import com.upc.cicloestrella.services.auth.AuthenticatedUserService;
-import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +40,7 @@ public class FavoriteService implements FavoriteServiceInterface {
         } else if (favorite.getFavoriteType() == Favorite.FavoriteType.FORMALITY) {
             Formality formality = formalityRepository.findById(favorite.getReferenceId())
                     .orElseThrow(() -> new EntityIdNotFoundException("Formalidad no encontrada con id " + favorite.getReferenceId()));
-            return modelMapper.map(formality, FormalityDTO.class);
+            return modelMapper.map(formality, FormalityResponseDTO.class);
         }
 
         return null;

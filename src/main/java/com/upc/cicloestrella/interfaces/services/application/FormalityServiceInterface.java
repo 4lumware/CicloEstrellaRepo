@@ -1,21 +1,21 @@
 package com.upc.cicloestrella.interfaces.services.application;
 
 
-import com.upc.cicloestrella.DTOs.FormalityDTO;
-import com.upc.cicloestrella.entities.Formality;
+import com.upc.cicloestrella.DTOs.requests.FormalityRequestDTO;
+import com.upc.cicloestrella.DTOs.responses.FormalityResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 
 public interface FormalityServiceInterface {
-    FormalityDTO findById(Long idFormality);
+    FormalityResponseDTO findById(Long idFormality);
 
-    Page<FormalityDTO> findAll(String title, String description, LocalDateTime from, LocalDateTime to, Pageable pageable);
+    Page<FormalityResponseDTO> findAll(String title, String description, LocalDateTime from, LocalDateTime to, Pageable pageable);
 
-    FormalityDTO insert(FormalityDTO formalityDTO);
+    FormalityResponseDTO insert(FormalityRequestDTO formalityDTO);
 
-    FormalityDTO update(Formality formality);
+    FormalityResponseDTO update(FormalityRequestDTO formalityRequestDTO , Long idFormality);
 
     void delete(Long idFormality);
 

@@ -1,4 +1,4 @@
-package com.upc.cicloestrella.DTOs;
+package com.upc.cicloestrella.DTOs.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class FormalityDTO {
+public class FormalityResponseDTO {
     private Long idFormality;
     private String title;
     private String description;

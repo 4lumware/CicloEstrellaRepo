@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class Comment {
     private Student student;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JsonBackReference
     @JoinColumn(name = "formality_id", nullable = false)
     private Formality formality;
 
