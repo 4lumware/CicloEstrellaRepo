@@ -55,10 +55,9 @@ public class CommentController {
     @GetMapping("/formalities/{formalityId}/comments")
     @PermitAll
     public ResponseEntity<ApiResponse<List<CommentResponseDTO>>> index(
-            @PathVariable Long formalityId,
-            @RequestParam(required = false) String keyword
+            @PathVariable Long formalityId
     ) {
-        List<CommentResponseDTO> comments = commentService.allByFormalityId(formalityId, keyword);
+        List<CommentResponseDTO> comments = commentService.allByFormalityId(formalityId);
         if (comments.isEmpty()) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<List<CommentResponseDTO>>builder()
