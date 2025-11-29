@@ -3,11 +3,14 @@ package com.upc.cicloestrella.services.application;
 import com.upc.cicloestrella.DTOs.responses.dashboard.ChartDataDTO;
 import com.upc.cicloestrella.DTOs.responses.dashboard.ChartDatasetDTO;
 import com.upc.cicloestrella.DTOs.responses.dashboard.DashboardKpiResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.reviews.ReviewResponseDTO;
+import com.upc.cicloestrella.entities.Review;
 import com.upc.cicloestrella.interfaces.services.application.DashboardServiceInterface;
 import com.upc.cicloestrella.repositories.interfaces.application.ReviewRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,7 @@ public class DashboardService implements DashboardServiceInterface {
     private final UserRepository userRepository;
     private final ReviewRepository reviewRepository;
     private final StudentRepository studentRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -149,6 +153,14 @@ public class DashboardService implements DashboardServiceInterface {
         }
         ChartDatasetDTO ds = new ChartDatasetDTO("Avg rating per teacher", data, null);
         return new ChartDataDTO(labels, List.of(ds));
+    }
+
+    @Override
+    public List<ReviewResponseDTO> getTopReviews(int limit) {
+        List<Review> reviews = reviewRepository.findTopReviews(limit);
+        return reviews.stream()
+                .map(r -> modelMapper.map(r, ReviewResponseDTO.class))
+                .toList();
     }
 
 

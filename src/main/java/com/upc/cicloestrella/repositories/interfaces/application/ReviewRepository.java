@@ -46,4 +46,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, JpaSpecif
 
     long countByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
+    @Query(""" 
+        SELECT r FROM Review r
+        ORDER BY r.rating DESC
+        LIMIT :limit
+                """)
+    List<Review> findTopReviews(@Param("limit") int limit);
 }
