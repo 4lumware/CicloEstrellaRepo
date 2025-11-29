@@ -111,7 +111,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/reviews/{reviewId}")
-    @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN') and @reviewAuthorizationService.canAccess(authentication, #reviewId)")
+    @PreAuthorize("hasAnyRole('STUDENT' , 'ADMIN' , 'MODERATOR') and @reviewAuthorizationService.canAccess(authentication, #reviewId)")
     public ResponseEntity<ApiResponse<ReviewResponseDTO>> delete(@PathVariable("reviewId") Long reviewId) {
         ReviewResponseDTO review = reviewService.show(reviewId);
         if (review == null) {

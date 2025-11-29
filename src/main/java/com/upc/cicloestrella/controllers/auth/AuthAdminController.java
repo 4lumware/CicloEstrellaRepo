@@ -43,7 +43,7 @@ public class AuthAdminController {
     }
 
     @GetMapping("/me")
-    @PreAuthorize("hasAnyRole('ADMIN', 'STAFF' , 'WRITER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR' , 'WRITER')")
     public ResponseEntity<ApiResponse<StaffResponseDTO>> me() {
         StaffResponseDTO staffResponseDTO = authStaffService.me();
         if(staffResponseDTO == null) {

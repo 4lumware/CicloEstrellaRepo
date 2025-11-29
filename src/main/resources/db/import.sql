@@ -89,7 +89,7 @@ INSERT INTO users (username, email, password, state, creation_date, profile_pict
 ('graciela', 'graciela@email.com', '$2b$12$5Qph/Kjl6mDydEYVDHfjs.lSVKEJHJIztRvYfVGZCTMeF7YYwUhvq', true, '2025-01-07', decode('SG9sYQ==', 'base64')),
 ('hector', 'hector@email.com', '$2b$12$zypJrCoMgGw.L/3f1ajjiOCX0ISU8gzCLZPJ8YU1VhkOtaz.8dJ8u', true, '2025-01-08', decode('SG9sYQ==', 'base64')),
 ('ines', 'ines@email.com', '$2b$12$cmgN6ZqXFoQD3zV8y9F.yOcDZiDD5rPAQK5LTJLSFjaeNoQoe3gxK', true, '2025-01-09', decode('SG9sYQ==', 'base64')),
-('juan', 'juan@email.com', '$2b$12$D6TsNrNe4OpcvqmMH6qiU.s951L1X2xW6EWbTiLcf148FFmXHhgdm', true, '2025-01-10', decode('SG9sYQ==', 'base64'));
+('juan', 'juan@email.com', '$2a$12$ejqI8nXv2bjbLNzzx4rCzunHg/GhImCWhYxJv/snSZ9Guuf.zqAPq', true, '2025-01-10', decode('SG9sYQ==', 'base64'));
 
 -- estudiantes
 INSERT INTO students (user_id, current_semester) VALUES

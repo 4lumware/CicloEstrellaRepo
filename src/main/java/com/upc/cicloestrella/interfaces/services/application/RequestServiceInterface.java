@@ -15,6 +15,6 @@ public interface RequestServiceInterface {
     RequestContentResponseDTO delete(Long studentId, Long requestId) throws JsonProcessingException;
     RequestContentResponseDTO show(Long studentId , Long requestId) throws JsonProcessingException;
     RequestContentResponseDTO findById(Long requestId) throws JsonProcessingException;
-    List<RequestContentResponseDTO> allByStudentId(Long studentId);
+    Page<RequestContentResponseDTO> allByStudentId(LocalDateTime startDate , LocalDateTime endDate , String teacherName , Long courseId , Long campusId ,  Long studentId , int page , int size);
     Page<RequestContentResponseDTO> index(Request.RequestStatus status , RequestTypeEnum type , String studentName , LocalDateTime startDate , LocalDateTime endDate , String teacherName , Long courseId ,Long campusId ,  int page , int size);
 }

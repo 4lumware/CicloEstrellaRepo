@@ -87,21 +87,31 @@ public class RequestService implements RequestServiceInterface {
 
     @SneakyThrows
     @Override
-    public List<RequestContentResponseDTO> allByStudentId(Long studentId) {
-        List<Request> requests = requestRepository.findRequestsByStudent_User_Id(studentId);
-        return requests.stream().map(r -> {
-            try {
-                return requestMapper.toDTO(r);
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
-        }).toList();
+    public Page<RequestContentResponseDTO> allByStudentId( LocalDateTime startDate , LocalDateTime endDate , String teacherName , Long courseId , Long campusId ,  Long studentId , int page , int size) {
+        Specification<Request> specification = RequestSpecification.build(null , null , null , startDate , endDate , studentId);
+        Pageable pageable = PageRequest.of(page, size);
+        List<Request> all = requestRepository.findAll(specification);
+        List<RequestContentResponseDTO> filtered = all.stream()
+                .map(r -> {
+                    try {
+                        return requestMapper.toDTO(r);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .filter(dto -> matchesJson(dto, teacherName, courseId, campusId))
+                .toList();
+        int start = Math.min((int) pageable.getOffset(), filtered.size());
+        int end = Math.min((start + pageable.getPageSize()), filtered.size());
+        List<RequestContentResponseDTO> pageContent = filtered.subList(start, end);
+        return new PageImpl<>(pageContent, pageable, filtered.size());
+
     }
 
     @SneakyThrows
     @Override
     public Page<RequestContentResponseDTO> index(Request.RequestStatus status , RequestTypeEnum type , String studentName , LocalDateTime startDate , LocalDateTime endDate , String teacherName , Long courseId , Long campusId ,  int page , int size) {
-        Specification<Request> specification = RequestSpecification.build(status , type , studentName , startDate , endDate);
+        Specification<Request> specification = RequestSpecification.build(status , type , studentName , startDate , endDate , null  );
         Pageable pageable = PageRequest.of(page, size);
         List<Request> all = requestRepository.findAll(specification);
         List<RequestContentResponseDTO> filtered = all.stream()
@@ -118,6 +128,7 @@ public class RequestService implements RequestServiceInterface {
         int start = Math.min((int) pageable.getOffset(), filtered.size());
         int end = Math.min((start + pageable.getPageSize()), filtered.size());
         List<RequestContentResponseDTO> pageContent = filtered.subList(start, end);
+
 
         return new PageImpl<>(pageContent, pageable, filtered.size());
     }

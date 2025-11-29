@@ -55,12 +55,20 @@ public class CommentSpecification {
         };
     }
 
+    protected static Specification<Comment> studentStateActive() {
+        return (root, query, cb) -> {
+            var student = root.join("student").join("user");
+            return cb.isTrue(student.get("state"));
+        };
+    }
+
     public static Specification<Comment> build(String keyword, String studentName, Long formalityId, String formalityTitle, LocalDateTime from, LocalDateTime to) {
         return Specification.<Comment>unrestricted()
                 .and(textContains(keyword))
                 .and(studentNameContains(studentName))
                 .and(formalityIdEquals(formalityId))
                 .and(formalityTitleContains(formalityTitle))
-                .and(createdBetween(from, to));
+                .and(createdBetween(from, to))
+                .and(studentStateActive());
     }
 }
