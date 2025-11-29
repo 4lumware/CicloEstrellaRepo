@@ -11,4 +11,5 @@ public interface StudentServiceInterface {
     public StudentResponseDTO show(Long id);
     public StudentResponseDTO update(Long id, StudentRequestDTO userRequestDTO) throws IOException;
     public void delete(Long id);
+    StudentResponseDTO updatePassword(Long id, String newPassword , String oldPassword) ;
 }

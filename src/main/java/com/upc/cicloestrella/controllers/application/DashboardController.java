@@ -1,7 +1,9 @@
 package com.upc.cicloestrella.controllers.application;
 
+import com.upc.cicloestrella.DTOs.responses.comments.CommentResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.dashboard.ChartDataDTO;
 import com.upc.cicloestrella.DTOs.responses.dashboard.DashboardKpiResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.reviews.ReviewResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 import com.upc.cicloestrella.interfaces.services.application.DashboardServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/dashboard")
@@ -77,5 +81,27 @@ public class DashboardController {
         DashboardKpiResponseDTO dto = dashboardService.getKpis(currentDays, previousDays);
         return ResponseEntity.ok(dto);
     }
+
+    @GetMapping("/last-reviews")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<List<ReviewResponseDTO>>> lastReviews(
+            @RequestParam(name = "limit", defaultValue = "3") int limit
+    ) {
+        List<ReviewResponseDTO> reviews = dashboardService.getTopReviews(limit);
+        if(reviews.isEmpty()){
+            return ResponseEntity.ok(ApiResponse.<List<ReviewResponseDTO>>builder()
+                    .data(reviews)
+                    .message("No se encontraron reviews")
+                    .status(200)
+                    .build());
+        }
+
+        return ResponseEntity.ok(ApiResponse.<List<ReviewResponseDTO>>builder()
+                .data(reviews)
+                .message("El top " + limit + " reviews se obtuvo correctamente")
+                .status(200)
+                .build());
+    }
+
 
 }

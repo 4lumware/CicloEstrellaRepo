@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.controllers.application;
 
+import com.upc.cicloestrella.DTOs.requests.ChangePasswordStudentDTO;
 import com.upc.cicloestrella.DTOs.requests.StudentRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
@@ -78,6 +79,27 @@ public class StudentController {
                         .status(200)
                         .build());
     }
+
+    @PutMapping("/{studentId}/update-password")
+    @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")
+    public ResponseEntity<ApiResponse<StudentResponseDTO>> getPassword(@PathVariable Long studentId , @Valid @RequestBody ChangePasswordStudentDTO changePasswordStudentDTO) {
+        StudentResponseDTO student= studentService.updatePassword(studentId, changePasswordStudentDTO.getNewPassword() , changePasswordStudentDTO.getOldPassword());
+
+        if(student == null) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<StudentResponseDTO>builder()
+                            .message("Estudiante no encontrado o contraseña antigua incorrecta")
+                            .status(404)
+                            .build());
+        }
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<StudentResponseDTO>builder()
+                        .data(student)
+                        .message("Contraseña actualizada correctamente")
+                        .status(200)
+                        .build());
+    }
+
 
     @DeleteMapping("/{studentId}")
     @PreAuthorize("hasAnyRole('STUDENT' ,'ADMIN') and @studentAuthorizationService.canAccess(authentication , #studentId)")

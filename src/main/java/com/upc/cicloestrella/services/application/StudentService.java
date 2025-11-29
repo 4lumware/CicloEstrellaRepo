@@ -73,6 +73,7 @@ public class StudentService implements StudentServiceInterface {
                         existingUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
                     }
 
+
                     List<Career> careers = careerRepository.findAllById(userRequestDTO.getCareerIds());
                     if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
                         throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
@@ -80,15 +81,34 @@ public class StudentService implements StudentServiceInterface {
                     existingStudent.setCareers(careers);
                     existingStudent.setCurrentSemester(userRequestDTO.getCurrentSemester());
 
+
                     String newProfileUrl = userRequestDTO.getProfilePictureUrl();
-                    if(!newProfileUrl.equals(existingUser.getProfilePictureUrl())){
+                    String oldProfileUrl = existingUser.getProfilePictureUrl();
+
+                    if (newProfileUrl == null) {
+                        existingUser.setProfilePictureUrl(null);
+                        return studentMapper.toDTO(studentRepository.save(existingStudent));
+                    }
+
+                    boolean isDifferent = !newProfileUrl.equals(oldProfileUrl);
+                    boolean isBase64 = newProfileUrl.startsWith("data:image/");
+
+                    if (isDifferent && isBase64) {
+
                         String[] parts = newProfileUrl.split(",");
-                        if(parts.length != 2) throw new IllegalArgumentException("Formato de imagen inválido");
+                        if (parts.length != 2)
+                            throw new IllegalArgumentException("Formato de imagen inválido");
+
                         try {
-                            existingUser.setProfilePictureUrl(imageCreatorService.saveBase64Image(parts[0], parts[1], userRequestDTO.getUsername()));
+                            existingUser.setProfilePictureUrl(
+                                    imageCreatorService.saveBase64Image(
+                                            parts[0], parts[1], userRequestDTO.getUsername()
+                                    )
+                            );
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
+
                     } else {
                         existingUser.setProfilePictureUrl(newProfileUrl);
                     }
@@ -113,5 +133,20 @@ public class StudentService implements StudentServiceInterface {
         studentRepository.save(student);
 
 
+    }
+
+    @Override
+    public StudentResponseDTO updatePassword(Long id, String newPassword , String oldPassword) {
+        return studentRepository.findById(id)
+                .map(existingStudent -> {
+                    User existingUser = existingStudent.getUser();
+                    if(!passwordEncoder.matches(oldPassword , existingUser.getPassword())) {
+                        throw new IllegalArgumentException("La contraseña antigua no coincide");
+                    }
+                    existingUser.setPassword(passwordEncoder.encode(newPassword));
+                    Student updatedStudent = studentRepository.save(existingStudent);
+                    return studentMapper.toDTO(updatedStudent);
+                })
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
     }
 }

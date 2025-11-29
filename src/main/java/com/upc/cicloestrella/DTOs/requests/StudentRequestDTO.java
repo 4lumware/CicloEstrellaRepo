@@ -18,8 +18,7 @@ public class StudentRequestDTO {
 
     @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
     private String password;
-
-    @NotNull(message = "El nombre no puede estar vacío")
+    
     private String profilePictureUrl;
 
     @NotNull(message = "El semestre actual no puede estar vacío")
