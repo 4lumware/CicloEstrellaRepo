@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.specifications.application;
 
+import com.upc.cicloestrella.entities.Comment;
 import com.upc.cicloestrella.entities.Request;
 import com.upc.cicloestrella.enums.RequestTypeEnum;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,12 +44,29 @@ public class RequestSpecification {
         };
     }
 
+    public static Specification<Request> studentIdEquals(Long studentId) {
+        return (root, query, cb) -> {
+            if (studentId == null) return null;
+            return cb.equal(root.join("student").join("user").get("id"), studentId);
+        };
+    }
 
-    public static Specification<Request> build(Request.RequestStatus status , RequestTypeEnum type , String studentName , LocalDateTime startDate , LocalDateTime endDate) {
+    protected static Specification<Request> studentStateActive() {
+        return (root, query, cb) -> {
+            var student = root.join("student").join("user");
+            return cb.isTrue(student.get("state"));
+        };
+    }
+
+
+    public static Specification<Request> build(Request.RequestStatus status , RequestTypeEnum type , String studentName , LocalDateTime startDate , LocalDateTime endDate , Long studentId) {
         return Specification.<Request>unrestricted()
                 .and(hasStatus(status))
                 .and(hasType(type))
                 .and(studentNameContains(studentName))
-                .and(createdAtBetween(startDate, endDate));
+                .and(createdAtBetween(startDate, endDate))
+                .and(studentIdEquals(studentId))
+                .and(studentStateActive());
+
     }
 }

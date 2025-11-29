@@ -1,5 +1,6 @@
 package com.upc.cicloestrella.specifications.application;
 
+import com.upc.cicloestrella.entities.Comment;
 import com.upc.cicloestrella.entities.Review;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -96,6 +97,12 @@ public class ReviewSpecification {
         };
     }
 
+    protected static Specification<Review> studentStateActive() {
+        return (root, query, cb) -> {
+            var student = root.join("student").join("user");
+            return cb.isTrue(student.get("state"));
+        };
+    }
     public static Specification<Review> build(
             String keyword,
             Long studentId,
@@ -117,7 +124,8 @@ public class ReviewSpecification {
                 .and(ratingBetween(minRating, maxRating))
                 .and(hasTag(tagId))
                 .and(hasTagName(tagName))
-                .and(createdBetween(from, to));
+                .and(createdBetween(from, to))
+                .and(studentStateActive());
     }
 }
 
