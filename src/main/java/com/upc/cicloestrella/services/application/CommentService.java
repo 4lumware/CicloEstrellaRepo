@@ -40,8 +40,8 @@ public class CommentService implements CommentServiceInterface {
     }
 
     @Override
-    public List<CommentResponseDTO> allByFormalityId(Long formalityId) {
-        return commentRepository.findCommentsByFormality_IdAndStudent_User_StateTrue(formalityId)
+    public List<CommentResponseDTO> allByFormalityId(Long formalityId , String keyword) {
+        return commentRepository.findCommentsByFormality_IdAndStudent_User_StateTrue(formalityId , keyword)
                 .stream()
                 .map(commentMapper::toDTO)
                 .toList();
