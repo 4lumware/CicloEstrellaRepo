@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface CommentServiceInterface {
     Page<CommentResponseDTO> index(String keyword, String studentName, Long formalityId, String formalityTitle, LocalDateTime from, LocalDateTime to , Pageable pageable);
-    List<CommentResponseDTO> allByFormalityId(Long formalityId);
+    List<CommentResponseDTO> allByFormalityId(Long formalityId , String keyword);
     CommentResponseDTO findById(Long commentId , Long formalityId);
     CommentResponseDTO delete(Long commentId , Long formalityId);
     CommentResponseDTO save(CommentRequestDTO comment , Long formalityId);
