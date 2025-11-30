@@ -85,6 +85,7 @@ public class FavoriteService implements FavoriteServiceInterface {
         return FavoriteResponseDTO.builder()
                 .id(savedFavorite.getId())
                 .type(savedFavorite.getFavoriteType())
+                .note(savedFavorite.getNote())
                 .favorite(data)
                 .build();
     }
@@ -92,11 +93,13 @@ public class FavoriteService implements FavoriteServiceInterface {
     @Override
     public List<FavoriteResponseDTO> index(Long studentId) {
         List<Favorite> favorites = favoriteRepository.findAllByStudent_User_Id(studentId);
+
         return favorites.stream().map(favorite ->  {
             Object data = getFavoriteData(favorite);
             return FavoriteResponseDTO.builder()
                     .id(favorite.getId())
                     .type(favorite.getFavoriteType())
+                    .note(favorite.getNote())
                     .favorite(data)
                     .build();
         }).toList();
@@ -113,6 +116,7 @@ public class FavoriteService implements FavoriteServiceInterface {
                 .id(favorite.getId())
                 .type(favorite.getFavoriteType())
                 .favorite(data)
+                .note(favorite.getNote())
                 .build();
     }
 
@@ -132,6 +136,7 @@ public class FavoriteService implements FavoriteServiceInterface {
                 .id(favorite.getId())
                 .type(favorite.getFavoriteType())
                 .favorite(data)
+                .note(favorite.getNote())
                 .build();
     }
 }
