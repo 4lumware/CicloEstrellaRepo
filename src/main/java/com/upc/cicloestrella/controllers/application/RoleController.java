@@ -1,10 +1,14 @@
 package com.upc.cicloestrella.controllers.application;
 
+import com.upc.cicloestrella.DTOs.requests.RoleVerificationRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.RoleResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.RoleVerificationResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
 
 import com.upc.cicloestrella.interfaces.services.application.RoleServiceInterface;
+import jakarta.annotation.security.PermitAll;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -57,6 +61,28 @@ public class RoleController {
                         .status(200)
                         .build());
     }
+
+    @PostMapping("/users/{userId}/roles/verify")
+    @PermitAll
+    public ResponseEntity<ApiResponse<RoleVerificationResponseDTO>> verifyUserRole(@PathVariable Long userId, @Valid @RequestBody RoleVerificationRequestDTO roleVerificationRequestDTO) {
+        RoleVerificationResponseDTO roleVerificationResponseDTO = roleService.userHasRole(userId, roleVerificationRequestDTO.getRoleNames());
+
+        if(roleVerificationResponseDTO == null) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<RoleVerificationResponseDTO>builder()
+                            .message("No se pudo verificar el rol")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.status(200)
+                .body(ApiResponse.<RoleVerificationResponseDTO>builder()
+                        .data(roleVerificationResponseDTO)
+                        .message("Rol verificado correctamente")
+                        .status(200)
+                        .build());
+    }
+
 
     @PostMapping("/users/{userId}/roles/{rolId}")
     @PreAuthorize("hasRole('ADMIN')")

@@ -1,4 +1,5 @@
 spring:
+  api-url : http://localhost:8080/api
   application:
     name: cicloestrella
   datasource:

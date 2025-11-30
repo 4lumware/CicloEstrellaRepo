@@ -23,4 +23,6 @@ public interface ReviewReactionRepository extends JpaRepository<ReviewReaction, 
     boolean existsReviewReactionByReview_IdAndAuthor_User_StateTrue(Long reviewId);
 
     boolean existsReviewReactionByIdAndAuthor_User_Email(Long id, String authorUserEmail);
+
+    List<Review> review(Review review);
 }

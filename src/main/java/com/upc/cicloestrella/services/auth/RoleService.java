@@ -1,6 +1,7 @@
 package com.upc.cicloestrella.services.auth;
 
 import com.upc.cicloestrella.DTOs.responses.RoleResponseDTO;
+import com.upc.cicloestrella.DTOs.responses.RoleVerificationResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.User;
@@ -11,6 +12,9 @@ import com.upc.cicloestrella.repositories.interfaces.application.auth.UserReposi
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -83,6 +87,26 @@ public class RoleService implements RoleServiceInterface {
     public void assignRoleToUser(User user, Role.RoleName roleName) {
         Role role = getRoleByName(roleName);
         user.getRoles().add(role);
+    }
+
+    @Override
+    public RoleVerificationResponseDTO userHasRole(Long userId, List<Role.RoleName> roleNames) {
+        Authentication actualUser = SecurityContextHolder.getContext().getAuthentication();
+        String actualUsername = actualUser.getName();
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityIdNotFoundException("Usuario no encontrado con ID: " + userId));
+
+        if(!user.getEmail().equals(actualUsername)) {
+            throw new RuntimeException("No tienes permiso para verificar los roles de este usuario.");
+        }
+
+        boolean hasRole = user.getRoles().stream()
+                .anyMatch(role -> roleNames.contains(role.getRoleName()));
+
+        return RoleVerificationResponseDTO.builder()
+                .hasRole(hasRole)
+                .build();
     }
 
     private Role getRoleByName(Role.RoleName roleName) {

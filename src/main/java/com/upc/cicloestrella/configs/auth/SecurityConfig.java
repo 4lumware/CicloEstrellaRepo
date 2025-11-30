@@ -12,12 +12,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -36,17 +36,25 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> {
+                            // Auth endpoints
                             authorize.requestMatchers("/auth/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/campuses/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/careers/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/courses/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET, "/formats/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/formalities/**" ).permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/teachers/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/students/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reactions/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reviews/**").permitAll();
-                            authorize.requestMatchers(HttpMethod.GET , "/reactions/**").permitAll();
+
+
+                            // Swagger
+
+                            authorize.requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui/index.html", "/webjars/**").permitAll();
+
+                            // Rutas públicas GET
+
+
+
+                            authorize.requestMatchers(HttpMethod.GET, "/campuses/**", "/careers/**", "/courses/**",
+                            "/formats/**", "/formalities/**", "/teachers/**", "/students/**",
+                            "/reactions/**", "/reviews/**").permitAll();
+
+                            // Permitir acceso público a imágenes estáticas (cubre /images/profiles/...)
+                            authorize.requestMatchers("/images/**", "/static/**").permitAll();
+
                             authorize.anyRequest().authenticated();
                         }
                 ).exceptionHandling(exception -> {
@@ -60,6 +68,12 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable);
 
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        // Ignorar completamente estas rutas para que Spring Security no intervenga
+        return web -> web.ignoring().requestMatchers("/images/**", "/static/**", "/favicon.ico");
     }
 
     @Bean

@@ -58,7 +58,14 @@ public class Teacher {
             inverseJoinColumns = @JoinColumn(name = "campus_id")
     )
     @JsonManagedReference
+
     private List<Campus> campuses;
+    @OneToMany(
+            mappedBy = "teacher",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Review> reviews;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(

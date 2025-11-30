@@ -3,13 +3,18 @@ package com.upc.cicloestrella.services.application;
 import com.upc.cicloestrella.DTOs.requests.StudentRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.StudentResponseDTO;
 import com.upc.cicloestrella.entities.Career;
+import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.Student;
 import com.upc.cicloestrella.entities.User;
 import com.upc.cicloestrella.exceptions.EntityIdNotFoundException;
+import com.upc.cicloestrella.exceptions.UniqueException;
 import com.upc.cicloestrella.interfaces.services.application.StudentServiceInterface;
 import com.upc.cicloestrella.mappers.StudentMapper;
 import com.upc.cicloestrella.repositories.interfaces.application.CareerRepository;
+import com.upc.cicloestrella.repositories.interfaces.application.RoleRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
+import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
+import com.upc.cicloestrella.services.logic.ImageCreatorService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,7 +22,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,10 +32,12 @@ import java.util.List;
 public class StudentService implements StudentServiceInterface {
 
     private final StudentRepository studentRepository;
+    private final UserRepository userRepository;
     private final CareerRepository careerRepository;
-    private final ModelMapper modelMapper ;
     private final StudentMapper studentMapper;
     private final PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
+    private final ImageCreatorService imageCreatorService;
 
 
     @Override
@@ -47,23 +56,64 @@ public class StudentService implements StudentServiceInterface {
     }
 
     @Override
-    public StudentResponseDTO update(Long id, StudentRequestDTO userRequestDTO) {
+    public StudentResponseDTO update(Long id, StudentRequestDTO userRequestDTO)  {
+
+        if(userRepository.existsByEmailAndIdNot(userRequestDTO.getEmail() , id)) {
+            throw new UniqueException("El email " + userRequestDTO.getEmail() + " ya está en uso.");
+        }
         return studentRepository.findById(id)
                 .map(existingStudent -> {
 
-                    modelMapper.map(userRequestDTO, existingStudent.getUser());
 
-                    List<Career> careers  = careerRepository.findAllById(userRequestDTO.getCareerIds());
 
+                    User existingUser = existingStudent.getUser();
+                    existingUser.setUsername(userRequestDTO.getUsername());
+                    existingUser.setEmail(userRequestDTO.getEmail());
+                    if (userRequestDTO.getPassword() != null && !userRequestDTO.getPassword().isEmpty()) {
+                        existingUser.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+                    }
+
+
+                    List<Career> careers = careerRepository.findAllById(userRequestDTO.getCareerIds());
                     if(careers.isEmpty() || careers.size() != userRequestDTO.getCareerIds().size()) {
                         throw new EntityIdNotFoundException("Algunas carreras proporcionadas no existen o no se proporcionó ninguna");
                     }
                     existingStudent.setCareers(careers);
                     existingStudent.setCurrentSemester(userRequestDTO.getCurrentSemester());
-                    existingStudent.getUser().setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+
+
+                    String newProfileUrl = userRequestDTO.getProfilePictureUrl();
+                    String oldProfileUrl = existingUser.getProfilePictureUrl();
+
+                    if (newProfileUrl == null) {
+                        existingUser.setProfilePictureUrl(null);
+                        return studentMapper.toDTO(studentRepository.save(existingStudent));
+                    }
+
+                    boolean isDifferent = !newProfileUrl.equals(oldProfileUrl);
+                    boolean isBase64 = newProfileUrl.startsWith("data:image/");
+
+                    if (isDifferent && isBase64) {
+
+                        String[] parts = newProfileUrl.split(",");
+                        if (parts.length != 2)
+                            throw new IllegalArgumentException("Formato de imagen inválido");
+
+                        try {
+                            existingUser.setProfilePictureUrl(
+                                    imageCreatorService.saveBase64Image(
+                                            parts[0], parts[1], userRequestDTO.getUsername()
+                                    )
+                            );
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+
+                    } else {
+                        existingUser.setProfilePictureUrl(newProfileUrl);
+                    }
 
                     Student updatedStudent = studentRepository.save(existingStudent);
-
                     return studentMapper.toDTO(updatedStudent);
                 })
                 .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
@@ -83,5 +133,20 @@ public class StudentService implements StudentServiceInterface {
         studentRepository.save(student);
 
 
+    }
+
+    @Override
+    public StudentResponseDTO updatePassword(Long id, String newPassword , String oldPassword) {
+        return studentRepository.findById(id)
+                .map(existingStudent -> {
+                    User existingUser = existingStudent.getUser();
+                    if(!passwordEncoder.matches(oldPassword , existingUser.getPassword())) {
+                        throw new IllegalArgumentException("La contraseña antigua no coincide");
+                    }
+                    existingUser.setPassword(passwordEncoder.encode(newPassword));
+                    Student updatedStudent = studentRepository.save(existingStudent);
+                    return studentMapper.toDTO(updatedStudent);
+                })
+                .orElseThrow(() -> new EntityIdNotFoundException("Estudiante con id " + id + " no encontrado"));
     }
 }

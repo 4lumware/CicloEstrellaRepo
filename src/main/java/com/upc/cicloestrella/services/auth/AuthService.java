@@ -1,10 +1,6 @@
 package com.upc.cicloestrella.services.auth;
 
 import com.upc.cicloestrella.DTOs.requests.auth.login.UserLoginRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.StaffRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestDTO;
-import com.upc.cicloestrella.DTOs.requests.auth.register.UserRegisterRequestWithImageDTO;
 import com.upc.cicloestrella.DTOs.responses.StaffResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JWTTokensDTO;
 import com.upc.cicloestrella.DTOs.responses.auth.JsonResponseDTO;
@@ -12,8 +8,8 @@ import com.upc.cicloestrella.entities.Role;
 import com.upc.cicloestrella.entities.Student;
 import com.upc.cicloestrella.entities.Token;
 import com.upc.cicloestrella.entities.User;
-import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;
 import com.upc.cicloestrella.mappers.StudentMapper;
+import com.upc.cicloestrella.repositories.interfaces.application.StudentRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.TokenRepository;
 import com.upc.cicloestrella.repositories.interfaces.application.auth.UserRepository;
 import com.upc.cicloestrella.repositories.interfaces.auth.AuthServiceInterface;
@@ -25,34 +21,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Base64;
+import java.util.List;
 
 
 @Slf4j
 @Service
 @RequiredArgsConstructor(onConstructor_ =  @Autowired)
 public class AuthService implements AuthServiceInterface {
-    private final StudentRegisterService studentRegisterService;
-    private final PasswordEncoder passwordEncoder;
-    private final StaffRegisterService adminRegisterService;
     private final JWTServiceInterface jwtService;
     private final TokenRepository tokenRepository;
     private final ModelMapper modelMapper;
     private final StudentMapper studentMapper;
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
-
+    private final StudentRepository studentRepository;
 
     @Override
+    @Transactional
     public JsonResponseDTO<Object> login(UserLoginRequestDTO userLoginRequestDTO) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         userLoginRequestDTO.getEmail(),
@@ -80,8 +70,12 @@ public class AuthService implements AuthServiceInterface {
     private Object getUserDTOByRole(User user) {
         for (Role role : user.getRoles()) {
             switch (role.getRoleName()) {
+
                 case STUDENT -> {
-                    Student student = studentRegisterService.getStudentByUserId(user.getId());
+
+                    Student student = studentRepository.findStudentByUserId(user.getId())
+                            .orElseThrow(() -> new UsernameNotFoundException("Estudiante no encontrado para el usuario con ID: " + user.getId()));
+
                     return studentMapper.toDTO(student);
                 }
                 case ADMIN , MODERATOR -> {
@@ -91,66 +85,12 @@ public class AuthService implements AuthServiceInterface {
             }
         }
         throw new IllegalArgumentException("El usuario no tiene un rol soportado");
+
     }
 
-    @Override
-    public JsonResponseDTO<Object> register(UserRegisterRequestDTO dto, RoleByAuthenticationMethods roleName) throws IOException {
-
-        // Log incoming DTO details to help debug binding issues
-        try {
-            if (dto instanceof com.upc.cicloestrella.DTOs.requests.auth.register.StudentRegisterRequestDTO sDto) {
-                log.debug("AuthService.register: received StudentRegisterRequestDTO currentSemester={} careerIds={}", sDto.getCurrentSemester(), sDto.getCareerIds());
-            } else {
-                log.debug("AuthService.register: received DTO of type {}", dto.getClass().getName());
-            }
-        } catch (Exception e) {
-            log.warn("AuthService.register: error while logging incoming DTO: {}", e.getMessage());
-        }
-
-        // Create a temporary DTO for image/password processing so we don't lose subclass fields like careerIds
-        UserRegisterRequestWithImageDTO userWithImage = modelMapper.map(dto, UserRegisterRequestWithImageDTO.class);
-
-        userWithImage.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        if (dto.getProfilePictureUrl() != null && !dto.getProfilePictureUrl().isEmpty()) {
-            String base64Data = dto.getProfilePictureUrl().split(",")[1];
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-
-            Path uploadDir = Paths.get("src/main/resources/static/images/profiles");
-            Files.createDirectories(uploadDir);
-
-            String fileName = dto.getUsername() + "_" + System.currentTimeMillis() + ".png";
-            Path filePath = uploadDir.resolve(fileName);
-
-            Files.write(filePath, imageBytes);
-
-            userWithImage.setProfilePictureUrl("/images/profiles/" + fileName);
-        }
-
-        // Copy back the processed password and profilePictureUrl into the original dto so subclass fields remain intact
-        dto.setPassword(userWithImage.getPassword());
-        dto.setProfilePictureUrl(userWithImage.getProfilePictureUrl());
-
-        Object entity = registerUserByRole(dto, roleName);
-
-        Object responseDto = mapEntityToDTO(entity, roleName);
-
-        User user = extractUserFromEntity(entity);
-        String accessToken = generateAccessToken(user);
-        String refreshToken = generateRefreshToken(user);
-
-        saveUserToken(user, accessToken);
-
-        return JsonResponseDTO.builder()
-                .user(responseDto)
-                .tokens(JWTTokensDTO.builder()
-                        .access_token(accessToken)
-                        .refresh_token(refreshToken)
-                        .build())
-                .build();
-    }
 
     @Override
+    @Transactional
     public JWTTokensDTO refreshToken(String authHeader) {
         if(authHeader == null  || !authHeader.startsWith("Bearer ")) throw new IllegalArgumentException("Invalid token header");
 
@@ -169,6 +109,7 @@ public class AuthService implements AuthServiceInterface {
         final String accessToken = jwtService.generateAccessToken(user);
 
         revokeAllUserTokens(user);
+
         saveUserToken(user, accessToken);
 
         return JWTTokensDTO.builder()
@@ -177,57 +118,23 @@ public class AuthService implements AuthServiceInterface {
                 .build();
     }
 
-    private Object registerUserByRole(UserRegisterRequestDTO userRegisterRequestDTO, RoleByAuthenticationMethods roleName) {
-        return switch (roleName) {
-            case STUDENT -> {
-                if (userRegisterRequestDTO instanceof StudentRegisterRequestDTO studentDto) {
-                    // already the correct subtype, avoid remapping which can drop fields
-                    yield studentRegisterService.register(studentDto);
-                } else {
-                    StudentRegisterRequestDTO student = modelMapper.map(userRegisterRequestDTO, StudentRegisterRequestDTO.class);
-                    yield studentRegisterService.register(student);
-                }
-            }
-            case STAFF -> {
-                StaffRegisterRequestDTO admin = modelMapper.map(userRegisterRequestDTO, StaffRegisterRequestDTO.class);
-                yield adminRegisterService.register(admin);
-            }
-        };
-    }
 
-    private Object mapEntityToDTO(Object entity, RoleByAuthenticationMethods roleName) {
-        return switch (roleName) {
-            case STUDENT -> studentMapper.toDTO((Student) entity);
-            case STAFF -> modelMapper.map(entity, StaffResponseDTO.class);
-        };
-    }
-
-    private User extractUserFromEntity(Object entity) {
-        if (entity instanceof Student student) {
-            return student.getUser();
-        } else if (entity instanceof User user) {
-            return user;
-        } else {
-            throw new IllegalStateException("Tipo de entidad inesperado: " + entity.getClass().getName());
-        }
-    }
-
-    private String generateAccessToken(User user) {
-        return jwtService.generateAccessToken(user);
-    }
-
-    private String generateRefreshToken(User user) {
-        return jwtService.generateRefreshToken(user);
-    }
 
     @Override
-    public JsonResponseDTO logout(String token) {
-        return null;
+    @Transactional
+    public void logout(String token) {
+        String jwt = token.substring(7);
+        String userEmail = jwtService.extractUsername(jwt);
+
+        if(userEmail == null) throw new IllegalArgumentException("Token invalido");
+
+        final User user = userRepository.findByEmailAndStateTrue(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado con email: " + userEmail));
+
+        revokeAllUserTokens(user);
     }
 
-
-
-    private void saveUserToken(User user, String jwtToken) {
+    public void saveUserToken(User user, String jwtToken) {
         var token = Token.builder()
                 .user(user)
                 .token(jwtToken)
@@ -238,15 +145,17 @@ public class AuthService implements AuthServiceInterface {
         tokenRepository.save(token);
     }
 
-    private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
+
+    @Transactional
+    protected void revokeAllUserTokens(User user) {
+        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUserId(user.getId());
         if (validUserTokens.isEmpty()) return;
+
+        System.out.println("Revoking tokens for user ID: " + user.getId());
 
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
-
-        tokenRepository.saveAll(validUserTokens);
     }
 }

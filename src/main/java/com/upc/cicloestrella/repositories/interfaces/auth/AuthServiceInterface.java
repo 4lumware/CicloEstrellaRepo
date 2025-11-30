@@ -10,8 +10,7 @@ import com.upc.cicloestrella.enums.RoleByAuthenticationMethods;
 import java.io.IOException;
 
 public interface AuthServiceInterface {
-    public JsonResponseDTO<?> login(UserLoginRequestDTO userLoginRequestDTO);
-    public JsonResponseDTO<?> register(UserRegisterRequestDTO userRegisterRequestDTO , RoleByAuthenticationMethods roleName) throws IOException;
-    public JsonResponseDTO<?> logout(String token);
-    public JWTTokensDTO refreshToken(String refreshToken);
+    JsonResponseDTO<?> login(UserLoginRequestDTO userLoginRequestDTO);
+    void logout(String token);
+    JWTTokensDTO refreshToken(String refreshToken);
 }

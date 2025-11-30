@@ -5,12 +5,21 @@ import com.upc.cicloestrella.DTOs.responses.teachers.TeacherFindByIdResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherResponseDTO;
 import com.upc.cicloestrella.DTOs.responses.teachers.TeacherSearchByKeywordResponseDTO;
 import com.upc.cicloestrella.entities.Teacher;
+import org.springframework.data.domain.Page;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface TeacherServiceInterface {
     public TeacherResponseDTO save(TeacherRequestDTO teacher);
-    public List<TeacherSearchByKeywordResponseDTO> index(String FirstName);
+    public Page<TeacherResponseDTO> index(String fullName,
+                                          BigDecimal minRating,
+                                          BigDecimal maxRating,
+                                          List<Long> careerIds,
+                                          List<Long> courseIds,
+                                          List<Long> campusIds,
+                                          Integer page,
+                                          Integer size);
     public TeacherFindByIdResponseDTO show(Long id);
     public TeacherResponseDTO update(Long id, TeacherRequestDTO teacher);
     public void delete(Long id);

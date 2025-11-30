@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor
@@ -27,5 +26,4 @@ public class UserRegisterRequestDTO {
 
     @NotNull(message = "El nombre no puede estar vacío")
     private String profilePictureUrl;
-
 }

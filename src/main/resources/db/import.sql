@@ -80,7 +80,7 @@ INSERT INTO teacher_courses (teacher_id, course_id) VALUES
 
 -- usuarios con contraseñas encriptadas
 INSERT INTO users (username, email, password, state, creation_date, profile_picture_url) VALUES
-('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', decode('SG9sYQ==', 'base64') ),
+('alicia', 'alicia@email.com', '$2b$12$N/0uUCFsyP6GHgs77Ky2Wu.3azPocyLeQEVrtOCuwVwyRs/a2ToT6', true, '2025-01-01', 'http://localhost:8080/api/images/profiles/123213312_17c70027-16a7-44ca-951f-63b8eb8883fa.jpg' ),
 ('roberto', 'roberto@email.com', '$2b$12$eSxBS7aKpPvaKTKzV2g1kuTnM97Cmjew8x1m63hRwZxwpKXVLnbeq', true, '2025-01-02', decode('SG9sYQ==', 'base64')),
 ('carlos', 'carlos@email.com', '$2b$12$BvlNL4N1rraGdur4Y2KY9.qU3tjsUrRDbngq5P6JKzueIDeV0mdwa', true, '2025-01-03', decode('SG9sYQ==', 'base64')),
 ('diana', 'diana@email.com', '$2b$12$e0bPeB4WRhqJ14bCwkTohOZGcB8ww0hzcoupvpgcDhtb62YJdOvou', true, '2025-01-04', decode('SG9sYQ==', 'base64')),
@@ -89,7 +89,7 @@ INSERT INTO users (username, email, password, state, creation_date, profile_pict
 ('graciela', 'graciela@email.com', '$2b$12$5Qph/Kjl6mDydEYVDHfjs.lSVKEJHJIztRvYfVGZCTMeF7YYwUhvq', true, '2025-01-07', decode('SG9sYQ==', 'base64')),
 ('hector', 'hector@email.com', '$2b$12$zypJrCoMgGw.L/3f1ajjiOCX0ISU8gzCLZPJ8YU1VhkOtaz.8dJ8u', true, '2025-01-08', decode('SG9sYQ==', 'base64')),
 ('ines', 'ines@email.com', '$2b$12$cmgN6ZqXFoQD3zV8y9F.yOcDZiDD5rPAQK5LTJLSFjaeNoQoe3gxK', true, '2025-01-09', decode('SG9sYQ==', 'base64')),
-('juan', 'juan@email.com', '$2b$12$D6TsNrNe4OpcvqmMH6qiU.s951L1X2xW6EWbTiLcf148FFmXHhgdm', true, '2025-01-10', decode('SG9sYQ==', 'base64'));
+('juan', 'juan@email.com', '$2a$12$ejqI8nXv2bjbLNzzx4rCzunHg/GhImCWhYxJv/snSZ9Guuf.zqAPq', true, '2025-01-10', decode('SG9sYQ==', 'base64'));
 
 -- estudiantes
 INSERT INTO students (user_id, current_semester) VALUES
@@ -147,14 +147,15 @@ INSERT INTO user_roles (user_id, role_id) VALUES
 (1, 2), (2, 2), (3, 2), (4, 2), (5, 2), (6, 1), (7, 3), (8, 1), (9, 3), (10, 3);
 
 -- favoritos
-INSERT INTO favorites (student_id, favorite_type, reference_id) VALUES
-(1, 'TEACHER', 1),
-(3, 'FORMALITY', 3),
-(4, 'TEACHER', 4),
-(1, 'FORMALITY', 6),
-(2, 'TEACHER', 7),
-(4, 'FORMALITY', 9),
-(5, 'TEACHER', 10);
+INSERT INTO favorites (student_id, favorite_type, reference_id, note) VALUES
+(1, 'TEACHER', 1, 'Me gusta cómo explica el profesor Carlos'),
+(3, 'FORMALITY', 3, 'Trámite de actividades extracurriculares muy útil'),
+(4, 'TEACHER', 4, 'La profesora Ana es muy dedicada'),
+(1, 'FORMALITY', 6, 'Constancia de estudios necesaria para beca'),
+(2, 'TEACHER', 7, 'El profesor Miguel motiva mucho en clase'),
+(4, 'FORMALITY', 9, 'Examen de recuperación importante para mi avance'),
+(5, 'TEACHER', 10, 'La profesora Paula es muy atenta');
+
 
 -- comentarios
 INSERT INTO comments (text, created_at, student_id, formality_id) VALUES
@@ -178,3 +179,106 @@ INSERT INTO comments (text, created_at, student_id, formality_id) VALUES
 ('Me gustaría que todo fuera digital.', '2025-08-03T16:40:00', 4, 8),
 ('Excelente atención telefónica.', '2025-09-07T17:50:00', 5, 9),
 ('El proceso fue claro y transparente.', '2025-10-03T18:55:00', 1, 10);
+
+
+-- Requests
+INSERT INTO requests (student_id, request_type, content, status, created_at) VALUES
+    (1, 'TEACHER', '{
+    "firstName": "Carlos",
+    "lastName": "Ramírez",
+    "generalDescription": "Docente con amplia experiencia en ingeniería y proyectos tecnológicos.",
+    "profilePictureUrl": "carlos.png",
+    "campusIds": [1],
+    "careerIds": [1],
+    "courseIds": [1]
+}', 'PENDING', '2025-11-17T10:00:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "María",
+    "lastName": "González",
+    "generalDescription": "Especialista en arte y creatividad, apasionada por la enseñanza.",
+    "profilePictureUrl": "maria.png",
+    "campusIds": [2],
+    "careerIds": [2],
+    "courseIds": [2]
+}', 'PENDING', '2025-11-17T10:05:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "José",
+    "lastName": "Fernández",
+    "generalDescription": "Contador público con enfoque en educación financiera.",
+    "profilePictureUrl": "jose.png",
+    "campusIds": [3],
+    "careerIds": [3],
+    "courseIds": [3]
+}', 'PENDING', '2025-11-17T10:10:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Ana",
+    "lastName": "Martínez",
+    "generalDescription": "Médica dedicada a la formación de futuros profesionales de la salud.",
+    "profilePictureUrl": "ana.png",
+    "campusIds": [4],
+    "careerIds": [4],
+    "courseIds": [4]
+}', 'PENDING', '2025-11-17T10:15:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "Luis",
+    "lastName": "Torres",
+    "generalDescription": "Abogado con experiencia en derecho civil y docente universitario.",
+    "profilePictureUrl": "luis.png",
+    "campusIds": [1],
+    "careerIds": [5],
+    "courseIds": [5]
+}', 'PENDING', '2025-11-17T10:20:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "Sofía",
+    "lastName": "López",
+    "generalDescription": "Investigadora en ciencias y promotora de la educación científica.",
+    "profilePictureUrl": "sofia.png",
+    "campusIds": [2],
+    "careerIds": [6],
+    "courseIds": [6]
+}', 'PENDING', '2025-11-17T10:25:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Miguel",
+    "lastName": "Vargas",
+    "generalDescription": "Experto en tecnología y programación, motivador de jóvenes talentos.",
+    "profilePictureUrl": "miguel.png",
+    "campusIds": [3],
+    "careerIds": [7],
+    "courseIds": [7]
+}', 'PENDING', '2025-11-17T10:30:00'),
+
+    (2, 'TEACHER', '{
+    "firstName": "Valeria",
+    "lastName": "Castro",
+    "generalDescription": "Diseñadora gráfica con enfoque en innovación y creatividad.",
+    "profilePictureUrl": "valeria.png",
+    "campusIds": [4],
+    "careerIds": [8],
+    "courseIds": [8]
+}', 'PENDING', '2025-11-17T10:35:00'),
+
+    (3, 'TEACHER', '{
+    "firstName": "Javier",
+    "lastName": "Mendoza",
+    "generalDescription": "Educador con vocación y experiencia en pedagogía moderna.",
+    "profilePictureUrl": "javier.png",
+    "campusIds": [1],
+    "careerIds": [9],
+    "courseIds": [9]
+}', 'PENDING', '2025-11-17T10:40:00'),
+
+    (1, 'TEACHER', '{
+    "firstName": "Paula",
+    "lastName": "Ríos",
+    "generalDescription": "Enfermera con pasión por la docencia y el cuidado integral.",
+    "profilePictureUrl": "paula.png",
+    "campusIds": [2],
+    "careerIds": [10],
+    "courseIds": [10]
+}', 'PENDING', '2025-11-17T10:45:00');

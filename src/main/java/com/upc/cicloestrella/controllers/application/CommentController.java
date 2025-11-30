@@ -3,15 +3,20 @@ package com.upc.cicloestrella.controllers.application;
 import com.upc.cicloestrella.DTOs.requests.CommentRequestDTO;
 import com.upc.cicloestrella.DTOs.responses.comments.CommentResponseDTO;
 import com.upc.cicloestrella.DTOs.shared.ApiResponse;
+import com.upc.cicloestrella.entities.Comment;
 import com.upc.cicloestrella.interfaces.services.application.CommentServiceInterface;
 import jakarta.annotation.security.PermitAll;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -19,10 +24,41 @@ import java.util.List;
 public class CommentController {
     private final CommentServiceInterface commentService;
 
+
+    @GetMapping("/comments")
+    @PreAuthorize("hasAnyRole('ADMIN','MODERATOR')")
+    public ResponseEntity<ApiResponse<Page<CommentResponseDTO>>> index(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String studentName,
+            @RequestParam(required = false) Long formalityId,
+            @RequestParam(required = false) String formalityTitle,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to,
+            Pageable pageable
+    ) {
+        Page<CommentResponseDTO> comments = commentService.index(keyword, studentName, formalityId, formalityTitle, from, to, pageable);
+
+        if (comments.isEmpty()) {
+            return ResponseEntity.status(404)
+                    .body(ApiResponse.<Page<CommentResponseDTO>>builder()
+                            .message("No se encontraron comentarios")
+                            .status(404)
+                            .build());
+        }
+
+        return ResponseEntity.ok(ApiResponse.<Page<CommentResponseDTO>>builder()
+                .data(comments)
+                .message("Comentarios obtenidos correctamente")
+                .status(200)
+                .build());
+    }
     @GetMapping("/formalities/{formalityId}/comments")
     @PermitAll
-    public ResponseEntity<ApiResponse<List<CommentResponseDTO>>> index(@PathVariable Long formalityId) {
-        List<CommentResponseDTO> comments = commentService.allByFormalityId(formalityId);
+    public ResponseEntity<ApiResponse<List<CommentResponseDTO>>> index(
+            @PathVariable Long formalityId,
+            @RequestParam(required = false) String keyword
+    ) {
+        List<CommentResponseDTO> comments = commentService.allByFormalityId(formalityId , keyword);
         if (comments.isEmpty()) {
             return ResponseEntity.status(404)
                     .body(ApiResponse.<List<CommentResponseDTO>>builder()
